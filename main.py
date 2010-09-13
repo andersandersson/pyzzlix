@@ -19,6 +19,7 @@ from scene_maingame import *
 background = 0
 sceneHandler = 0
 screen = 0
+fullscreen = False
 
 def init():
     global background
@@ -26,7 +27,7 @@ def init():
     global screen
     
     # Initialize screen and window
-    screen = pygame.display.set_mode((320, 240))
+    screen = setDisplay(fullscreen)
     pygame.display.set_caption('Pyzzlix')
     pygame.mouse.set_visible(0)
 
@@ -44,6 +45,13 @@ def init():
     mainscene = Scene_MainGame()
     sceneHandler.pushScene(mainscene)
 
+def setDisplay(fullscreen):
+    if (fullscreen == True):
+        screen = pygame.display.set_mode((320, 240), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
+    else:
+        screen = pygame.display.set_mode((320, 240))
+    return screen
+
 def render():
     # Display The Background
     screen.blit(background, (0, 0))
@@ -54,6 +62,8 @@ def update(time):
     sceneHandler.update(time)
 
 def main():
+    global fullscreen
+
     #Initialize Everything
     pygame.init()
     
@@ -78,6 +88,9 @@ def main():
                 return
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 return
+            elif event.type == KEYDOWN and event.key == K_F1:
+                fullscreen = not fullscreen
+                setDisplay(fullscreen)
             elif event.type == KEYDOWN:
                 sceneHandler.handleKeyInput(event.key, KEYDOWN)
             elif event.type == KEYUP:
