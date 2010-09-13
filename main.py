@@ -11,21 +11,21 @@ if not pygame.mixer: print 'Warning, sound disabled'
 
 
 # Import important stuff
-import globals
 from globals import *
-
-import scenestack
-from scenestack import *
-
-import scene_maingame
+from scenehandler import *
+from renderer import *
 from scene_maingame import *
 
+background = 0
+sceneHandler = 0
+screen = 0
+
 def init():
-    global screen
     global background
-    global sceneStack
+    global sceneHandler
+    global screen
     
-    # Initialize screen
+    # Initialize screen and window
     screen = pygame.display.set_mode((320, 240))
     pygame.display.set_caption('Pyzzlix')
     pygame.mouse.set_visible(0)
@@ -35,20 +35,23 @@ def init():
     background = background.convert()
     background.fill((0, 0, 100))
     
+    # Initialize renderer
+    renderer = Renderer()
+    renderer.setScreen(screen)
+    
     # Initialize and populate scene stack
-    sceneStack = SceneStack()
+    sceneHandler = SceneHandler()
     mainscene = Scene_MainGame()
-    sceneStack.registerScene(mainscene)
-    sceneStack.pushScene(mainscene)
+    sceneHandler.pushScene(mainscene)
 
 def render():
     # Display The Background
     screen.blit(background, (0, 0))
-    sceneStack.renderScenes(screen)
+    sceneHandler.renderScenes()
     pygame.display.flip()
     
 def update(time):
-    sceneStack.update(time)
+    sceneHandler.update(time)
 
 def main():
     #Initialize Everything
@@ -59,12 +62,16 @@ def main():
             
     # Initialize main clockg
     mainClock = pygame.time.Clock()
+    time = pygame.time.get_ticks() * 0.001
+    lastfpsupdate = time
+    fpscounter = 0
     
     #Main Loop
     while 1:
-        mainClock.tick(5)
+        mainClock.tick(30)
+        lasttime = time
         time = pygame.time.get_ticks() * 0.001
-
+        
         # Handle Input Events
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -72,16 +79,22 @@ def main():
             elif event.type == KEYDOWN and event.key == K_ESCAPE:
                 return
             elif event.type == KEYDOWN:
-                sceneStack.handleKeyInput(event.key, KEYDOWN)
+                sceneHandler.handleKeyInput(event.key, KEYDOWN)
             elif event.type == KEYUP:
-                sceneStack.handleKeyInput(event.key, KEYUP)
+                sceneHandler.handleKeyInput(event.key, KEYUP)
 
         # Update everything
-        update(time)
+        update(time - lasttime)
         
         # Draw everything on screen
         render()
-
+        
+        fpscounter += 1
+        if (time - lastfpsupdate >= 1.0):
+            print "FPS:", str(fpscounter)
+            fpscounter = 0
+            lastfpsupdate = time
+    
         sys.stdout.flush()
 
     #Game Over

@@ -1,4 +1,5 @@
-import singleton
+from globals import *
+from renderer import *
 from singleton import *
 
 class SceneHandler(Singleton):
@@ -8,12 +9,6 @@ class SceneHandler(Singleton):
         self.focus = 0
         self.currentTime = 0
         
-    def registerScene(self, scene):
-        self.allScenes.append(scene)
-    
-    def unregisterScene(self, scene):
-        self.allScenes.remove(scene)
-    
     def pushScene(self, scene):
         try:
             self.sceneStack.remove(scene)
@@ -60,13 +55,13 @@ class SceneHandler(Singleton):
             if (scene.isBlockingUpdates() == True):
                 break
         
-    def renderScenes(self, screen):
+    def renderScenes(self):
+        renderer = Renderer()
         renderStack = []
         for scene in reversed(self.sceneStack):
             renderStack.append(scene)
             if (scene.isBlockingRendering() == True):
-                break
-        
+                break       
         for scene in reversed(renderStack):
-            scene.render(screen)
+            renderer.render(scene)
             

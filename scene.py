@@ -1,3 +1,7 @@
+import pygame
+from pygame.locals import *
+
+
 import singleton
 from singleton import *
 
@@ -9,14 +13,13 @@ class Scene(Singleton):
         self.renderBlocker = False
         self.updateBlocker = False
         self.focusable = True
+       
+        self.sprites = pygame.sprite.LayeredUpdates()
         
     def update(self, deltaTime):    
-        #self.currentTime += deltaTime
-        self.tick()
-    
-    def render(self, surf):
-        pass
-    
+        self.currentTime += deltaTime
+        self.tick(deltaTime)
+        
     def handleKeyInput(self, key, state):
         return False
         
