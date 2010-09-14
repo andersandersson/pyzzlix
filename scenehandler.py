@@ -63,10 +63,4 @@ class SceneHandler(Singleton):
             if (scene.isBlockingRendering() == True):
                 break       
         for scene in reversed(renderStack):
-<<<<<<< HEAD:scenestack.py
-            scene.render(screen)
-            
-=======
             renderer.render(scene)
-            
->>>>>>> 54486567b58c9b14058931b3bbe9adbfee62f176:scenehandler.py
