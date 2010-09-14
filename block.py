@@ -27,4 +27,5 @@ class Block(pygame.sprite.Sprite):
             self.image = self.images[self.frame]
             self.frame += 1
             
-        
+    def draw(self, surf):
+        surf.blit(self.image, (self.rect.x, self.rect.y), ((0, 0) , (self.rect.width, self.rect.height)))

@@ -13,5 +13,7 @@ class Renderer(Singleton):
                 
     def render(self, scene):
         if (self.screen != 0):
-            scene.sprites.draw(self.screen)
+            for layer in scene.sprites.layers():
+                for sprite in scene.sprites.get_sprites_from_layer(layer):
+                    sprite.draw(self.screen)
 

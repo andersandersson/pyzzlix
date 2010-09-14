@@ -48,8 +48,6 @@ def init():
     mainscene = Scene_MainGame()
     sceneHandler.pushScene(mainscene)
 
-    font_normal = Font("font_normal.bmp", 8, 8);
-
 
 def setDisplay(fullscreen):
     if (fullscreen == True):

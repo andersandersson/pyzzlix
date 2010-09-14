@@ -2,6 +2,8 @@ import os, pygame
 from pygame.locals import *
 from scene import *
 from block import *
+from font import *
+from text import *
 import random
 
 class Scene_MainGame(Scene):
@@ -10,6 +12,9 @@ class Scene_MainGame(Scene):
         self.state = "running"
         self.blocks = pygame.sprite.Group()
         self.blockcount = 0
+        self.font = Font("font_normal.bmp", 8, 8);
+        self.scoretext = Text(0, 0, self.font, "SCORE: 1234567890")
+        self.sprites.add(self.scoretext);
    
     def tick(self, deltaTime):
         if (self.state == "creating"):
