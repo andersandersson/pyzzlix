@@ -64,4 +64,3 @@ class SceneHandler(Singleton):
                 break       
         for scene in reversed(renderStack):
             renderer.render(scene)
-            

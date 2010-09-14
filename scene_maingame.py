@@ -1,6 +1,8 @@
 import os, pygame
 from pygame.locals import *
+
 from scene import *
+from board import *
 from block import *
 from font import *
 from text import *
@@ -10,6 +12,7 @@ class Scene_MainGame(Scene):
     def _runOnce(self):
         Scene._runOnce(self)
         self.state = "running"
+        self.board = Board(32, 20)
         self.blocks = pygame.sprite.Group()
         self.blockcount = 0
         self.font = Font("font_normal.bmp", 8, 8);
