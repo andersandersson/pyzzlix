@@ -3,19 +3,29 @@ from pygame.locals import *
 
 from scene import *
 from board import *
+from block import *
+import random
 
 class Scene_MainGame(Scene):
     def _runOnce(self):
         Scene._runOnce(self)
         self.state = "running"
         self.board = Board(32, 20)
+        self.blocks = pygame.sprite.Group()
+        self.blockcount = 0
    
-    def tick(self):
-        if (self.state == "running"):
-            print self, "is running"
-        else:
-            print self, "is stopped"
+    def tick(self, deltaTime):
+        if (self.state == "creating"):
+            self.createBlock(random.randint(-16, 320), random.randint(-16, 240), random.randint(0, 7))
+            self.blockcount+=1
             
+        self.blocks.update(deltaTime)
+    
+    def createBlock(self, x, y, type):
+        block = Block(x, y, type)
+        self.blocks.add(block)
+        self.sprites.add(block)
+        
     def show(self):
         print self, "is showing"
         
@@ -23,12 +33,15 @@ class Scene_MainGame(Scene):
         print self, "is hiding"
 
     def handleKeyInput(self, key, state):
-        if state == KEYDOWN:
-            if (key == K_RETURN):
-                if (self.state == "stopped"):
-                    self.state = "running"
-                else:
-                    self.state = "stopped"
-                return True
+        
+        if (key == K_RETURN):
+            if state == KEYDOWN:
+                if (self.state == "running"):
+                    self.state = "creating"
+            else:
+                if (self.state == "creating"):
+                    self.state = "running"                     
+                    print self.blockcount
+            return True
         return False
         
