@@ -15,6 +15,9 @@ from globals import *
 from scenehandler import *
 from renderer import *
 from scene_maingame import *
+from font import *
+
+
 
 background = 0
 sceneHandler = 0
@@ -44,6 +47,9 @@ def init():
     sceneHandler = SceneHandler()
     mainscene = Scene_MainGame()
     sceneHandler.pushScene(mainscene)
+
+    font_normal = Font("font_normal.bmp", 8, 8);
+
 
 def setDisplay(fullscreen):
     if (fullscreen == True):

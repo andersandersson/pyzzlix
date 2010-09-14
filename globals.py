@@ -41,7 +41,6 @@ def loadImageSheet(filename, w, h, colorkey=None):
                 except:
                     image = masterImage.subsurface((i*w, j*h, w, h))
                     images[name] = image
-                    print name
                 sheet.append(image)
     return sheet
 

@@ -1,8 +1,5 @@
 import pygame
 from pygame.locals import *
-
-
-import singleton
 from singleton import *
 
 class Scene(Singleton):
