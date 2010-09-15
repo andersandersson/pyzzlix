@@ -24,11 +24,11 @@ class Scene_MainGame(Scene):
         self.sprites.add(self.scoretext)
         self.sprites.add(self.marker)
         self.blocks.add(self.marker)
-        self.ticker = 0
+        self.ticker = 20
    
     def tick(self, deltaTime):
         self.ticker += 1
-        if (self.state == "creating") or self.ticker == 100:
+        if (self.state == "creating") or self.ticker > 20:
             self.ticker = 0
             c = 0
             while True:
