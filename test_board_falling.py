@@ -1,4 +1,5 @@
 import board
+from block import *
 
 c = board.Board(5,5)
 

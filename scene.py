@@ -17,7 +17,7 @@ class Scene(Singleton):
         self.currentTime += deltaTime
         self.tick(deltaTime)
         
-    def handleKeyInput(self, key, state):
+    def handleEvent(self, event):
         return False
         
     def focus(self):

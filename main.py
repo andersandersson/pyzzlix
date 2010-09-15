@@ -95,10 +95,8 @@ def main():
             elif event.type == KEYDOWN and event.key == K_F1:
                 fullscreen = not fullscreen
                 setDisplay(fullscreen)
-            elif event.type == KEYDOWN:
-                sceneHandler.handleKeyInput(event.key, KEYDOWN)
-            elif event.type == KEYUP:
-                sceneHandler.handleKeyInput(event.key, KEYUP)
+            else:
+                sceneHandler.handleEvent(event)
 
         # Update everything
         update(time - lasttime)

@@ -40,9 +40,9 @@ class SceneHandler(Singleton):
         scene.focus()
         self.focus = scene
         
-    def handleKeyInput(self, key, keystate):
+    def handleEvent(self, event):
         for scene in reversed(self.sceneStack):
-            if (scene.handleKeyInput(key, keystate) == True):
+            if (scene.handleEvent(event) == True):
                 break
     
     def update(self, deltaTime):

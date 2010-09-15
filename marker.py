@@ -4,16 +4,14 @@ import pygame
 from pygame.locals import *
 
 
-class Block(pygame.sprite.Sprite):
-    def __init__(self, x, y, type):
+class Marker(pygame.sprite.Sprite):
+    def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.type = type
-        self.images = loadImageSheet("block" + str(self.type) + ".bmp", 16, 16)
+        self.images = loadImageSheet("marker.bmp", 32, 32)
         self.image = self.images[0]
         self.rect = self.image.get_rect()
 
-        self.x = x
-        self.y = y
         self.offset_x = 0
         self.offset_y = 0
         self.scale_x = 16
@@ -32,9 +30,8 @@ class Block(pygame.sprite.Sprite):
         self.rect.x = self.x * self.scale_x + self.offset_x
         self.rect.y = self.y * self.scale_y + self.offset_y
 
-    def kill(self):
-        self.images = loadImageSheet("block" + str(4) + ".bmp", 16, 16)
-        self.image = self.images[0]
+    def move(self, dx, dy):
+        self.moveTo(self.x+dx, self.y+dy)
 
     def update(self, deltaTime):
         self.timeatlastframe += deltaTime
