@@ -8,6 +8,7 @@ STATUS_IN_CIRCLE = 4
 DEFAULT_GRAVITY_DELAY = 2
 
 EVENT_CIRCLE_FOUND = USEREVENT
+EVENT_GAME_OVER = USEREVENT+1
 
 def TriangleArea(a, b, c):
     return (b[0]-a[0]) * (c[1]-a[1]) - (c[0]-a[0])*(b[1]-a[1])
@@ -25,16 +26,11 @@ def PolygonArea(points):
 
 class Board:
     def __init__(self, width=30, height=20):
-        self.last_rotated = []
         self.width = width
         self.height = height
-        self.grid = []
 
-        for x in range(width):
-            self.grid.append([])
-            for y in range(height):
-                self.grid[x].append(None)
-                
+        self.reset()
+
     def __str__(self):
         val = ""
         for x in range(self.width):
@@ -49,11 +45,30 @@ class Board:
             val = val + "|\n"
         return val
 
+    def reset(self):
+        self.last_rotated = []
+        self.grid = []
+        self.gameOver = False
+
+        for x in range(self.width):
+            self.grid.append([])
+            for y in range(self.height):
+                self.grid[x].append(None)        
+
     def add(self, x, y, type, block, gravity_delay=DEFAULT_GRAVITY_DELAY, status=STATUS_NONE):
         self.grid[x][y] = {'type': type, 'block': block, 'gravity_delay': gravity_delay, 'status': status}
 
     def clear(self, x, y):
         self.grid[x][y] = None
+
+    def updateGameOver(self):
+        for rows in self.grid:
+            for tile in rows:
+                if not tile:
+                    return
+
+        self.gameOver = True        
+        pygame.event.post(pygame.event.Event(EVENT_GAME_OVER))
 
     def handleCircle(self, points):
         # If the points are oriented counterclockwise, change it.
@@ -100,6 +115,9 @@ class Board:
         pygame.event.post(pygame.event.Event(EVENT_CIRCLE_FOUND, blocks=blocks))
 
     def findCircle(self, points):        
+        if self.gameOver:
+            return
+
         def finder(x, y, path, first_point, type):
             if x < 0 or y < 0 or x >= self.width or y >= self.height:
                 return None
@@ -139,6 +157,9 @@ class Board:
                     self.handleCircle(circle)
 
     def rotate(self, x, y, direction, radius):
+        if self.gameOver:
+            return False
+
         # Just check that we are in a valid area
         if x > self.width-radius or x < 0:
             return False
@@ -207,6 +228,9 @@ class Board:
         return True
 
     def update(self):
+        if self.gameOver:
+            return
+
         points = self.last_rotated
 
         for y in reversed(range(self.height-1)):
@@ -252,3 +276,4 @@ class Board:
             self.findCircle(points)
 
         self.last_rotated = []
+        self.updateGameOver()

@@ -14,8 +14,8 @@ class Block(pygame.sprite.Sprite):
 
         self.x = x
         self.y = y
-        self.offset_x = 0
-        self.offset_y = 0
+        self.offset_x = 16
+        self.offset_y = 16
         self.scale_x = 16
         self.scale_y = 16
 

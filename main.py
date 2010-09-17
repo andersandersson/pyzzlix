@@ -37,7 +37,7 @@ def init():
     # Create The Backgound
     background = pygame.Surface(screen.get_size())
     background = background.convert()
-    background.fill((0, 0, 100))
+    background.fill((0, 0, 0))
     
     # Initialize renderer
     renderer = Renderer()

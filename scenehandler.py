@@ -29,7 +29,7 @@ class SceneHandler(Singleton):
         if (self.focus == scene):
             self.focus = 0
             if (len(self.sceneStack) > 0):
-                for s in reversed(sceneStack):
+                for s in reversed(self.sceneStack):
                     if (s.canBeFocused() == True):
                         this.focusScene(s)
         return scene

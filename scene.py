@@ -39,7 +39,7 @@ class Scene(Singleton):
         return self.focuable == True
         
     def isBlockingUpdates(self):
-        return self.renderBlocker == True
+        return self.updateBlocker == True
     
     def isBlockingRendering(self):
-        return self.updateBlocker == True
+        return self.renderBlocker == True

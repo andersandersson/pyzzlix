@@ -31,9 +31,9 @@ class Text(pygame.sprite.Sprite):
             drawposx = self.x
         elif (self.anchor == "right"):
             drawposx = self.x - self.length * self.font.width
-        elif (self.anchor == "middle"):
+        elif (self.anchor == "center"):
             drawposx = self.x - (self.length * self.font.width) / 2
-    
+
         for c in self.chars:
             surf.blit(self.font.getGlyph(c), (drawposx, self.y), ((0,0) , (self.font.width, self.font.height)))
             drawposx += self.font.width
