@@ -67,7 +67,7 @@ class Board:
                 if not tile:
                     return
 
-        self.gameOver = True        
+        #self.gameOver = True        
         pygame.event.post(pygame.event.Event(EVENT_GAME_OVER))
 
     def handleCircle(self, points):

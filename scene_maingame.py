@@ -38,6 +38,7 @@ class Scene_MainGame(Scene):
         self.sprites.add(self.marker)
         self.sprites.add(self.background)
         self.ticker = 20
+        self.init_done = False
 
     def resetGame(self):
         self.score = 0
@@ -51,25 +52,26 @@ class Scene_MainGame(Scene):
 
     def tick(self, deltaTime):
         self.ticker += 1
-        if (self.state == "creating") or self.ticker > 20:
-            self.ticker = 0
-            c = 0
-            while True:
-                c += 1
-                if c > 100:
-                    break
-                
-                x = random.randint(0, self.board.width-1)
-                y = 0
 
-                if not self.board.grid[x][y]:
-                    break;                
+        for i in range(1,4):
+            if (self.state == "creating") or self.ticker > 5 or not self.init_done:
+                self.ticker = 0
+                c = 0
+                while True:
+                    c += 1
+                    if c > 100:
+                        break
+                    
+                    x = random.randint(0, self.board.width-1)
+                    y = 0
+                    
+                    if not self.board.grid[x][y]:
+                        break;                
             
-            if c < 100:                
-                self.createBlock(x, y, 8+random.randint(0, 3))
-                #self.createBlock(x, y, 8)
-
-            self.blockcount+=1
+                if c < 100:                
+                    self.createBlock(x, y, 8+random.randint(0, 3))
+                    self.init_ticker -= 1
+                    self.blockcount+=1
 
         self.scoretext.setText("SCORE: "+str(self.score))
         self.board.update()
@@ -101,7 +103,8 @@ class Scene_MainGame(Scene):
                 self.sprites.remove(block)
 
         if event.type == board.EVENT_GAME_OVER:
-            self.showGameOver()
+            self.init_done = True
+            #self.showGameOver()
 
         if event.type == KEYDOWN or event.type == KEYUP:
             state = event.type
