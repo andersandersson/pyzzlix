@@ -9,6 +9,7 @@ class Block(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.type = type
         self.images = loadImageSheet("block" + str(self.type) + ".bmp", 16, 16)
+        self.images = self.images[:-1]
         self.image = self.images[0]
         self.rect = self.image.get_rect()
 
@@ -45,7 +46,7 @@ class Block(pygame.sprite.Sprite):
         self.new_y = self.y * self.scale_y + self.offset_y
 
     def kill(self):
-        self.images = loadImageSheet("block" + str(4) + ".bmp", 16, 16)
+        self.images = loadImageSheet("block" + str(9) + ".bmp", 16, 16)
         self.image = self.images[0]
 
     def update(self, deltaTime):

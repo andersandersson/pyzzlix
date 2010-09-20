@@ -69,7 +69,7 @@ class Scene_MainGame(Scene):
                         break;                
             
                 if c < 100:                
-                    self.createBlock(x, y, 8+random.randint(0, 3))
+                    self.createBlock(x, y, random.randint(0, 7))
                     self.init_ticker -= 1
                     self.blockcount+=1
 
@@ -82,7 +82,7 @@ class Scene_MainGame(Scene):
     def createBlock(self, x, y, type):
         block = Block(x, y, type)
         block._layer = LAYER_BLOCKS
-        self.board.add(x, y, type, block)
+        self.board.add(x, y, type, block, 0)
         self.blocks.add(block)
         self.sprites.add(block)
         
@@ -98,6 +98,7 @@ class Scene_MainGame(Scene):
 
             for block in event.blocks:
                 print block.x, block.y
+                block.kill()
                 self.board.clear(block.x, block.y)
                 self.blocks.remove(block)
                 self.sprites.remove(block)

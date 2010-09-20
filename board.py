@@ -5,7 +5,7 @@ STATUS_MOVING = 1
 STATUS_WEIGHTLESS = 2
 STATUS_IN_CIRCLE = 4
 
-DEFAULT_GRAVITY_DELAY = 2
+DEFAULT_GRAVITY_DELAY = 30
 
 EVENT_CIRCLE_FOUND = USEREVENT
 EVENT_GAME_OVER = USEREVENT+1
@@ -199,6 +199,10 @@ class Board:
         # is locked, in which case we will return false
         for p in points:
             next_tile = self.grid[p[0]+x][p[1]+y]
+            
+            if not next_tile:
+                return False
+            
             if next_tile and (next_tile['status'] & STATUS_MOVING or next_tile['status'] & STATUS_IN_CIRCLE):
                 return False
 
@@ -219,7 +223,7 @@ class Board:
             try:
                 if tile:
                     tile["block"].moveTo(xx, yy)
-                    tile['status'] |= STATUS_MOVING
+                    #tile['gravity_delay'] = 0
             except (AttributeError, TypeError):
                 pass
 
