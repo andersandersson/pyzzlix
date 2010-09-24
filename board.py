@@ -20,7 +20,7 @@ def PolygonArea(points):
 class Board:
     def __init__(self, width=30, height=20):
         self.width = width
-        self.height = height
+        self.height = 2*height
 
         self.reset()
 
