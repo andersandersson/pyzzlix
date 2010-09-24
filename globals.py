@@ -4,6 +4,12 @@ from pygame import *
 BOARD_WIDTH = 10
 BOARD_HEIGHT = 13
 
+HOURGLASS_DEFAULT = 1000
+
+EVENT_CIRCLE_FOUND = USEREVENT
+EVENT_GAME_OVER = USEREVENT+1
+EVENT_LEVEL_UP = USEREVENT+2
+
 # Functions to create our resources
 images = dict()
 

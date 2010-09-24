@@ -1,8 +1,5 @@
 from block import *
 
-EVENT_CIRCLE_FOUND = USEREVENT
-EVENT_GAME_OVER = USEREVENT+1
-
 def TriangleArea(a, b, c):
     return (b[0]-a[0]) * (c[1]-a[1]) - (c[0]-a[0])*(b[1]-a[1])
 
@@ -290,4 +287,3 @@ class Board:
             self.findCircle(points)
 
         self.last_rotated = []
-        self.updateGameOver()
