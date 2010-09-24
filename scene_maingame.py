@@ -30,9 +30,7 @@ class Scene_MainGame(Scene):
         self.scoretext = Text(224, 16, self.font, "SCORE: 0")
         self.scoretext._layer = LAYER_GUI
         self.score = 0
-        self.marker = Marker(0,0)
-        self.marker.offset_x = 16
-        self.marker.offset_y = 16
+        self.marker = Marker(2,14)
         self.marker._layer = LAYER_MARKER
         self.sprites.add(self.scoretext)
         self.sprites.add(self.marker)

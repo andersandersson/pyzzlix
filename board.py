@@ -50,6 +50,7 @@ class Board:
 
     def add(self, x, y, block):
         self.grid[x][y] = block
+        self.moveBlock(block, x, y)
 
     def clear(self, x, y):
         self.grid[x][y] = None
@@ -121,7 +122,7 @@ class Board:
             if not self.grid[x][y].type == type:
                 return None
 
-            if self.grid[x][y].status & STATUS_MOVING or self.grid[x][y].status & STATUS_IN_CIRCLE:
+            if self.grid[x][y].status & STATUS_MOVING or self.grid[x][y].status & STATUS_IN_CIRCLE or self.grid[x][y].status & STATUS_OFFSCREEN:
                 return None
 
             if path and x == first_point[0] and y == first_point[1]:
@@ -215,7 +216,7 @@ class Board:
 
             try:
                 if tile:
-                    tile.moveTo(xx, yy)
+                    self.moveBlock(tile, xx, yy)
                     #tile.gravityDelay = 0
             except (AttributeError, TypeError):
                 pass
@@ -223,6 +224,15 @@ class Board:
             tile = next_tile
 
         return True
+
+    def moveBlock(self, block, x, y):
+        block.moveTo(x, y)
+        
+        if y < self.height/2:
+            block.status |= STATUS_OFFSCREEN
+        else:
+            block.status &= ~STATUS_OFFSCREEN
+
 
     def update(self):
         if self.gameOver:
@@ -251,7 +261,7 @@ class Board:
                             tile_over.status |= STATUS_MOVING
 
                             try:
-                                tile_over.moveTo(x, y+1)
+                                self.moveBlock(tile_over, x, y+1)
                             except (AttributeError, TypeError):
                                 pass
                             

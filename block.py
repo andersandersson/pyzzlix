@@ -7,6 +7,7 @@ STATUS_NONE = 0
 STATUS_MOVING = 1
 STATUS_WEIGHTLESS = 2
 STATUS_IN_CIRCLE = 4
+STATUS_OFFSCREEN = 8
 
 DEFAULT_GRAVITY_DELAY = 30
 
@@ -25,7 +26,7 @@ class Block(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.offset_x = 16
-        self.offset_y = -20*16
+        self.offset_y = -12*16
         self.scale_x = 16
         self.scale_y = 16
 
@@ -76,4 +77,7 @@ class Block(pygame.sprite.Sprite):
             self.rect.y = self.new_y
             
     def draw(self, surf):
+        if self.status & STATUS_OFFSCREEN:
+            return
+            
         surf.blit(self.image, (self.rect.x, self.rect.y), ((0, 0) , (self.rect.width, self.rect.height)))
