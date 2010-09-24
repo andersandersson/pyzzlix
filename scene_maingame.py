@@ -82,7 +82,7 @@ class Scene_MainGame(Scene):
     def createBlock(self, x, y, type):
         block = Block(x, y, type)
         block._layer = LAYER_BLOCKS
-        self.board.add(x, y, type, block, 0)
+        self.board.add(x, y, block)
         self.blocks.add(block)
         self.sprites.add(block)
         

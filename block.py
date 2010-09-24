@@ -3,11 +3,20 @@ from globals import *
 import pygame
 from pygame.locals import *
 
+STATUS_NONE = 0
+STATUS_MOVING = 1
+STATUS_WEIGHTLESS = 2
+STATUS_IN_CIRCLE = 4
+
+DEFAULT_GRAVITY_DELAY = 30
 
 class Block(pygame.sprite.Sprite):
     def __init__(self, x, y, type):
         pygame.sprite.Sprite.__init__(self)
+        self.gravityDelay = 0
         self.type = type
+        self.status = STATUS_NONE
+
         self.images = loadImageSheet("block" + str(self.type) + ".bmp", 16, 16)
         self.images = self.images[:-1]
         self.image = self.images[0]
