@@ -48,6 +48,13 @@ class Board:
             for y in range(self.height):
                 self.grid[x].append(None)
 
+    def full(self):
+        for row in self.grid:
+            for tile in row:
+                if not tile:
+                    return False
+        return True
+
     def add(self, x, y, block):
         self.grid[x][y] = block
         self.moveBlock(block, x, y)
@@ -197,7 +204,7 @@ class Board:
             if not next_tile:
                 return False
             
-            if next_tile and (next_tile.status & STATUS_MOVING or next_tile.status & STATUS_IN_CIRCLE):
+            if next_tile and (next_tile.status & STATUS_MOVING or next_tile.status & STATUS_IN_CIRCLE or next_tile.status & STATUS_OFFSCREEN):
                 return False
 
         tile = None

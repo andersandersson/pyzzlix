@@ -13,7 +13,7 @@ class Marker(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
         self.offset_x = 16
-        self.offset_y = -12*16
+        self.offset_y = -BOARD_HEIGHT*16+16
         self.scale_x = 16
         self.scale_y = 16
 

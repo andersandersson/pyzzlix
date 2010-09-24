@@ -1,6 +1,9 @@
 import os, pygame
 from pygame import *
 
+BOARD_WIDTH = 10
+BOARD_HEIGHT = 13
+
 # Functions to create our resources
 images = dict()
 
