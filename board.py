@@ -1,15 +1,5 @@
 from block import *
 
-STATUS_NONE = 0
-STATUS_MOVING = 1
-STATUS_WEIGHTLESS = 2
-STATUS_IN_CIRCLE = 4
-
-DEFAULT_GRAVITY_DELAY = 30
-
-EVENT_CIRCLE_FOUND = USEREVENT
-EVENT_GAME_OVER = USEREVENT+1
-
 def TriangleArea(a, b, c):
     return (b[0]-a[0]) * (c[1]-a[1]) - (c[0]-a[0])*(b[1]-a[1])
 
@@ -27,7 +17,7 @@ def PolygonArea(points):
 class Board:
     def __init__(self, width=30, height=20):
         self.width = width
-        self.height = height
+        self.height = 2*height
 
         self.reset()
 
@@ -39,7 +29,7 @@ class Board:
         for y in range(self.height):
             for x in range(self.width):
                 if self.grid[x][y]:
-                    val = "%s|%d" % (val, self.grid[x][y]['status'])
+                    val = "%s|%d" % (val, self.grid[x][y].status)
                 else:
                     val = "%s|_" % (val)
             val = val + "|\n"
@@ -47,16 +37,24 @@ class Board:
 
     def reset(self):
         self.last_rotated = []
-        self.grid = []
         self.gameOver = False
+        self.grid = []
 
         for x in range(self.width):
             self.grid.append([])
             for y in range(self.height):
-                self.grid[x].append(None)        
+                self.grid[x].append(None)
 
-    def add(self, x, y, type, block, gravity_delay=DEFAULT_GRAVITY_DELAY, status=STATUS_NONE):
-        self.grid[x][y] = {'type': type, 'block': block, 'gravity_delay': gravity_delay, 'status': status}
+    def full(self):
+        for row in self.grid:
+            for tile in row:
+                if not tile:
+                    return False
+        return True
+
+    def add(self, x, y, block):
+        self.grid[x][y] = block
+        self.moveBlock(block, x, y)
 
     def clear(self, x, y):
         self.grid[x][y] = None
@@ -82,10 +80,10 @@ class Board:
             x = point[0]
             y = point[1]
 
-            self.grid[x][y]['status'] |= STATUS_IN_CIRCLE
+            self.grid[x][y].status |= STATUS_IN_CIRCLE
 
-            if self.grid[x][y]['block'] not in blocks:
-                blocks.append(self.grid[x][y]['block'])
+            if self.grid[x][y] not in blocks:
+                blocks.append(self.grid[x][y])
 
             if last_point:
                 x_dir = 0
@@ -106,9 +104,9 @@ class Board:
                 while (x+x_dir, y+y_dir) not in points:
                     x = x+x_dir
                     y = y+y_dir
-                    self.grid[x][y]['status'] |= STATUS_IN_CIRCLE
-                    if self.grid[x][y]['block'] not in blocks:
-                        blocks.append(self.grid[x][y]['block'])
+                    self.grid[x][y].status |= STATUS_IN_CIRCLE
+                    if self.grid[x][y] not in blocks:
+                        blocks.append(self.grid[x][y])
 
             last_point = point
 
@@ -125,10 +123,10 @@ class Board:
             if not self.grid[x][y]:
                 return None
 
-            if not self.grid[x][y]['type'] == type:
+            if not self.grid[x][y].type == type:
                 return None
 
-            if self.grid[x][y]['status'] & STATUS_MOVING or self.grid[x][y]['status'] & STATUS_IN_CIRCLE:
+            if self.grid[x][y].status & STATUS_MOVING or self.grid[x][y].status & STATUS_IN_CIRCLE or self.grid[x][y].status & STATUS_OFFSCREEN:
                 return None
 
             if path and x == first_point[0] and y == first_point[1]:
@@ -152,7 +150,7 @@ class Board:
             
         for p in points:
             if self.grid[p[0]][p[1]]:
-                circle = finder(p[0], p[1], [], p, self.grid[p[0]][p[1]]['type'])
+                circle = finder(p[0], p[1], [], p, self.grid[p[0]][p[1]].type)
                 if circle and len(circle) >= 4:
                     self.handleCircle(circle)
 
@@ -203,7 +201,7 @@ class Board:
             if not next_tile:
                 return False
             
-            if next_tile and (next_tile['status'] & STATUS_MOVING or next_tile['status'] & STATUS_IN_CIRCLE):
+            if next_tile and (next_tile.status & STATUS_MOVING or next_tile.status & STATUS_IN_CIRCLE or next_tile.status & STATUS_OFFSCREEN):
                 return False
 
         tile = None
@@ -222,14 +220,23 @@ class Board:
 
             try:
                 if tile:
-                    tile["block"].moveTo(xx, yy)
-                    #tile['gravity_delay'] = 0
+                    self.moveBlock(tile, xx, yy)
+                    #tile.gravityDelay = 0
             except (AttributeError, TypeError):
                 pass
 
             tile = next_tile
 
         return True
+
+    def moveBlock(self, block, x, y):
+        block.moveTo(x, y)
+        
+        if y < self.height/2:
+            block.status |= STATUS_OFFSCREEN
+        else:
+            block.status &= ~STATUS_OFFSCREEN
+
 
     def update(self):
         if self.gameOver:
@@ -243,41 +250,40 @@ class Board:
                 tile_under = self.grid[x][y+1]
                     
                 if tile_under and y+1 == self.height-1:
-                    if 0 == tile_under['gravity_delay']:
+                    if 0 == tile_under.gravityDelay:
                         points.append( (x, y+1) )
 
-                    tile_under['gravity_delay'] = DEFAULT_GRAVITY_DELAY
-                    tile_under['status'] &= ~STATUS_MOVING
+                    tile_under.gravityDelay = DEFAULT_GRAVITY_DELAY
+                    tile_under.status &= ~STATUS_MOVING
                     
                 if tile_over and not tile_under:
-                    if tile_over and not tile_over['status'] & STATUS_WEIGHTLESS and not tile_over['status'] & STATUS_IN_CIRCLE:
-                        if tile_over['gravity_delay'] <= 0:
+                    if tile_over and not tile_over.status & STATUS_WEIGHTLESS and not tile_over.status & STATUS_IN_CIRCLE:
+                        if tile_over.gravityDelay <= 0:
                             self.grid[x][y+1] = tile_over
                             self.grid[x][y] = None
-                            tile_over['gravity_delay'] = 0
-                            tile_over['status'] |= STATUS_MOVING
+                            tile_over.gravityDelay = 0
+                            tile_over.status |= STATUS_MOVING
 
                             try:
-                                tile_over['block'].moveTo(x, y+1)
+                                self.moveBlock(tile_over, x, y+1)
                             except (AttributeError, TypeError):
                                 pass
                             
                         else:
-                            tile_over['gravity_delay'] -= 1
+                            tile_over.gravityDelay -= 1
 
                 elif tile_over and tile_under:
-                    if 0 == tile_over['gravity_delay'] and not 0 == tile_under['gravity_delay']:
+                    if 0 == tile_over.gravityDelay and not 0 == tile_under.gravityDelay:
                         points.append( (x, y) )
                     
-                    tile_over['gravity_delay'] = tile_under['gravity_delay']
+                    tile_over.gravityDelay = tile_under.gravityDelay
 
-                    if tile_under['status'] & STATUS_MOVING:
-                        tile_over['status'] |= STATUS_MOVING
+                    if tile_under.status & STATUS_MOVING:
+                        tile_over.status |= STATUS_MOVING
                     else:
-                        tile_over['status'] &= ~STATUS_MOVING
+                        tile_over.status &= ~STATUS_MOVING
 
         if points:
             self.findCircle(points)
 
         self.last_rotated = []
-        self.updateGameOver()

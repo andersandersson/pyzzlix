@@ -49,21 +49,24 @@ class Renderer(Singleton):
         self.setDisplay()    
                 
     def drawSprite(self, sprite):
-        #glDisable(GL_TEXTURE_2D)
-        #glTranslatef(-sprite.x, -sprite.y, 0.0)
         glPushMatrix()
-        #glTranslatef(-sprite.x, -sprite.y, 0.0)
+        glTranslatef(sprite.x, sprite.y, 0.0)
         if (sprite.currentImage != 0):
             image = sprite.currentImage
+            srcx1 = image.srcx * image.texture.pw
+            srcx2 = srcx1 + image.width * image.texture.pw
+            srcy1 = image.srcy * image.texture.ph
+            srcy2 = srcy1 + image.height * image.texture.ph
+            
             glBindTexture(GL_TEXTURE_2D, image.texture.texID)
             glBegin(GL_QUADS)
-            glTexCoord2f(0.0, 1.0)
+            glTexCoord2f(srcx1, srcy1)
             glVertex2f(0.0, 0.0)
-            glTexCoord2f(0.0, 0.0)
+            glTexCoord2f(srcx1, srcy2)
             glVertex2f(0.0, image.height)
-            glTexCoord2f(1.0, 0.0)
+            glTexCoord2f(srcx2, srcy2)
             glVertex2f(image.width, image.height)
-            glTexCoord2f(1.0, 1.0)
+            glTexCoord2f(srcx2, srcy1)
             glVertex2f(image.width, 0.0)
             glEnd()
                 

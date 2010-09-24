@@ -5,6 +5,14 @@ from globals import *
 
 from sprite import *
 
+STATUS_NONE = 0
+STATUS_MOVING = 1
+STATUS_WEIGHTLESS = 2
+STATUS_IN_CIRCLE = 4
+STATUS_OFFSCREEN = 8
+
+DEFAULT_GRAVITY_DELAY = 30
+
 class Block(Sprite):
     def __init__(self, x, y, type):
         Sprite.__init__(self)
@@ -14,16 +22,16 @@ class Block(Sprite):
         self.boardx = x
         self.boardy = y
 
+        self.gravityDelay = 0
+        self.type = type
+        self.status = STATUS_NONE
+        
         self.offset_x = 16
-        self.offset_y = 16
+        self.offset_y = -BOARD_HEIGHT*16 + 16
         self.scale_x = 16
         self.scale_y = 16
 
         self.move_ticker = 0
-        self.old_x = self.x
-        self.old_y = self.y
-        self.new_x = self.x
-        self.new_y = self.y
 
         self.timeatlastframe = 0
         self.frameDelay = 0.1
@@ -32,17 +40,12 @@ class Block(Sprite):
 
         self.moveTo(x, y)
 
-        
     def moveTo(self, x, y):
-        self.old_x = self.x * self.scale_x + self.offset_x
-        self.old_y = self.y * self.scale_y + self.offset_y
-        self.move_ticker = 0
-        
-        self.x = x
-        self.y = y
+        self.boardx = x
+        self.boardy = y
 
-        self.new_x = self.x * self.scale_x + self.offset_x
-        self.new_y = self.y * self.scale_y + self.offset_y
+        self.x = self.boardx * self.scale_x + self.offset_x
+        self.y = self.boardy * self.scale_y + self.offset_y
 
     def kill(self):
         self.images = loadImageSheet("block" + str(9) + ".bmp", 16, 16)
@@ -50,12 +53,4 @@ class Block(Sprite):
 
     def update(self, deltaTime):
         Sprite.update(self, deltaTime)
-
-        if (self.move_ticker) < 1.0:
-            self.x = (self.new_x - self.old_x)*self.move_ticker + self.old_x
-            self.y = (self.new_y - self.old_y)*self.move_ticker + self.old_y
-            self.move_ticker += deltaTime*9
-        else:
-            self.x = self.new_x
-            self.y = self.new_y
-            
+     
