@@ -1,12 +1,14 @@
-import pygame
-from pygame import *
+#import pygame
+#from pygame import *
 from font import *
+
+from sprite import *
 
 import math
 
-class Text(pygame.sprite.Sprite):
+class Text(Sprite):
     def __init__(self, x, y, font, text):
-        pygame.sprite.Sprite.__init__(self)
+        Sprite.__init__(self)
         self.chars = list(text)
         self.font = font
         self.x = x
@@ -35,5 +37,5 @@ class Text(pygame.sprite.Sprite):
             drawposx = self.x - (self.length * self.font.width) / 2
 
         for c in self.chars:
-            surf.blit(self.font.getGlyph(c), (drawposx, self.y), ((0,0) , (self.font.width, self.font.height)))
+            #surf.blit(self.font.getGlyph(c), (drawposx, self.y), ((0,0) , (self.font.width, self.font.height)))
             drawposx += self.font.width

@@ -25,7 +25,7 @@ class Scene_MainGame(Scene):
         self.blocks = pygame.sprite.Group()
         self.blockcount = 0
         self.font = Font("font_normal.bmp", 8, 8);
-        self.background = Image()
+        self.background = Sprite()
         self.background.loadSheet("maingame.bmp", 320, 240)
         self.scoretext = Text(224, 16, self.font, "SCORE: 0")
         self.scoretext._layer = LAYER_GUI
@@ -36,7 +36,7 @@ class Scene_MainGame(Scene):
         self.marker._layer = LAYER_MARKER
         self.sprites.add(self.scoretext)
         self.sprites.add(self.marker)
-        self.sprites.add(self.background)
+        #self.sprites.add(self.background)
         self.ticker = 20
         self.init_done = False
 

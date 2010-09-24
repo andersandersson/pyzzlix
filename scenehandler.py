@@ -63,4 +63,4 @@ class SceneHandler(Singleton):
             if (scene.isBlockingRendering() == True):
                 break       
         for scene in reversed(renderStack):
-            renderer.render(scene)
+            renderer.renderScene(scene)

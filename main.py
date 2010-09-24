@@ -9,7 +9,6 @@ from pygame.locals import *
 if not pygame.font: print 'Warning, fonts disabled'
 if not pygame.mixer: print 'Warning, sound disabled'
 
-
 # Import important stuff
 from globals import *
 from scenehandler import *
@@ -17,10 +16,9 @@ from renderer import *
 from scene_maingame import *
 from font import *
 
-
-
 background = 0
 sceneHandler = 0
+renderer = 0
 screen = 0
 fullscreen = False
 
@@ -28,39 +26,17 @@ def init():
     global background
     global sceneHandler
     global screen
-    
-    # Initialize screen and window
-    screen = setDisplay(fullscreen)
-    pygame.display.set_caption('Pyzzlix')
-    pygame.mouse.set_visible(0)
-
-    # Create The Backgound
-    background = pygame.Surface(screen.get_size())
-    background = background.convert()
-    background.fill((0, 0, 0))
+    global renderer
     
     # Initialize renderer
     renderer = Renderer()
-    renderer.setScreen(screen)
+    renderer.init('Pyzzlix', 320, 240)
     
     # Initialize and populate scene stack
     sceneHandler = SceneHandler()
     mainscene = Scene_MainGame()
     sceneHandler.pushScene(mainscene)
 
-
-def setDisplay(fullscreen):
-    if (fullscreen == True):
-        screen = pygame.display.set_mode((320, 240), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE)
-    else:
-        screen = pygame.display.set_mode((320, 240))
-    return screen
-
-def render():
-    # Display The Background
-    screen.blit(background, (0, 0))
-    sceneHandler.renderScenes()
-    pygame.display.flip()
     
 def update(time):
     sceneHandler.update(time)
@@ -102,7 +78,7 @@ def main():
         update(time - lasttime)
         
         # Draw everything on screen
-        render()
+        renderer.render()
         
         fpscounter += 1
         if (time - lastfpsupdate >= 1.0):
