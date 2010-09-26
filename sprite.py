@@ -31,6 +31,10 @@ class Sprite(pygame.sprite.Sprite):
         self._col_ref = (1.0, 1.0, 1.0, 1.0)
         self._col_reftime = 0
                     
+    def setImage(self, image):
+        self.images[0] = image
+        self.currentImage = image
+                    
     def loadSheet(self, name, width, height):
         self.images = loadImageSheet(name, width, height)
         self.frameCount = len(self.images)

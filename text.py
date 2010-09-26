@@ -9,12 +9,13 @@ import math
 class Text(Sprite):
     def __init__(self, x, y, font, text):
         Sprite.__init__(self)
-        self.chars = list(text)
+        self.chars = None
         self.font = font
         self.x = x
         self.y = y
         self.setAnchor("left")
         self.setText(text)
+        
                 
     def setAnchor(self, mode):
         if (mode == "right"):
@@ -27,6 +28,14 @@ class Text(Sprite):
     def setText(self, text):
         self.chars = list(text)
         self.length = len(self.chars)
+        counter = 0
+        for char in self.chars:
+            glyph = self.font.getGlyph(c)
+            sprite = Sprite()
+            sprite.setImage(glyph)
+            sprite.setPos((counter * self.font.width, 0))
+            self.subSprites.add(sprite)
+            counter += 1
                           
     def draw(self, surf):
         if (self.anchor == "left"):
