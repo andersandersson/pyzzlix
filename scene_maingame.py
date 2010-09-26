@@ -35,8 +35,8 @@ class Scene_MainGame(Scene):
         self.score = 0
         self.marker = Marker(2,14)
         self.marker._layer = LAYER_MARKER
-        self.sprites.add(self.scoretext)
-        self.sprites.add(self.leveltext)
+        #self.sprites.add(self.scoretext)
+        #self.sprites.add(self.leveltext)
         self.sprites.add(self.marker)
         self.sprites.add(self.background)
         self.ticker = 20

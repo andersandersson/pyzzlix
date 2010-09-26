@@ -32,7 +32,6 @@ class Sprite(pygame.sprite.Sprite):
         self._col_reftime = 0
                     
     def setImage(self, image):
-        self.images[0] = image
         self.currentImage = image
                     
     def loadSheet(self, name, width, height):

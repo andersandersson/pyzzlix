@@ -86,7 +86,7 @@ class Renderer(Singleton):
             glEnd()
                 
         for subsprite in sprite.subSprites:
-            self.drawSprite(subsprite)
+            self.drawSprite(subsprite, currentTime)
                 
         glPopMatrix()
                 

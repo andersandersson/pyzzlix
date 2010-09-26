@@ -30,11 +30,11 @@ class Text(Sprite):
         self.length = len(self.chars)
         counter = 0
         for char in self.chars:
-            glyph = self.font.getGlyph(c)
+            glyph = self.font.getGlyph(char)
             sprite = Sprite()
             sprite.setImage(glyph)
             sprite.setPos((counter * self.font.width, 0))
-            self.subSprites.add(sprite)
+            self.subSprites.append(sprite)
             counter += 1
                           
     def draw(self, surf):
