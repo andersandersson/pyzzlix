@@ -26,24 +26,27 @@ class Block(Sprite):
         self.type = type
         self.status = STATUS_NONE
         
-        self.offset_x = 16
-        self.offset_y = -BOARD_HEIGHT*16 + 16
-        self.scale_x = 16
-        self.scale_y = 16
+        self.size = (16, 16)
+        self.center = (self.size[0] / 2, self.size[1] / 2)
+        self.offset_x = 16 + self.center[0]
+        self.offset_y = -BOARD_HEIGHT*16 + 16 + self.center[1]
 
-        self.move_ticker = 0
-
-        self.timeatlastframe = 0
-        self.frameDelay = 0.1
-        self.frame = 0
         self.layer = type
 
-        Sprite.setPos(self, self.boardx * self.scale_x + self.offset_x, self.boardy * self.scale_y + self.offset_y)
+        Sprite.setPos(self, (self.boardx * self.size[0] + self.offset_x, self.boardy * self.size[1] + self.offset_y))
 
-    def moveToBoardCoord(self, x, y, currentTime):
-        self.boardx = x
-        self.boardy = y
-        self.moveTo(self.boardx * self.scale_x + self.offset_x, self.boardy * self.scale_y + self.offset_y, currentTime, 0.15)
+    def moveToBoardCoord(self, boardx, boardy, currentTime):
+        self.boardx = boardx
+        self.boardy = boardy
+        self.moveTo((self.boardx * self.size[0] + self.offset_x, self.boardy * self.size[1] + self.offset_y), currentTime, 0.15)
+
+    def animatePopup(self, currentTime):
+        self.setCol((1.0, 1.0, 1.0, 0.0))
+        self.fadeTo((1.0, 1.0, 1.0, 1.0), currentTime, 0.2)
+        self.setScale((0.0, 0.0))
+        self.scaleTo((1.0, 1.0), currentTime, 0.2)
+        self.setRot(90.0)
+        self.rotateTo(0, currentTime, 0.2)
 
     def kill(self):
         self.images = loadImageSheet("block" + str(9) + ".bmp", 16, 16)
