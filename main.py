@@ -54,7 +54,7 @@ def main():
     lastfpsupdate = time
     fpscounter = 0
     
-    LOGICS_PER_SEC = 2.0
+    LOGICS_PER_SEC = 20.0
     logicLength = 1.0 / LOGICS_PER_SEC
     
     #Main Loop
@@ -99,7 +99,7 @@ def main():
             fpscounter += 1
             
         sys.stdout.flush()
-        mainClock.tick(4) #sleeping
+        mainClock.tick(60) #sleeping
 
     #Game Over
 

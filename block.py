@@ -40,10 +40,10 @@ class Block(Sprite):
 
         Sprite.setPos(self, self.boardx * self.scale_x + self.offset_x, self.boardy * self.scale_y + self.offset_y)
 
-    def moveToBoardCoord(self, x, y, atTime):
+    def moveToBoardCoord(self, x, y, currentTime):
         self.boardx = x
         self.boardy = y
-        self.moveTo(self.boardx * self.scale_x + self.offset_x, self.boardy * self.scale_y + self.offset_y, atTime)
+        self.moveTo(self.boardx * self.scale_x + self.offset_x, self.boardy * self.scale_y + self.offset_y, currentTime, 0.15)
 
     def kill(self):
         self.images = loadImageSheet("block" + str(9) + ".bmp", 16, 16)

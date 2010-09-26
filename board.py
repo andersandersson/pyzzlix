@@ -231,7 +231,7 @@ class Board:
         return True
 
     def moveBlock(self, block, x, y):
-        block.moveToBoardCoord(x, y, self.scene.currentTime + 1.0)
+        block.moveToBoardCoord(x, y, self.scene.currentTime)
         
         if y < self.height/2:
             block.status |= STATUS_OFFSCREEN

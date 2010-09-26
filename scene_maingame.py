@@ -35,10 +35,10 @@ class Scene_MainGame(Scene):
         self.score = 0
         self.marker = Marker(2,14)
         self.marker._layer = LAYER_MARKER
-        #self.sprites.add(self.scoretext)
-        #self.sprites.add(self.leveltext)
+        self.sprites.add(self.scoretext)
+        self.sprites.add(self.leveltext)
         self.sprites.add(self.marker)
-        #self.sprites.add(self.background)
+        self.sprites.add(self.background)
         self.ticker = 20
         self.init_counter = 0
         self.init_x = 0
@@ -50,7 +50,7 @@ class Scene_MainGame(Scene):
         self.usable_blocks = [8,9,10,11]#range(0,8)
         
         self.hourglass = Hourglass()
-        #self.sprites.add(self.hourglass)
+        self.sprites.add(self.hourglass)
         
         self.resetGame()
 
@@ -95,15 +95,15 @@ class Scene_MainGame(Scene):
     def tick(self):
         self.ticker += 1
 
-        #if not self.board.full():
-        #    if self.init_counter > 0:
-        #        self.fillZigZag()
-        #           
-        #    else:
-        #        for x in range(0, BOARD_WIDTH):
-        #            for y in range(0, BOARD_HEIGHT):
-        #                if not self.board.grid[x][y]:
-        #                    self.addRandom(x, y)
+        if not self.board.full():
+            if self.init_counter > 0:
+                self.fillZigZag()
+                   
+            else:
+                for x in range(0, BOARD_WIDTH):
+                    for y in range(0, BOARD_HEIGHT):
+                        if not self.board.grid[x][y]:
+                            self.addRandom(x, y)
         
 
         self.scoretext.setText("SCORE: "+str(self.score))
@@ -180,8 +180,6 @@ class Scene_MainGame(Scene):
             if (key == K_RIGHT):
                 if state == KEYDOWN:
                     self.marker.move(1, 0, self.currentTime)
-                    print "marker move, time:", self.currentTime
-                    print "rendertime:", self.renderTime
             if (key == K_LEFT):
                 if state == KEYDOWN:
                     self.marker.move(-1, 0, self.currentTime)

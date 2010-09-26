@@ -52,17 +52,17 @@ class Renderer(Singleton):
         self.fullscreen = not self.fullscreen
         self.setDisplay()    
                 
-    def drawSprite(self, sprite, time):
+    def drawSprite(self, sprite, currentTime):
         glPushMatrix()
-        if (sprite._reftime_pos <= time):
+        if (sprite._reftime_pos <= currentTime):
             x = sprite._ref_x
             y = sprite._ref_y
         else:
-            factorT = (sprite._reftime_pos - sprite._updatetime) * (time - sprite._updatetime)
-            x = sprite.x + (sprite._ref_x - sprite.x) * factorT
-            y = sprite.y + (sprite._ref_y - sprite.y) * factorT
-            print "ref:", sprite._reftime_pos, "time:",  time, "sx:", sprite.x, "sy:", sprite.y, "utime:", sprite._updatetime
-        print "x:", x, "y:", y
+            factorT = (sprite._reftime_pos - currentTime) / (sprite._reftime_pos - sprite._updatetime)
+            x = sprite._ref_x - (sprite._ref_x - sprite.x) * factorT
+            y = sprite._ref_y - (sprite._ref_y - sprite.y) * factorT
+            #print "ref:", sprite._reftime_pos, "time:",  time, "sx:", sprite.x, "sy:", sprite.y, "utime:", sprite._updatetime
+        #print "x:", x, "y:", y
         
         glTranslatef(x, y, 0.0)
         if (sprite.currentImage != 0):
@@ -106,20 +106,7 @@ class Renderer(Singleton):
         glLoadIdentity();
         glColor3f(1.0, 1.0, 1.0)
           
-        
         self.scenehandler.renderScenes()
-        glDisable(GL_TEXTURE_2D)
-        glBegin(GL_QUADS)
-        
-        glVertex2f(0.0, 0.0)
-        
-        glVertex2f(0.0, self.currentTime * 20)
-        
-        glVertex2f(20, self.currentTime * 20)
-        
-        glVertex2f(20, 0.0)
-        glEnd() 
-        glEnable(GL_TEXTURE_2D)
         pygame.display.flip()
         
         

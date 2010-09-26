@@ -24,7 +24,7 @@ class Marker(Sprite):
     def moveToBoardCoord(self, x, y, currentTime):
         self.boardx = x
         self.boardy = y
-        self.moveTo(self.boardx * self.scale_x + self.offset_x, self.boardy * self.scale_y + self.offset_y, currentTime, 1.0)
+        self.moveTo(self.boardx * self.scale_x + self.offset_x, self.boardy * self.scale_y + self.offset_y, currentTime, 0.025)
 
     def move(self, dx, dy, currentTime):
         self.moveToBoardCoord(self.boardx + dx, self.boardy + dy, currentTime)

@@ -33,9 +33,9 @@ class Sprite(pygame.sprite.Sprite):
             self.x = self._ref_x
             self.y = self._ref_y
         else:    
-            factorT = (self._reftime_pos - self._updatetime) * (currentTime - self._updatetime)
-            self.x = self.x + (self._ref_x - self.x) * factorT
-            self.y = self.y + (self._ref_y - self.y) * factorT
+            factorT = (self._reftime_pos - currentTime) / (self._reftime_pos - self._updatetime)
+            self.x = self._ref_x - (self._ref_x - self.x) * factorT
+            self.y = self._ref_y - (self._ref_y - self.y) * factorT
         self._updatetime = currentTime
 
     def update(self, currentTime): 
