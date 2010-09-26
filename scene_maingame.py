@@ -22,7 +22,7 @@ class Scene_MainGame(Scene):
     def _runOnce(self):
         Scene._runOnce(self)
         self.state = "running"
-        self.board = Board(BOARD_WIDTH, BOARD_HEIGHT)
+        self.board = Board(self, BOARD_WIDTH, BOARD_HEIGHT)
         self.blocks = pygame.sprite.Group()
         self.blockcount = 0
         self.font = Font("font_normal.bmp", 8, 8);
@@ -35,10 +35,10 @@ class Scene_MainGame(Scene):
         self.score = 0
         self.marker = Marker(2,14)
         self.marker._layer = LAYER_MARKER
-        self.sprites.add(self.scoretext)
-        self.sprites.add(self.leveltext)
+        #self.sprites.add(self.scoretext)
+        #self.sprites.add(self.leveltext)
         self.sprites.add(self.marker)
-        self.sprites.add(self.background)
+        #self.sprites.add(self.background)
         self.ticker = 20
         self.init_counter = 0
         self.init_x = 0
@@ -50,7 +50,7 @@ class Scene_MainGame(Scene):
         self.usable_blocks = [8,9,10,11]#range(0,8)
         
         self.hourglass = Hourglass()
-        self.sprites.add(self.hourglass)
+        #self.sprites.add(self.hourglass)
         
         self.resetGame()
 
@@ -92,27 +92,28 @@ class Scene_MainGame(Scene):
                     self.init_x += 1                   
                     self.init_y -= 1
                             
-    def tick(self, deltaTime):
+    def tick(self):
         self.ticker += 1
 
-        if not self.board.full():
-            if self.init_counter > 0:
-                self.fillZigZag()
-                   
-            else:
-                for x in range(0, BOARD_WIDTH):
-                    for y in range(0, BOARD_HEIGHT):
-                        if not self.board.grid[x][y]:
-                            self.addRandom(x, y)
+        #if not self.board.full():
+        #    if self.init_counter > 0:
+        #        self.fillZigZag()
+        #           
+        #    else:
+        #        for x in range(0, BOARD_WIDTH):
+        #            for y in range(0, BOARD_HEIGHT):
+        #                if not self.board.grid[x][y]:
+        #                    self.addRandom(x, y)
         
 
         self.scoretext.setText("SCORE: "+str(self.score))
         self.leveltext.setText("LEVEL: "+str(self.level))
         self.board.update()
-        self.marker.update(deltaTime)
-        self.blocks.update(deltaTime)
-        self.background.update(deltaTime)
-        self.hourglass.update(deltaTime)
+        self.sprites.update(self.currentTime)
+        #self.marker.update(self.currentTime)
+        #self.blocks.update(self.currentTime)
+        #self.background.update(self.currentTime)
+        #self.hourglass.update(self.currentTime)
     
     def addRandom(self, x, y):
         if y < BOARD_HEIGHT*2-1:
@@ -152,9 +153,8 @@ class Scene_MainGame(Scene):
             self.addScore(event.blocks)
             
             for block in event.blocks:
-                print block.x, block.y
                 block.kill()
-                self.board.clear(block.x, block.y)
+                self.board.clear(block.boardx, block.boardy)
                 self.blocks.remove(block)
                 self.sprites.remove(block)
 
@@ -179,23 +179,25 @@ class Scene_MainGame(Scene):
                 
             if (key == K_RIGHT):
                 if state == KEYDOWN:
-                    self.marker.move(1,0)
+                    self.marker.move(1, 0, self.currentTime)
+                    print "marker move, time:", self.currentTime
+                    print "rendertime:", self.renderTime
             if (key == K_LEFT):
                 if state == KEYDOWN:
-                    self.marker.move(-1,0)
+                    self.marker.move(-1, 0, self.currentTime)
             if (key == K_UP):
                 if state == KEYDOWN:
-                    self.marker.move(0,-1)
+                    self.marker.move(0, -1, self.currentTime)
             if (key == K_DOWN):
                 if state == KEYDOWN:
-                    self.marker.move(0,1)
+                    self.marker.move(0, 1, self.currentTime)
 
             if (key == K_x):
                 if state == KEYDOWN:
-                    self.board.rotate(self.marker.x, self.marker.y, 1, 2)
+                    self.board.rotate(self.marker.boardx, self.marker.boardy, 1, 2)
             if (key == K_z):
                 if state == KEYDOWN:
-                    self.board.rotate(self.marker.x, self.marker.y, -1, 2)
+                    self.board.rotate(self.marker.boardx, self.marker.boardy, -1, 2)
 
         return False
         

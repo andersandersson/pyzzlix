@@ -14,13 +14,13 @@ STATUS_OFFSCREEN = 8
 DEFAULT_GRAVITY_DELAY = 30
 
 class Block(Sprite):
-    def __init__(self, x, y, type):
+    def __init__(self, boardx, boardy, type):
         Sprite.__init__(self)
         self.type = type
         self.loadSheet("block" + str(self.type) + ".bmp", 16, 16)
 
-        self.boardx = x
-        self.boardy = y
+        self.boardx = boardx
+        self.boardy = boardy
 
         self.gravityDelay = 0
         self.type = type
@@ -38,14 +38,12 @@ class Block(Sprite):
         self.frame = 0
         self.layer = type
 
-        self.moveTo(x, y)
+        Sprite.setPos(self, self.boardx * self.scale_x + self.offset_x, self.boardy * self.scale_y + self.offset_y)
 
-    def moveTo(self, x, y):
+    def moveToBoardCoord(self, x, y, atTime):
         self.boardx = x
         self.boardy = y
-
-        self.x = self.boardx * self.scale_x + self.offset_x
-        self.y = self.boardy * self.scale_y + self.offset_y
+        self.moveTo(self.boardx * self.scale_x + self.offset_x, self.boardy * self.scale_y + self.offset_y, atTime)
 
     def kill(self):
         self.images = loadImageSheet("block" + str(9) + ".bmp", 16, 16)

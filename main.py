@@ -37,10 +37,6 @@ def init():
     mainscene = Scene_MainGame()
     sceneHandler.pushScene(mainscene)
 
-    
-def update(time):
-    sceneHandler.update(time)
-
 def main():
     global fullscreen
 
@@ -53,40 +49,57 @@ def main():
     # Initialize main clockg
     mainClock = pygame.time.Clock()
     time = pygame.time.get_ticks() * 0.001
+    nextupdatetime = time
+    lastrendertime = time
     lastfpsupdate = time
     fpscounter = 0
     
+    LOGICS_PER_SEC = 2.0
+    logicLength = 1.0 / LOGICS_PER_SEC
+    
     #Main Loop
-    while 1:
-        mainClock.tick(30)
-        lasttime = time
+    while 1:        
         time = pygame.time.get_ticks() * 0.001
         
-        # Handle Input Events
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                return
-            elif event.type == KEYDOWN and event.key == K_ESCAPE:
-                return
-            elif event.type == KEYDOWN and event.key == K_F1:
-                fullscreen = not fullscreen
-                setDisplay(fullscreen)
-            else:
-                sceneHandler.handleEvent(event)
-
-        # Update everything
-        update(time - lasttime)
-        
-        # Draw everything on screen
-        renderer.render()
-        
-        fpscounter += 1
         if (time - lastfpsupdate >= 1.0):
             print "FPS:", str(fpscounter)
             fpscounter = 0
             lastfpsupdate = time
-    
+        
+        # Logic loop
+        if (time > nextupdatetime):
+            while (time > nextupdatetime):
+                nextupdatetime += logicLength
+                
+                # Update scene timers
+                sceneHandler.updateTimers(logicLength)
+                
+                # Handle Input Events
+                for event in pygame.event.get():
+                    if event.type == QUIT:
+                        return
+                    elif event.type == KEYDOWN and event.key == K_ESCAPE:
+                        return
+                    elif event.type == KEYDOWN and event.key == K_F1:
+                        fullscreen = not fullscreen
+                        setDisplay(fullscreen)
+                    else:
+                        sceneHandler.handleEvent(event)
+
+                # Do all ticks
+                sceneHandler.doSceneTicks()
+                
+                # Draw everything on screen, use the same timestamp as logic step
+                renderer.render(0)
+                lastrendertime = time
+                fpscounter += 1
+        else:
+            renderer.render(time - lastrendertime)
+            lastrendertime = time
+            fpscounter += 1
+            
         sys.stdout.flush()
+        mainClock.tick(4) #sleeping
 
     #Game Over
 

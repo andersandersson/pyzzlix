@@ -42,7 +42,7 @@ class Scene_GameOver(Scene):
         self.updateBlocker = True
         self.ready_check = 2
    
-    def tick(self, deltaTime):
+    def tick(self):
         self.ticker += 1
 
         if self.ready_check > 0:

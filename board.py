@@ -15,10 +15,10 @@ def PolygonArea(points):
     return area
 
 class Board:
-    def __init__(self, width=30, height=20):
+    def __init__(self, scene, width=30, height=20):
         self.width = width
         self.height = 2*height
-
+        self.scene = scene
         self.reset()
 
     def __str__(self):
@@ -54,7 +54,7 @@ class Board:
 
     def add(self, x, y, block):
         self.grid[x][y] = block
-        self.moveBlock(block, x, y)
+        #self.moveBlock(block, x, y)
 
     def clear(self, x, y):
         self.grid[x][y] = None
@@ -164,6 +164,7 @@ class Board:
         if y > self.height-radius or y < 0:
             return False
 
+
         # Generate a list with the x values for traversing a circular rectangle
         #
         # 0 -> 1 -> 2
@@ -192,7 +193,7 @@ class Board:
 
         tile = None
         next_tile = None
-
+        
         # Go through the generated list of points and check if anyone
         # is locked, in which case we will return false
         for p in points:
@@ -200,7 +201,7 @@ class Board:
             
             if not next_tile:
                 return False
-            
+
             if next_tile and (next_tile.status & STATUS_MOVING or next_tile.status & STATUS_IN_CIRCLE or next_tile.status & STATUS_OFFSCREEN):
                 return False
 
@@ -230,7 +231,7 @@ class Board:
         return True
 
     def moveBlock(self, block, x, y):
-        block.moveTo(x, y)
+        block.moveToBoardCoord(x, y, self.scene.currentTime + 1.0)
         
         if y < self.height/2:
             block.status |= STATUS_OFFSCREEN

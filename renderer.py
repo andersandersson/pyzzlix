@@ -15,6 +15,8 @@ class Renderer(Singleton):
         self.fullscreen = False
         self.title = "The Game"
         self.scenehandler = scenehandler.SceneHandler()
+        self.currentTime = 0.0
+        self.deltaT = 0.0
         
     def init(self, title, width, height, fullscreen = False):
         self.width = width
@@ -30,6 +32,8 @@ class Renderer(Singleton):
         glDisable(GL_CULL_FACE)
         glDisable(GL_DEPTH_TEST)        
         glShadeModel(GL_FLAT)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glClearColor(1.0, 0.7, 0.0, 0.0)
         glViewport(0, 0, self.width, self.height)
         glMatrixMode(GL_PROJECTION)
@@ -48,9 +52,19 @@ class Renderer(Singleton):
         self.fullscreen = not self.fullscreen
         self.setDisplay()    
                 
-    def drawSprite(self, sprite):
+    def drawSprite(self, sprite, time):
         glPushMatrix()
-        glTranslatef(sprite.x, sprite.y, 0.0)
+        if (sprite._reftime_pos <= time):
+            x = sprite._ref_x
+            y = sprite._ref_y
+        else:
+            factorT = (sprite._reftime_pos - sprite._updatetime) * (time - sprite._updatetime)
+            x = sprite.x + (sprite._ref_x - sprite.x) * factorT
+            y = sprite.y + (sprite._ref_y - sprite.y) * factorT
+            print "ref:", sprite._reftime_pos, "time:",  time, "sx:", sprite.x, "sy:", sprite.y, "utime:", sprite._updatetime
+        print "x:", x, "y:", y
+        
+        glTranslatef(x, y, 0.0)
         if (sprite.currentImage != 0):
             image = sprite.currentImage
             srcx1 = image.srcx * image.texture.pw
@@ -76,19 +90,37 @@ class Renderer(Singleton):
         glPopMatrix()
                 
     def renderScene(self, scene):
+        scene.renderTime += self.deltaT
         if (self.screen != 0):
             #for layer in scene.sprites.layers():
                 #for sprite in scene.sprites.get_sprites_from_layer(layer):
                     #sprite.draw(self.screen)
             for sprite in scene.sprites:
-                self.drawSprite(sprite)   
+                self.drawSprite(sprite, scene.renderTime)   
                     
-    def render(self):                
+    def render(self, deltaT):                
+        self.deltaT = deltaT
+        self.currentTime += deltaT
         # Clear the screen
         glClear(GL_COLOR_BUFFER_BIT);
         glLoadIdentity();
         glColor3f(1.0, 1.0, 1.0)
+          
+        
         self.scenehandler.renderScenes()
+        glDisable(GL_TEXTURE_2D)
+        glBegin(GL_QUADS)
+        
+        glVertex2f(0.0, 0.0)
+        
+        glVertex2f(0.0, self.currentTime * 20)
+        
+        glVertex2f(20, self.currentTime * 20)
+        
+        glVertex2f(20, 0.0)
+        glEnd() 
+        glEnable(GL_TEXTURE_2D)
         pygame.display.flip()
+        
         
     

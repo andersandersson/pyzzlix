@@ -45,16 +45,19 @@ class SceneHandler(Singleton):
             if (scene.handleEvent(event) == True):
                 break
     
-    def update(self, deltaTime):
+    def updateTimers(self, deltaTime):
         self.currentTime += deltaTime
-        self.updateScenes(deltaTime)
-    
-    def updateScenes(self, deltaTime):
         for scene in reversed(self.sceneStack):
-            scene.update(deltaTime)
+            scene.updateTimer(deltaTime)
             if (scene.isBlockingUpdates() == True):
                 break
-        
+    
+    def doSceneTicks(self):
+        for scene in reversed(self.sceneStack):
+            scene.tick()
+            if (scene.isBlockingUpdates() == True):
+                break
+  
     def renderScenes(self):
         renderer = Renderer()
         renderStack = []

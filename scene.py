@@ -5,6 +5,7 @@ from singleton import *
 class Scene(Singleton):
     def _runOnce(self):
         self.currentTime = 0
+        self.renderTime = 0
         self.state = 0
         self.done = False
         self.renderBlocker = False
@@ -13,10 +14,10 @@ class Scene(Singleton):
        
         self.sprites = pygame.sprite.LayeredUpdates()
         
-    def update(self, deltaTime):    
+    def updateTimer(self, deltaTime):    
         self.currentTime += deltaTime
-        self.tick(deltaTime)
-        
+        self.renderTime = self.currentTime
+
     def handleEvent(self, event):
         return False
         
