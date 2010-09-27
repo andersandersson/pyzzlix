@@ -48,8 +48,7 @@ class Renderer(Singleton):
         glDisable(GL_DEPTH_TEST)        
         glShadeModel(GL_FLAT)
         glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        #glClearColor(1.0, 0.7, 0.0, 0.0)
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
         glClearColor(0.0, 0.0, 0.0, 0.0)
         glViewport(0, 0, self.width * 2, self.height * 2)
         glMatrixMode(GL_PROJECTION)
@@ -130,6 +129,11 @@ class Renderer(Singleton):
                 
     def renderScene(self, scene):
         scene.renderTime += self.deltaT
+        if (scene.softblend == True):
+            glBlendFunc(GL_ONE, GL_ONE)
+        else:
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        
         if (self.screen != 0):
             #for layer in scene.sprites.layers():
                 #for sprite in scene.sprites.get_sprites_from_layer(layer):

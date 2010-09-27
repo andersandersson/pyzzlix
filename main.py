@@ -14,16 +14,15 @@ from globals import *
 from scenehandler import *
 from renderer import *
 from scene_maingame import *
+from scene_background import *
 from font import *
 
-background = 0
 sceneHandler = 0
 renderer = 0
 screen = 0
 fullscreen = False
 
 def init():
-    global background
     global sceneHandler
     global screen
     global renderer
@@ -35,6 +34,8 @@ def init():
     # Initialize and populate scene stack
     sceneHandler = SceneHandler()
     mainscene = Scene_MainGame()
+    background = Scene_Background()
+    sceneHandler.pushScene(background)
     sceneHandler.pushScene(mainscene)
 
 def main():
