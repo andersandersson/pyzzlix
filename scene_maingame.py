@@ -32,6 +32,12 @@ class Scene_MainGame(Scene):
         self.scoretext._layer = LAYER_GUI
         self.leveltext = Text(224, 38, self.font, "SCORE: 0")
         self.leveltext._layer = LAYER_GUI
+        self.leveltext.scaleTo([2.0,3.0], 0, 10)
+        self.leveltext.fadeTo([1.0,0.0,0.0,1.0], 0, 10)
+        self.leveltext.rotateTo(930.0, 0, 20)
+        self.scoretext.scaleTo([2.0,3.0], 0, 10)
+        self.scoretext.fadeTo([0.0,0.0,1.0,1.0], 0, 10)
+        self.scoretext.rotateTo(-930.0, 0, 20)
         self.score = 0
         self.marker = Marker(2,14)
         self.marker._layer = LAYER_MARKER
@@ -109,9 +115,6 @@ class Scene_MainGame(Scene):
 
         self.scoretext.setText("SCORE: "+str(self.score))
         self.leveltext.setText("LEVEL: "+str(self.level))
-        self.leveltext.scaleTo([2.0,3.0],0,0)
-        self.leveltext.fadeTo([1.0,0.0,0.0,1.0],0,0)
-        self.leveltext.rotateTo(30.0, 0, 0)
         
         self.board.updateBoard()
         self.sprites.update(self.currentTime)

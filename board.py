@@ -77,7 +77,7 @@ class Board(Sprite):
             block.status |= STATUS_OFFSCREEN
 
     def clear(self, x, y):
-        if self.grid[x][y]:
+        if self.grid[x][y] in self.subSprites:
             self.subSprites.remove(self.grid[x][y])
 
         self.grid[x][y] = None

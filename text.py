@@ -24,6 +24,10 @@ class Text(Sprite):
             self.anchor = mode
         else:
             self.anchor = "left"
+
+        text = self.text
+        self.text = ""
+        self.setText(text)
         
     def setText(self, text):
         if self.text == text:
@@ -33,18 +37,20 @@ class Text(Sprite):
 
         self.chars = list(text)
         self.length = len(self.chars)
-        self.setAnchor(self.anchor)
+        self.width = self.font.width*self.length
+        self.height = self.font.height
 
         if (self.anchor == "left"):
             drawposx = 0
         elif (self.anchor == "right"):
-            drawposx = self.length * self.font.width
+            drawposx = self.width - self.length * self.font.width
+            #self.center = ((self.length * self.font.width), 0)
         elif (self.anchor == "center"):
-            drawposx = (self.length * self.font.width) / 2
+            #self.center = ((self.length * self.font.width) / 2, 0)
+            drawposx = -(self.length * self.font.width) / 2
 
-        counter = 0
         self.subSprites = []
-
+        print drawposx
         for char in self.chars:
             glyph = self.font.getGlyph(char)
             sprite = Sprite()
