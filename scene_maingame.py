@@ -25,7 +25,7 @@ class Scene_MainGame(Scene):
         self.board = Board(self, BOARD_WIDTH, BOARD_HEIGHT)
         self.blocks = pygame.sprite.Group()
         self.blockcount = 0
-        self.font = Font("font_normal.bmp", 8, 8)
+        self.font = Font("font_normal.png", 8, 8)
         self.background = Sprite()
         self.background.loadSheet("maingame.bmp", 320, 240)
         self.scoretext = Text(224, 16, self.font, "SCORE: 0")
@@ -50,7 +50,7 @@ class Scene_MainGame(Scene):
         self.usable_blocks = [8,9,10,11]#range(0,8)
         
         self.hourglass = Hourglass()
-        #self.sprites.add(self.hourglass)
+        self.sprites.add(self.hourglass)
         
         self.resetGame()
 

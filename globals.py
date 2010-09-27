@@ -37,7 +37,7 @@ def loadImage(filename, colorkey=None):
             raise SystemExit, message
         textureID = glGenTextures(1)
         imagefile.convert_alpha()
-        data = pygame.image.tostring(imagefile, "RGBA", 1)
+        data = pygame.image.tostring(imagefile, "RGBA", False)
         glBindTexture(GL_TEXTURE_2D, textureID)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imagefile.get_width(), imagefile.get_height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, data)
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
@@ -58,8 +58,8 @@ def loadImageSheet(filename, w, h, colorkey=None):
     masterHeight = masterImage.texture.height
     for j in xrange(int(masterHeight/h)):
         for i in xrange(int(masterWidth/w)):
-                image = Image(masterImage.texture, i*w, j*h, w, h)
-                sheet.append(image)
+            image = Image(masterImage.texture, i*w, j*h, w, h)
+            sheet.append(image)
     return sheet
 
 def loadSound(name):
