@@ -43,7 +43,8 @@ class Text(Sprite):
         if (self.anchor == "left"):
             drawposx = 0
         elif (self.anchor == "right"):
-            drawposx = self.width - self.length * self.font.width
+            drawposx = -self.length * self.font.width
+            print self.width, self.length, self.font.width
             #self.center = ((self.length * self.font.width), 0)
         elif (self.anchor == "center"):
             #self.center = ((self.length * self.font.width) / 2, 0)

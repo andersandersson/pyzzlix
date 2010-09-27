@@ -9,7 +9,7 @@ class Hourglass(Sprite):
         self.loadSheet("pixel.png", 1, 1)
         
         self.setScale((90, -150))
-        self.setPos((BOARD_WIDTH*16+3*16, 240 - 16))
+        self.setPos((BOARD_WIDTH*16+4*16, 240 - 16))
         self.max = 0
         
         self.timeatlastframe = 0
@@ -51,6 +51,6 @@ class Hourglass(Sprite):
         if p > 1.0:
             p = 1.0
 
-        self.scaleTo((90, -p*150), currentTime, 0.1)
+        self.scaleTo((90, -p*130), currentTime, 0.1)
         self.fadeTo((1 - p, p, 0.0, 1.0), currentTime, 0.1)
         #pygame.draw.rect(self.image, [(1-p)*255,p*255,0], [0,(1-p)*150,90,150])

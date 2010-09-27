@@ -86,7 +86,6 @@ def main():
                         ptime = pygame.time.get_ticks() * 0.001
                         renderer.toggleFullScreen()
                         pausedTime += (pygame.time.get_ticks() * 0.001) - ptime
-                        renderer.render(0)
                     else:
                         sceneHandler.handleEvent(event)
 

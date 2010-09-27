@@ -28,19 +28,28 @@ class Scene_MainGame(Scene):
         self.font = Font("font_normal.png", 8, 8)
         self.background = Sprite()
         self.background.loadSheet("maingame.png", 320, 240)
-        self.scoretext = Text(204, 16, self.font, "SCORE: 0")
+        self.scorelabeltext = Text(220, 8, self.font, "SCORE:")
+        self.scorelabeltext._layer = LAYER_GUI
+        self.scoretext = Text(312, 18, self.font, "0")
         self.scoretext._layer = LAYER_GUI
-        self.leveltext = Text(204, 38, self.font, "SCORE: 0")
+        self.scoretext.setAnchor("right")
+        self.levellabeltext = Text(220, 32, self.font, "LEVEL:")
+        self.levellabeltext._layer = LAYER_GUI
+        self.leveltext = Text(312, 42, self.font, "0")
         self.leveltext._layer = LAYER_GUI
+        self.leveltext.setAnchor("right")
+        
         self.score = 0
         self.marker = Marker(2,14)
         self.marker._layer = LAYER_MARKER
         self.hourglass = Hourglass()
-        #self.sprites.add(self.hourglass)
+        self.sprites.add(self.hourglass)
         self.sprites.add(self.board)
         self.sprites.add(self.background)
         self.sprites.add(self.scoretext)
         self.sprites.add(self.leveltext)
+        self.sprites.add(self.scorelabeltext)
+        self.sprites.add(self.levellabeltext)
         self.sprites.add(self.marker)
         self.ticker = 20
         self.init_counter = 0
@@ -107,16 +116,12 @@ class Scene_MainGame(Scene):
                             self.addRandom(x, y)
         
 
-        self.scoretext.setText("SCORE: "+str(self.score))
-        self.leveltext.setText("LEVEL: "+str(self.level))
+        self.scoretext.setText(str(self.score))
+        self.leveltext.setText(str(self.level))
         
         self.board.updateBoard()
         self.sprites.update(self.currentTime)
-        #self.marker.update(self.currentTime)
-        #self.blocks.update(self.currentTime)
-        #self.background.update(self.currentTime)
-        #self.hourglass.update(self.currentTime)
-    
+
     def addRandom(self, x, y):
         if y < self.board.height - 1:
             type = self.usable_blocks[random.randint(0,len(self.usable_blocks)-1)]
