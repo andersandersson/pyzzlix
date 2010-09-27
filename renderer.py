@@ -9,6 +9,8 @@ from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
+from globals import *
+
 import scenehandler
 
 class Renderer(Singleton):
@@ -21,15 +23,23 @@ class Renderer(Singleton):
         self.deltaT = 0.0
         self.colorStack = []
         self.currentColor = (1.0, 1.0, 1.0, 1.0)
-    
+        self.width = 0
+        self.height = 0
         
     def init(self, title, width, height, fullscreen = False):
         self.width = width
         self.height = height
-        self.fullscreen = fullscreen
         self.title = title
+        self.fullscreen = fullscreen
         # Initialize screen and window
         self.setDisplay()
+        
+    def setDisplay(self):
+        if (self.fullscreen == True):
+            self.screen = pygame.display.set_mode((self.width * 2, self.height * 2), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.OPENGL)
+        else:
+            self.screen = pygame.display.set_mode((self.width * 2, self.height * 2), pygame.HWSURFACE | pygame.OPENGL | pygame.DOUBLEBUF)
+    
         pygame.display.set_caption(self.title)
         pygame.mouse.set_visible(0)
         # OpenGL stuff
@@ -41,22 +51,21 @@ class Renderer(Singleton):
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         #glClearColor(1.0, 0.7, 0.0, 0.0)
         glClearColor(0.0, 0.0, 0.0, 0.0)
-        glViewport(0, 0, self.width, self.height)
+        glViewport(0, 0, self.width * 2, self.height * 2)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         glOrtho(0, self.width, self.height, 0, 0, 100)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
+        reloadTextures()
         
-    def setDisplay(self):
-        if (self.fullscreen == True):
-            self.screen = pygame.display.set_mode((self.width, self.height), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.OPENGL)
-        else:
-            self.screen = pygame.display.set_mode((self.width, self.height), pygame.HWSURFACE | pygame.OPENGL | pygame.DOUBLEBUF)
     
     def toggleFullScreen(self):
+        glClear(GL_COLOR_BUFFER_BIT);
+        pygame.display.flip()
         self.fullscreen = not self.fullscreen
-        self.setDisplay()    
+        self.setDisplay()
+
                 
     def drawSprite(self, sprite, currentTime):
         glPushMatrix()

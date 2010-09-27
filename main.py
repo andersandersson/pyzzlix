@@ -49,6 +49,7 @@ def main():
     # Initialize main clockg
     mainClock = pygame.time.Clock()
     time = pygame.time.get_ticks() * 0.001
+    pausedTime = 0
     nextupdatetime = time
     lastrendertime = time
     lastfpsupdate = time
@@ -59,7 +60,7 @@ def main():
     
     #Main Loop
     while 1:        
-        time = pygame.time.get_ticks() * 0.001
+        time = pygame.time.get_ticks() * 0.001 - pausedTime
         
         if (time - lastfpsupdate >= 1.0):
             print "FPS:", str(fpscounter)
@@ -82,7 +83,10 @@ def main():
                         return
                     elif event.type == KEYDOWN and event.key == K_F1:
                         fullscreen = not fullscreen
-                        setDisplay(fullscreen)
+                        ptime = pygame.time.get_ticks() * 0.001
+                        renderer.toggleFullScreen()
+                        pausedTime += (pygame.time.get_ticks() * 0.001) - ptime
+                        renderer.render(0)
                     else:
                         sceneHandler.handleEvent(event)
 
