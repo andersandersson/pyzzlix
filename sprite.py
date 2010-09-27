@@ -38,7 +38,7 @@ class Sprite(pygame.sprite.Sprite):
     def loadSheet(self, name, width, height):
         self.images = loadImageSheet(name, width, height)
         self.frameCount = len(self.images)
-        self.frameDelays = self.frameCount * [0.1]
+        self.frameDelays = self.frameCount * [0.2]
         self.currentImage = self.images[0]
         self.width = self.currentImage.width
         self.height = self.currentImage.height

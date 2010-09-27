@@ -28,21 +28,15 @@ class Scene_MainGame(Scene):
         self.font = Font("font_normal.png", 8, 8)
         self.background = Sprite()
         self.background.loadSheet("maingame.png", 320, 240)
-        self.scoretext = Text(224, 16, self.font, "SCORE: 0")
+        self.scoretext = Text(204, 16, self.font, "SCORE: 0")
         self.scoretext._layer = LAYER_GUI
-        self.leveltext = Text(224, 38, self.font, "SCORE: 0")
+        self.leveltext = Text(204, 38, self.font, "SCORE: 0")
         self.leveltext._layer = LAYER_GUI
-        self.leveltext.scaleTo([2.0,3.0], 0, 10)
-        self.leveltext.fadeTo([1.0,0.0,0.0,1.0], 0, 10)
-        self.leveltext.rotateTo(930.0, 0, 20)
-        self.scoretext.scaleTo([2.0,3.0], 0, 10)
-        self.scoretext.fadeTo([0.0,0.0,1.0,1.0], 0, 10)
-        self.scoretext.rotateTo(-930.0, 0, 20)
         self.score = 0
         self.marker = Marker(2,14)
         self.marker._layer = LAYER_MARKER
         self.hourglass = Hourglass()
-        self.sprites.add(self.hourglass)
+        #self.sprites.add(self.hourglass)
         self.sprites.add(self.board)
         self.sprites.add(self.background)
         self.sprites.add(self.scoretext)
@@ -163,11 +157,24 @@ class Scene_MainGame(Scene):
         if event.type == board.EVENT_CIRCLE_FOUND:
             self.addScore(event.blocks)
             
+            text_x = 0
+            text_y = 0
+            text_count = len(event.blocks)
+            
             for block in event.blocks:
+                text_x += block.pos[0]
+                text_y += block.pos[1]
                 block.kill()
                 self.board.clear(block.boardx, block.boardy)
                 self.blocks.remove(block)
                 self.sprites.remove(block)
+
+            text_x = text_x/text_count-4
+            text_y = text_y/text_count-4
+            text = Text(text_x, text_y, self.font, str(len(event.blocks)))
+            text.fadeTo([1.0, 0.0, 0.0, 1.0], self.currentTime, 1.0)
+            self.board.subSprites.append(text)
+            
 
         if event.type == board.EVENT_GAME_OVER:
             self.showGameOver()

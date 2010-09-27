@@ -67,7 +67,8 @@ class Renderer(Singleton):
         rot = sprite.calcRot(currentTime)
         sx, sy = sprite.calcScale(currentTime)
 
-        self.currentColor = map(operator.mul, sprite.calcCol(currentTime), self.currentColor)
+        calc_color = sprite.calcCol(currentTime)
+        self.currentColor = tuple(map(operator.mul, calc_color, self.currentColor))
 
         r, g, b, a = self.currentColor
 
@@ -85,7 +86,7 @@ class Renderer(Singleton):
         if not cx == 0.0 or not cy == 0.0:
             glTranslatef(-cx, -cy, 0.0)
 
-        if not last_color == self.currentColor:
+        if not (1.0, 1.0, 1.0, 1.0) == calc_color:
             glColor4f(r, g, b, a)
 
         if (sprite.currentImage != 0):
@@ -111,6 +112,11 @@ class Renderer(Singleton):
             self.drawSprite(subsprite, currentTime)
 
         self.currentColor = self.colorStack.pop()
+        
+        if not (1.0, 1.0, 1.0, 1.0) == calc_color:
+            r, g, b, a = self.currentColor
+            glColor4f(r, g, b, a)
+
         glPopMatrix()
                 
     def renderScene(self, scene):
