@@ -130,8 +130,6 @@ class Scene_MainGame(Scene):
         block = Block(x, y, type)
         block._layer = LAYER_BLOCKS
         self.board.add(x, y, block)
-        #self.blocks.add(block)
-        #self.sprites.add(block)
         block.animatePopup(self.currentTime)
         
     def show(self):

@@ -1,3 +1,4 @@
+from globals import *
 from block import *
 from sprite import *
 
@@ -21,6 +22,7 @@ class Board(Sprite):
     def __init__(self, scene, width=30, height=20):
         Sprite.__init__(self)
 
+        self.grid = []
         self.width = width
         self.height = 2*height
         self.scene = scene
@@ -45,6 +47,11 @@ class Board(Sprite):
         return iter(self.sprites)
 
     def reset(self):
+        for x in range(self.width):
+            for y in range(self.height):
+                if self.grid and len(self.grid) and len(self.grid[x]):
+                    self.clear(x, y)
+
         self.last_rotated = []
         self.gameOver = False
         self.grid = []
@@ -64,7 +71,9 @@ class Board(Sprite):
     def add(self, x, y, block):
         self.grid[x][y] = block
         self.sprites.add(block)
-        #self.moveBlock(block, x, y)
+
+        if y < self.height/2:
+            block.status |= STATUS_OFFSCREEN
 
     def clear(self, x, y):
         self.sprites.remove(self.grid[x][y])
