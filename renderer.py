@@ -60,6 +60,7 @@ class Renderer(Singleton):
                 
     def drawSprite(self, sprite, currentTime):
         glPushMatrix()
+        last_color = self.currentColor
         self.colorStack.append(self.currentColor)
 
         x, y = sprite.calcPos(currentTime)
@@ -72,11 +73,20 @@ class Renderer(Singleton):
 
         cx, cy = sprite.center
 
-        glTranslatef(x, y, 0.0)
-        glRotatef(rot, 0.0, 0.0, 1.0)
-        glScalef(sx, sy, 1.0)
-        glTranslatef(-cx, -cy, 0.0)
-        glColor4f(r, g, b, a)
+        if not x == 0.0 or not y == 0.0:
+            glTranslatef(x, y, 0.0)
+
+        if not rot == 0.0:
+            glRotatef(rot, 0.0, 0.0, 1.0)
+
+        if not sx == 1.0 or not sy == 1.0:
+            glScalef(sx, sy, 1.0)
+
+        if not cx == 0.0 or not cy == 0.0:
+            glTranslatef(-cx, -cy, 0.0)
+
+        if not last_color == self.currentColor:
+            glColor4f(r, g, b, a)
 
         if (sprite.currentImage != 0):
             image = sprite.currentImage
