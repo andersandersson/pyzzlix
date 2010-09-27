@@ -17,7 +17,7 @@ class Block(Sprite):
     def __init__(self, boardx, boardy, type):
         Sprite.__init__(self)
         self.type = type
-        self.loadSheet("block" + str(self.type) + ".bmp", 16, 16)
+        self.loadSheet("block" + str(self.type) + ".png", 16, 16)
 
         self.boardx = boardx
         self.boardy = boardy

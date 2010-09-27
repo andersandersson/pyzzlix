@@ -27,7 +27,7 @@ class Scene_MainGame(Scene):
         self.blockcount = 0
         self.font = Font("font_normal.png", 8, 8)
         self.background = Sprite()
-        self.background.loadSheet("maingame.bmp", 320, 240)
+        self.background.loadSheet("maingame.png", 320, 240)
         self.scoretext = Text(224, 16, self.font, "SCORE: 0")
         self.scoretext._layer = LAYER_GUI
         self.leveltext = Text(224, 38, self.font, "SCORE: 0")
@@ -35,6 +35,7 @@ class Scene_MainGame(Scene):
         self.score = 0
         self.marker = Marker(2,14)
         self.marker._layer = LAYER_MARKER
+        self.sprites.add(self.board)
         self.sprites.add(self.background)
         self.sprites.add(self.scoretext)
         self.sprites.add(self.leveltext)
@@ -107,7 +108,7 @@ class Scene_MainGame(Scene):
 
         self.scoretext.setText("SCORE: "+str(self.score))
         self.leveltext.setText("LEVEL: "+str(self.level))
-        self.board.update()
+        self.board.updateBoard()
         self.sprites.update(self.currentTime)
         #self.marker.update(self.currentTime)
         #self.blocks.update(self.currentTime)
@@ -129,8 +130,8 @@ class Scene_MainGame(Scene):
         block = Block(x, y, type)
         block._layer = LAYER_BLOCKS
         self.board.add(x, y, block)
-        self.blocks.add(block)
-        self.sprites.add(block)
+        #self.blocks.add(block)
+        #self.sprites.add(block)
         block.animatePopup(self.currentTime)
         
     def show(self):

@@ -1,4 +1,5 @@
 from block import *
+from sprite import *
 
 def TriangleArea(a, b, c):
     return (b[0]-a[0]) * (c[1]-a[1]) - (c[0]-a[0])*(b[1]-a[1])
@@ -14,11 +15,14 @@ def PolygonArea(points):
 
     return area
 
-class Board:
+class Board(Sprite):
     def __init__(self, scene, width=30, height=20):
+        Sprite.__init__(self)
+
         self.width = width
         self.height = 2*height
         self.scene = scene
+        self.sprites = []
         self.reset()
 
     def __str__(self):
@@ -34,6 +38,9 @@ class Board:
                     val = "%s|_" % (val)
             val = val + "|\n"
         return val
+
+    def __iter__(self):
+        return iter(self.sprites)
 
     def reset(self):
         self.last_rotated = []
@@ -54,9 +61,11 @@ class Board:
 
     def add(self, x, y, block):
         self.grid[x][y] = block
+        self.sprites.append(block)
         #self.moveBlock(block, x, y)
 
     def clear(self, x, y):
+        self.sprites.remove(self.grid[x][y])
         self.grid[x][y] = None
 
     def updateGameOver(self):
@@ -239,7 +248,7 @@ class Board:
             block.status &= ~STATUS_OFFSCREEN
 
 
-    def update(self):
+    def updateBoard(self):
         if self.gameOver:
             return
 
