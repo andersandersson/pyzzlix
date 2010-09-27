@@ -26,7 +26,6 @@ class Board(Sprite):
         self.width = width
         self.height = 2*height
         self.scene = scene
-        self.sprites = pygame.sprite.LayeredUpdates()
         self.reset()
 
     def __str__(self):
@@ -70,17 +69,18 @@ class Board(Sprite):
 
     def add(self, x, y, block):
         self.grid[x][y] = block
-        self.sprites.add(block)
+
+        if y >= self.height/2:
+            self.subSprites.append(block)
 
         if y < self.height/2:
             block.status |= STATUS_OFFSCREEN
 
     def clear(self, x, y):
-        self.sprites.remove(self.grid[x][y])
-        self.grid[x][y] = None
+        if self.grid[x][y]:
+            self.subSprites.remove(self.grid[x][y])
 
-    def update(self, deltaTime):
-        self.sprites.update(deltaTime)
+        self.grid[x][y] = None
 
     def updateGameOver(self):
         for rows in self.grid:
@@ -259,6 +259,9 @@ class Board(Sprite):
         if y < self.height/2:
             block.status |= STATUS_OFFSCREEN
         else:
+            if not block in self.subSprites:
+                self.subSprites.append(block)
+
             block.status &= ~STATUS_OFFSCREEN
 
 

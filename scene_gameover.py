@@ -8,7 +8,7 @@ from board import *
 from block import *
 from font import *
 from text import *
-from image import *
+from sprite import *
 from marker import *
 import random
 
@@ -18,7 +18,7 @@ class Scene_GameOver(Scene):
     def _runOnce(self):
         Scene._runOnce(self)
 
-        self.font = Font("font_normal.bmp", 8, 8);
+        self.font = Font("font_normal.png", 8, 8);
 
         self.gameovertext = Text(160, 100, self.font, "GAME OVER!")
         self.gameovertext._layer = 2
@@ -28,12 +28,11 @@ class Scene_GameOver(Scene):
         self.gameovertext_2._layer = 2
         self.gameovertext_2.setAnchor("center")
 
-        self.background = Image()
-        self.background.image = pygame.Surface([320, 240])
-        self.background.image.fill([0,0,0])
-        self.background.image.set_alpha(200);
+        self.background = Sprite()
+        self.background.loadSheet("pixel.png", 1, 1)
+        self.background.scaleTo((320,240),0,0)
+        self.background.fadeTo((0.0,0.0,0.0, 0.7),0,0)
         self.background._layer = 0
-        self.background.rect = self.background.image.get_rect()
 
         self.sprites.add(self.background)
         self.sprites.add(self.gameovertext)

@@ -1,3 +1,5 @@
+import operator
+
 from scene import *
 from singleton import *
 
@@ -17,6 +19,9 @@ class Renderer(Singleton):
         self.scenehandler = scenehandler.SceneHandler()
         self.currentTime = 0.0
         self.deltaT = 0.0
+        self.colorStack = []
+        self.currentColor = (1.0, 1.0, 1.0, 1.0)
+    
         
     def init(self, title, width, height, fullscreen = False):
         self.width = width
@@ -55,10 +60,15 @@ class Renderer(Singleton):
                 
     def drawSprite(self, sprite, currentTime):
         glPushMatrix()
+        self.colorStack.append(self.currentColor)
+
         x, y = sprite.calcPos(currentTime)
         rot = sprite.calcRot(currentTime)
         sx, sy = sprite.calcScale(currentTime)
-        r, g, b, a = sprite.calcCol(currentTime)
+
+        self.currentColor = map(operator.mul, sprite.calcCol(currentTime), self.currentColor)
+
+        r, g, b, a = self.currentColor
 
         cx, cy = sprite.center
 
@@ -89,7 +99,8 @@ class Renderer(Singleton):
                 
         for subsprite in sprite.subSprites:
             self.drawSprite(subsprite, currentTime)
-                
+
+        self.currentColor = self.colorStack.pop()
         glPopMatrix()
                 
     def renderScene(self, scene):
@@ -98,10 +109,8 @@ class Renderer(Singleton):
             #for layer in scene.sprites.layers():
                 #for sprite in scene.sprites.get_sprites_from_layer(layer):
                     #sprite.draw(self.screen)
-            for spritelist in scene.sprites:
-                if spritelist:
-                    for sprite in spritelist:
-                        self.drawSprite(sprite, scene.renderTime)   
+            for sprite in scene.sprites:
+                self.drawSprite(sprite, scene.renderTime)   
                     
     def render(self, deltaT):                
         self.deltaT = deltaT
@@ -109,7 +118,7 @@ class Renderer(Singleton):
         # Clear the screen
         glClear(GL_COLOR_BUFFER_BIT);
         glLoadIdentity();
-        glColor3f(1.0, 1.0, 1.0)
+        self.currentColor = (1.0, 1.0, 1.0, 1.0)
           
         self.scenehandler.renderScenes()
         pygame.display.flip()

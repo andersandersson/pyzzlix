@@ -47,6 +47,7 @@ class Scene_MainGame(Scene):
         self.init_y = 0
         self.init_y_dir = 0
         self.level = 0
+        self.block_count = 0
        
         self.usable_blocks = [8,9,10,11]#range(0,8)
         
@@ -58,6 +59,7 @@ class Scene_MainGame(Scene):
     def resetGame(self):
         self.level = 1
         self.score = 0
+        self.block_count = 0
         self.board.reset()
         self.hourglass.reset(HOURGLASS_DEFAULT)
         self.init_x = 0
@@ -68,7 +70,6 @@ class Scene_MainGame(Scene):
         self.init_counter = BOARD_WIDTH*BOARD_HEIGHT
         self.sprites.remove_sprites_of_layer(LAYER_BLOCKS)
         self.blocks.empty()
-
 
     def showGameOver(self):
         game_over = Scene_GameOver()
@@ -108,6 +109,10 @@ class Scene_MainGame(Scene):
 
         self.scoretext.setText("SCORE: "+str(self.score))
         self.leveltext.setText("LEVEL: "+str(self.level))
+        self.leveltext.scaleTo([2.0,3.0],0,0)
+        self.leveltext.fadeTo([1.0,0.0,0.0,1.0],0,0)
+        self.leveltext.rotateTo(30.0, 0, 0)
+        
         self.board.updateBoard()
         self.sprites.update(self.currentTime)
         #self.marker.update(self.currentTime)
@@ -139,13 +144,17 @@ class Scene_MainGame(Scene):
         print self, "is hiding"
 
     def addScore(self, blocks):
+        self.block_count += len(blocks)
+
+        if self.block_count >= self.level * 20:
+            self.newLevel()
+
         self.score += pow(2,len(blocks)-2)
         self.hourglass.value += pow(len(blocks),2)*10
 
     def newLevel(self):
         self.level += 1
-        print (pow(0.9, self.level-1)*HOURGLASS_DEFAULT)
-        self.hourglass.reset(pow(0.9, self.level-1)*HOURGLASS_DEFAULT)
+        self.hourglass.scaleValue(0.8)
 
     def handleEvent(self, event):
         if event.type == board.EVENT_CIRCLE_FOUND:
@@ -172,6 +181,9 @@ class Scene_MainGame(Scene):
 
             if key == K_r:
                 self.resetGame()
+                
+            if key == K_g:
+                self.showGameOver()
                 
             if key == K_n:
                 self.newLevel()

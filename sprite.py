@@ -32,17 +32,6 @@ class Sprite(pygame.sprite.Sprite):
         self._col_reftime = 0
         self._in_iter = False
                     
-    def __iter__(self):
-        self._in_iter = True
-        return self
-
-    def next(self):
-        if not self._in_iter:
-            raise StopIteration
-
-        self._in_iter = False
-        return self
-
     def setImage(self, image):
         self.currentImage = image
                     
@@ -112,6 +101,9 @@ class Sprite(pygame.sprite.Sprite):
                     self.frame = 0
                    
             self.currentImage = self.images[self.frame]        
+
+        for sprite in self.subSprites:
+            sprite.update(currentTime)
     
     def moveTo(self, pos, currentTime, duration):
         self.updatePos(currentTime)
@@ -156,4 +148,3 @@ class Sprite(pygame.sprite.Sprite):
     def setFrame(self, frame):
         self.frame = frame
         self.currentImage = self.images[self.frame]
-
