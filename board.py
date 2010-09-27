@@ -1,6 +1,8 @@
 from block import *
 from sprite import *
 
+import pygame.sprite
+
 def TriangleArea(a, b, c):
     return (b[0]-a[0]) * (c[1]-a[1]) - (c[0]-a[0])*(b[1]-a[1])
 
@@ -22,7 +24,7 @@ class Board(Sprite):
         self.width = width
         self.height = 2*height
         self.scene = scene
-        self.sprites = []
+        self.sprites = pygame.sprite.LayeredUpdates()
         self.reset()
 
     def __str__(self):
@@ -61,12 +63,15 @@ class Board(Sprite):
 
     def add(self, x, y, block):
         self.grid[x][y] = block
-        self.sprites.append(block)
+        self.sprites.add(block)
         #self.moveBlock(block, x, y)
 
     def clear(self, x, y):
         self.sprites.remove(self.grid[x][y])
         self.grid[x][y] = None
+
+    def update(self, deltaTime):
+        self.sprites.update(deltaTime)
 
     def updateGameOver(self):
         for rows in self.grid:
