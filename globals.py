@@ -59,6 +59,7 @@ def loadImageSheet(filename, w, h, colorkey=None):
     for j in xrange(int(masterHeight/h)):
         for i in xrange(int(masterWidth/w)):
                 image = Image(masterImage.texture, i*w, j*h, w, h)
+                print w, h
                 sheet.append(image)
     return sheet
 

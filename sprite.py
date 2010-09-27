@@ -19,6 +19,18 @@ class Sprite(pygame.sprite.Sprite):
         self._ref_x = 0
         self._ref_y = 0
         self._reftime_pos = 0
+        self._in_iter = False
+
+    def __iter__(self):
+        self._in_iter = True
+        return self
+
+    def next(self):
+        if not self._in_iter:
+            raise StopIteration
+
+        self._in_iter = False
+        return self
                
     def loadSheet(self, name, width, height):
         self.images = loadImageSheet(name, width, height)
@@ -62,3 +74,6 @@ class Sprite(pygame.sprite.Sprite):
         self.y = y
         self._reftime_pos = 0
         
+    def setFrame(self, frame):
+        self.frame = frame
+        self.currentImage = self.images[self.frame]

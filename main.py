@@ -30,7 +30,7 @@ def init():
     
     # Initialize renderer
     renderer = Renderer()
-    renderer.init('Pyzzlix', 320, 240)
+    renderer.init('Pyzzlix', 320, 240, fullscreen)
     
     # Initialize and populate scene stack
     sceneHandler = SceneHandler()

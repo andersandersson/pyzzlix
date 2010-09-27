@@ -95,8 +95,10 @@ class Renderer(Singleton):
             #for layer in scene.sprites.layers():
                 #for sprite in scene.sprites.get_sprites_from_layer(layer):
                     #sprite.draw(self.screen)
-            for sprite in scene.sprites:
-                self.drawSprite(sprite, scene.renderTime)   
+            for spritelist in scene.sprites:
+                if spritelist:
+                    for sprite in spritelist:
+                        self.drawSprite(sprite, scene.renderTime)   
                     
     def render(self, deltaT):                
         self.deltaT = deltaT
