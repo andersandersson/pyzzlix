@@ -41,6 +41,8 @@ class Scene_MainGame(Scene):
         self.score = 0
         self.marker = Marker(2,14)
         self.marker._layer = LAYER_MARKER
+        self.hourglass = Hourglass()
+        self.sprites.add(self.hourglass)
         self.sprites.add(self.board)
         self.sprites.add(self.background)
         self.sprites.add(self.scoretext)
@@ -57,8 +59,6 @@ class Scene_MainGame(Scene):
        
         self.usable_blocks = [8,9,10,11]#range(0,8)
         
-        self.hourglass = Hourglass()
-        self.sprites.add(self.hourglass)
         
         self.resetGame()
 
