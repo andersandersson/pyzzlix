@@ -19,12 +19,12 @@ class Marker(Sprite):
         self.scale_x = 16
         self.scale_y = 16
         
-        self.setPos(self.boardx * self.scale_x + self.offset_x, self.boardy * self.scale_y + self.offset_y)
+        self.setPos((self.boardx * self.scale_x + self.offset_x, self.boardy * self.scale_y + self.offset_y))
 
-    def moveToBoardCoord(self, x, y, currentTime):
-        self.boardx = x
-        self.boardy = y
-        self.moveTo(self.boardx * self.scale_x + self.offset_x, self.boardy * self.scale_y + self.offset_y, currentTime, 0.025)
+    def moveToBoardCoord(self, boardx, boardy, currentTime):
+        self.boardx = boardx
+        self.boardy = boardy
+        self.moveTo((self.boardx * self.scale_x + self.offset_x, self.boardy * self.scale_y + self.offset_y), currentTime, 0.025)
 
     def move(self, dx, dy, currentTime):
         self.moveToBoardCoord(self.boardx + dx, self.boardy + dy, currentTime)

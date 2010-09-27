@@ -25,7 +25,7 @@ class Scene_MainGame(Scene):
         self.board = Board(self, BOARD_WIDTH, BOARD_HEIGHT)
         self.blocks = pygame.sprite.Group()
         self.blockcount = 0
-        self.font = Font("font_normal.bmp", 8, 8);
+        self.font = Font("font_normal.bmp", 8, 8)
         self.background = Sprite()
         self.background.loadSheet("maingame.bmp", 320, 240)
         self.scoretext = Text(224, 16, self.font, "SCORE: 0")
@@ -94,7 +94,6 @@ class Scene_MainGame(Scene):
                             
     def tick(self):
         self.ticker += 1
-
         if not self.board.full():
             if self.init_counter > 0:
                 self.fillZigZag()
@@ -116,7 +115,7 @@ class Scene_MainGame(Scene):
         #self.hourglass.update(self.currentTime)
     
     def addRandom(self, x, y):
-        if y < BOARD_HEIGHT*2-1:
+        if y < self.board.height - 1:
             type = self.usable_blocks[random.randint(0,len(self.usable_blocks)-1)]
                     
             while(self.board.grid[x][y+1] and self.board.grid[x][y+1].type == type):
@@ -132,6 +131,7 @@ class Scene_MainGame(Scene):
         self.board.add(x, y, block)
         self.blocks.add(block)
         self.sprites.add(block)
+        block.animatePopup(self.currentTime)
         
     def show(self):
         print self, "is showing"

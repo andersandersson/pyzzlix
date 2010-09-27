@@ -54,24 +54,26 @@ class Renderer(Singleton):
                 
     def drawSprite(self, sprite, currentTime):
         glPushMatrix()
-        if (sprite._reftime_pos <= currentTime):
-            x = sprite._ref_x
-            y = sprite._ref_y
-        else:
-            factorT = (sprite._reftime_pos - currentTime) / (sprite._reftime_pos - sprite._updatetime)
-            x = sprite._ref_x - (sprite._ref_x - sprite.x) * factorT
-            y = sprite._ref_y - (sprite._ref_y - sprite.y) * factorT
-            #print "ref:", sprite._reftime_pos, "time:",  time, "sx:", sprite.x, "sy:", sprite.y, "utime:", sprite._updatetime
-        #print "x:", x, "y:", y
-        
+        x, y = sprite.calcPos(currentTime)
+        rot = sprite.calcRot(currentTime)
+        sx, sy = sprite.calcScale(currentTime)
+        r, g, b, a = sprite.calcCol(currentTime)
+
+        cx, cy = sprite.center
+
         glTranslatef(x, y, 0.0)
+        glRotatef(rot, 0.0, 0.0, 1.0)
+        glScalef(sx, sy, 1.0)
+        glTranslatef(-cx, -cy, 0.0)
+        glColor4f(r, g, b, a)
+
         if (sprite.currentImage != 0):
             image = sprite.currentImage
             srcx1 = image.srcx * image.texture.pw
             srcx2 = srcx1 + image.width * image.texture.pw
             srcy1 = image.srcy * image.texture.ph
             srcy2 = srcy1 + image.height * image.texture.ph
-            
+
             glBindTexture(GL_TEXTURE_2D, image.texture.texID)
             glBegin(GL_QUADS)
             glTexCoord2f(srcx1, srcy1)
@@ -85,7 +87,7 @@ class Renderer(Singleton):
             glEnd()
                 
         for subsprite in sprite.subSprites:
-            self.drawSprite(subsprite)
+            self.drawSprite(subsprite, currentTime)
                 
         glPopMatrix()
                 

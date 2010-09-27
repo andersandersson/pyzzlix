@@ -6,11 +6,10 @@ from image import *
 class Hourglass(Sprite):
     def __init__(self):
         Sprite.__init__(self)
+        self.loadSheet("font_normal.bmp", 1, 1)
         
-        self.image = pygame.Surface([90, 150])
-        self.rect = self.image.get_rect()
-        self.rect.x = BOARD_WIDTH*16+3*16
-        self.rect.y = (240 - 150 - 16)
+        self.setScale((90, -150))
+        self.setPos((BOARD_WIDTH*16+3*16, 240 - 16))
         self.value = 0
         self.max = 0
         
@@ -24,7 +23,7 @@ class Hourglass(Sprite):
         self.value = value*0.5
         self.max = value
 
-    def update(self, deltaTime):
+    def update(self, currentTime):
         if self.value <= 0:
             pygame.event.post(pygame.event.Event(EVENT_GAME_OVER))
             return
@@ -37,5 +36,6 @@ class Hourglass(Sprite):
         #self.image.fill([0,0,0])
         #self.image.set_alpha(200);
         p = float(self.value) / self.max
-
+        self.scaleTo((90, -p*150), currentTime, 0.1)
+        self.fadeTo((1 - p, p, 0.0, 1.0), currentTime, 0.1)
         #pygame.draw.rect(self.image, [(1-p)*255,p*255,0], [0,(1-p)*150,90,150])

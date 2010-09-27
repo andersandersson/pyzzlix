@@ -9,7 +9,7 @@ import math
 class Text(Sprite):
     def __init__(self, x, y, font, text):
         Sprite.__init__(self)
-        self.chars = list(text)
+        self.chars = None
         self.font = font
         self.text_x = x
         self.text_y = y
@@ -34,7 +34,7 @@ class Text(Sprite):
 
         glyph = self.font.getGlyph(self.chars[self.currentChar])
         
-        glyph.setPos(drawposx+self.currentChar*self.font.width, self.text_y)
+        glyph.setPos([drawposx+self.currentChar*self.font.width, self.text_y])
 
         self.currentChar += 1
 
@@ -52,3 +52,24 @@ class Text(Sprite):
         self.chars = list(text)
         self.length = len(self.chars)
         self.setAnchor(self.anchor)
+
+#        counter = 0
+#        for char in self.chars:
+#            glyph = self.font.getGlyph(char)
+#            sprite = Sprite()
+#            sprite.setImage(glyph)
+#            sprite.setPos((counter * self.font.width, 0))
+#            self.subSprites.append(sprite)
+#            counter += 1
+                          
+    def draw(self, surf):
+        if (self.anchor == "left"):
+            drawposx = self.x
+        elif (self.anchor == "right"):
+            drawposx = self.x - self.length * self.font.width
+        elif (self.anchor == "center"):
+            drawposx = self.x - (self.length * self.font.width) / 2
+
+        for c in self.chars:
+            #surf.blit(self.font.getGlyph(c), (drawposx, self.y), ((0,0) , (self.font.width, self.font.height)))
+            drawposx += self.font.width

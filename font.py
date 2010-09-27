@@ -13,5 +13,12 @@ class Font():
     
     def getGlyph(self, c):
         glyph = self.glyphs
-        glyph.setFrame(ord(c))
+
+        frame = ord(c) - 32
+
+        if frame >= len(glyph.images):
+            frame = 0
+
+        glyph.setFrame(frame)
+
         return glyph
