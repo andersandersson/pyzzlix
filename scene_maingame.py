@@ -11,6 +11,8 @@ from image import *
 from marker import *
 from hourglass import *
 from scene_gameover import *
+from scene_enter_highscore import *
+from scene_highscore import *
 from scenehandler import *
 import random
 
@@ -83,6 +85,11 @@ class Scene_MainGame(Scene):
     def showGameOver(self):
         game_over = Scene_GameOver()
         SceneHandler().pushScene(game_over)
+
+    def showEnterHighscore(self):
+        enter_highscore = Scene_EnterHighscore()
+        enter_highscore.setHighscore(self.score)
+        SceneHandler().pushScene(enter_highscore)
 
     def fillZigZag(self):
         for i in range(0,4):
@@ -191,7 +198,10 @@ class Scene_MainGame(Scene):
             
 
         if event.type == EVENT_GAME_OVER:
-            self.showGameOver()
+            if Scene_Highscore().isNewHighscore(self.score):
+                self.showEnterHighscore()
+            else:
+                self.showGameOver()
 
         if event.type == EVENT_LEVEL_UP:
             self.newLevel()
@@ -211,6 +221,9 @@ class Scene_MainGame(Scene):
                 
             if key == K_n:
                 self.newLevel()
+
+            if key == K_h:
+                self.showEnterHighscore()
                 
             if (key == K_RIGHT):
                 if state == KEYDOWN:
