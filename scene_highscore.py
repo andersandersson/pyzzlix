@@ -94,7 +94,7 @@ class Scene_Highscore(Scene):
             elif next_score:                
                 tmp = score[:]
 
-                self.updateHighscore(score, score[0], score[1])
+                self.updateHighscore(score, next_score[0], next_score[1])
 
                 next_score = tmp
 
