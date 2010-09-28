@@ -25,6 +25,7 @@ class Scene_MainGame(Scene):
         Scene._runOnce(self)
         self.state = "running"
         self.board = Board(self, BOARD_WIDTH, BOARD_HEIGHT)
+        self.board.setPos((16.0, 16.0))
         self.blocks = pygame.sprite.Group()
         self.blockcount = 0
         self.font = Font("font_normal.png", 8, 8)
@@ -62,7 +63,8 @@ class Scene_MainGame(Scene):
         self.level = 0
         self.block_count = 0
        
-        self.usable_blocks = [8,9,10,11]#range(0,8)
+        self.usable_blocks = []
+        self.all_blocks = range(0,12)
         
         
         self.resetGame()
@@ -77,6 +79,7 @@ class Scene_MainGame(Scene):
         self.init_y = BOARD_HEIGHT*2-1
         self.init_x_dir = 1
         self.init_y_dir = -1
+        self.usable_blocks = range(0,4)
 
         self.init_counter = BOARD_WIDTH*BOARD_HEIGHT
         self.sprites.remove_sprites_of_layer(LAYER_BLOCKS)
@@ -163,6 +166,13 @@ class Scene_MainGame(Scene):
 
     def newLevel(self):
         self.level += 1
+
+        maxblocks = int(4 + self.level/2)
+        if maxblocks > len(self.all_blocks):
+            maxblocks = len(self.all_blocks)
+
+        self.usable_blocks = range(0, maxblocks)
+
         self.hourglass.scaleValue(0.8)
 
     def handleEvent(self, event):

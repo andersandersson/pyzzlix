@@ -28,8 +28,8 @@ class Block(Sprite):
         
         self.size = (16, 16)
         self.center = (self.size[0] / 2, self.size[1] / 2)
-        self.offset_x = 16 + self.center[0]
-        self.offset_y = -BOARD_HEIGHT*16 + 16 + self.center[1]
+        self.offset_x = self.center[0]
+        self.offset_y = -BOARD_HEIGHT*16 + self.center[1]
 
         self.layer = type
 
