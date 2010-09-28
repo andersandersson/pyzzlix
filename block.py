@@ -3,6 +3,7 @@ from globals import *
 #import pygame
 #from pygame.locals import *
 
+import random
 from sprite import *
 
 STATUS_NONE = 0
@@ -17,7 +18,7 @@ class Block(Sprite):
     def __init__(self, boardx, boardy, type):
         Sprite.__init__(self)
         self.type = type
-        self.loadSheet("block" + str(self.type) + ".png", 16, 16)
+        self.loadSheet("new_block" + str(self.type) + ".png", 16, 16)
 
         self.boardx = boardx
         self.boardy = boardy

@@ -64,7 +64,7 @@ class Scene_MainGame(Scene):
         self.block_count = 0
        
         self.usable_blocks = []
-        self.all_blocks = range(0,12)
+        self.all_blocks = range(0,6)
         
         
         self.resetGame()
