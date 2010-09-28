@@ -177,16 +177,25 @@ class Scene_MainGame(Scene):
             text_x = text_x/text_count-4
             text_y = text_y/text_count-4
             text = Text(text_x, text_y, self.font, str(len(event.blocks)))
-            text.fadeTo([1.0, 0.0, 0.0, 1.0], self.currentTime, 1.0)
-            self.board.subSprites.append(text)
+            
+            def text_fade_done():
+                self.sprites.remove(text)
+                
+            def text_scale_done():
+                text.scaleTo([20.0, 20.0], self.currentTime, 0.3)
+                text.fadeTo([0.0, 0.0, 0.0, 0.0], self.currentTime, 0.3, text_fade_done)
+                
+            text.scaleTo([10.0,10.0], self.currentTime, 0.7, text_scale_done)
+            text.moveTo([320, -100], self.currentTime, 1.0)
+            self.sprites.add(text)
             
 
-        if event.type == board.EVENT_GAME_OVER:
+        if event.type == EVENT_GAME_OVER:
             self.showGameOver()
 
-        if event.type == board.EVENT_LEVEL_UP:
+        if event.type == EVENT_LEVEL_UP:
             self.newLevel()
-            
+        
         if event.type == KEYDOWN or event.type == KEYUP:
             state = event.type
             key = event.key
