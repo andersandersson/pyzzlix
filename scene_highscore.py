@@ -38,8 +38,8 @@ class Scene_Highscore(Scene):
         self.highscores = []
 
         for i in range(0,10):
-            self.highscores.append(["AAA", 0, Text(80, 60+i*10, self.font, "AAA: 0")])
-            self.sprites.add(self.highscores[i][2])
+            self.highscores.append(["AAA", 0, 0, Text(80, 60+i*10, self.font, "AAA: 0"), i])
+            self.sprites.add(self.highscores[i][3])
 
         self.loadHighscores()
 
@@ -57,7 +57,7 @@ class Scene_Highscore(Scene):
         if string:
             hs = json.loads(string)
             for obj in zip(hs, self.highscores):
-                self.updateHighscore(obj[1], obj[0][0].encode(), obj[0][1])
+                self.updateHighscore(obj[1], obj[0][0].encode(), obj[0][1], obj[0][2])
 
         fp.close()
 
@@ -65,7 +65,7 @@ class Scene_Highscore(Scene):
         data = []
 
         for score in self.highscores:
-            data.append([score[0], score[1]])
+            data.append([score[0], score[1], score[2]])
 
         fp = open("pyzzlix.dat", "w")
         fp.write(zlib.compress(json.dumps(data)))
@@ -78,23 +78,24 @@ class Scene_Highscore(Scene):
 
         return False
 
-    def updateHighscore(self, score, name, highscore):
+    def updateHighscore(self, score, name, highscore, level):
         score[0] = name
         score[1] = highscore
-        score[2].setText(name + ": " + str(highscore))
+        score[2] = level
+        score[3].setText("%2d. %3s: %5d <L%d>" % (score[4]+1, name, highscore, score[2]))
 
-    def addNewHighscore(self, name, highscore):
+    def addNewHighscore(self, name, highscore, level):
         next_score = None
 
         for score in self.highscores:
             if score[1] < highscore and not next_score:
                 next_score = score[:]
-                self.updateHighscore(score, name, highscore)
+                self.updateHighscore(score, name, highscore, level)
 
             elif next_score:                
                 tmp = score[:]
 
-                self.updateHighscore(score, next_score[0], next_score[1])
+                self.updateHighscore(score, next_score[0], next_score[1], next_score[2])
 
                 next_score = tmp
 
