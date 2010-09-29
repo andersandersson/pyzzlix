@@ -42,7 +42,7 @@ def initTexture(texture):
     texture.updateData(textureID, imageWidth, imageHeight)
 
 # Loads an image
-def loadImage(filename):
+def loadImage(filename, srcx = 0, srcy = 0, srcw = None, srch = None):
     texture = 0
     try: 
         texture = textures[filename]
@@ -51,7 +51,7 @@ def loadImage(filename):
         texture = Texture(fullname)
         initTexture(texture)
         textures[filename] = texture 
-    return Image(texture)
+    return Image(texture, srcx, srcy, srcw, srch)
 
 def reloadTextures():
     for t in textures:
@@ -59,16 +59,33 @@ def reloadTextures():
 
 # Loads a list of images from a larger ones. Each subimage is the same size.
 # This function generates as many subimages that fits wholly on the source image.
-def loadImageSheet(filename, w, h):
+def loadImageSheet(filename, w, h, srcx = 0, srcy = 0, srcw = None, srch = None):
     sheet = []
     image = 0
     masterImage = loadImage(filename)
-    masterWidth = masterImage.texture.width
-    masterHeight = masterImage.texture.height
-    for j in xrange(int(masterHeight/h)):
-        for i in xrange(int(masterWidth/w)):
-            image = Image(masterImage.texture, i*w, j*h, w, h)
+    sourcex = srcx
+    sourcey = srcy
+    if (srcw == None):
+        sourceWidth = masterImage.texture.width
+    else:
+        sourceWidth = srcw
+        
+    if (srch == None):
+        sourceHeight = masterImage.texture.height
+    else:
+        sourceHeight = srch
+  
+    for j in xrange(int(sourceHeight/h)):
+        for i in xrange(int(sourceWidth/w)):
+            image = Image(masterImage.texture, sourcex + i*w, sourcey + j*h, w, h)
             sheet.append(image)
+    
+    try:
+        image = sheet[0]
+    except pygame.error, message:
+        print 'Could not load image(s) from:', fullname
+        raise SystemExit, message
+            
     return sheet
 
 def loadSound(name):

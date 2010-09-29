@@ -25,6 +25,7 @@ class Renderer(Singleton):
         self.currentColor = (1.0, 1.0, 1.0, 1.0)
         self.width = 0
         self.height = 0
+        self.currentTexture = None
         
     def init(self, title, width, height, fullscreen = False):
         self.width = width
@@ -49,6 +50,10 @@ class Renderer(Singleton):
         glShadeModel(GL_FLAT)
         glEnable(GL_BLEND)
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+        
+        #glEnableClientState(GL_VERTEX_ARRAY)
+        #glEnableClientState(GL_TEXTURE_COORD_ARRAY)
+        
         glClearColor(0.0, 0.0, 0.0, 0.0)
         glViewport(0, 0, self.width * 2, self.height * 2)
         glMatrixMode(GL_PROJECTION)
@@ -98,22 +103,24 @@ class Renderer(Singleton):
             glColor4f(r, g, b, a)
 
         if (sprite.currentImage != 0):
-            image = sprite.currentImage
-            srcx1 = image.srcx * image.texture.pw
-            srcx2 = srcx1 + image.width * image.texture.pw
-            srcy1 = image.srcy * image.texture.ph
-            srcy2 = srcy1 + image.height * image.texture.ph
+            i = sprite.currentImage
+            if (self.currentTexture != i.texture.texID):
+                glBindTexture(GL_TEXTURE_2D, i.texture.texID)
+                self.currentTexture = i.texture.texID
 
-            glBindTexture(GL_TEXTURE_2D, image.texture.texID)
+            #glVertexPointer(2, GL_FLOAT, 0, i.vCoords)
+            #glTexCoordPointer(2, GL_FLOAT, 0, i.tCoords)
+            #glDrawArrays(GL_QUADS, 0, 4)
+            
             glBegin(GL_QUADS)
-            glTexCoord2f(srcx1, srcy1)
-            glVertex2f(0.0, 0.0)
-            glTexCoord2f(srcx1, srcy2)
-            glVertex2f(0.0, image.height)
-            glTexCoord2f(srcx2, srcy2)
-            glVertex2f(image.width, image.height)
-            glTexCoord2f(srcx2, srcy1)
-            glVertex2f(image.width, 0.0)
+            glTexCoord2f(i.tCoords[0], i.tCoords[1])
+            glVertex2f(i.vCoords[0], i.vCoords[1])
+            glTexCoord2f(i.tCoords[2], i.tCoords[3])
+            glVertex2f(i.vCoords[2], i.vCoords[3])
+            glTexCoord2f(i.tCoords[4], i.tCoords[5])
+            glVertex2f(i.vCoords[4], i.vCoords[5])
+            glTexCoord2f(i.tCoords[6], i.tCoords[7])
+            glVertex2f(i.vCoords[6], i.vCoords[7])
             glEnd()
                 
         for subsprite in sprite.subSprites:
