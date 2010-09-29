@@ -17,7 +17,7 @@ DEFAULT_GRAVITY_DELAY = 30
 class Block(Sprite):
     def __init__(self, boardx, boardy, type):
         Sprite.__init__(self)
-        self.type = type
+        self.type = random.randint(0,6)
         self.loadSheet("new_block" + str(self.type) + ".png", 16, 16)
 
         self.boardx = boardx
