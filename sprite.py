@@ -60,7 +60,7 @@ class Sprite(pygame.sprite.Sprite):
                 self._pos_callbacks = []
                 
                 for callback in callbacks:
-                    callback=callback()
+                    callback(self)
 
         self.pos = self.calcPos(currentTime)
         self._pos_lasttime = currentTime
@@ -79,7 +79,7 @@ class Sprite(pygame.sprite.Sprite):
                 self._col_callbacks = []
                 
                 for callback in callbacks:
-                    callback=callback()                
+                    callback(self)                
 
         self.col = self.calcCol(currentTime)
         self._col_lasttime = currentTime
@@ -98,7 +98,7 @@ class Sprite(pygame.sprite.Sprite):
                 self._scale_callbacks = []
                  
                 for callback in callbacks:
-                    callback()
+                    callback(self)
                 
         self.scale = self.calcScale(currentTime)
         self._scale_lasttime = currentTime

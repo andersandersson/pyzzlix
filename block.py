@@ -12,7 +12,7 @@ STATUS_WEIGHTLESS = 2
 STATUS_IN_CIRCLE = 4
 STATUS_OFFSCREEN = 8
 
-DEFAULT_GRAVITY_DELAY = 30
+DEFAULT_GRAVITY_DELAY = 5
 
 class Block(Sprite):
     def __init__(self, boardx, boardy, type):

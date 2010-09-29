@@ -55,9 +55,6 @@ class Scene_GameOver(Scene):
 
     def handleEvent(self, event):
         if event.type == KEYDOWN and self.ready_check == 0:
-            state = event.type
-            key = event.key
-
             scene_maingame.Scene_MainGame().resetGame()
             SceneHandler().removeScene(self)
             
