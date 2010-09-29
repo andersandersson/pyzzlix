@@ -63,6 +63,7 @@ class Scene_MainGame(Scene):
         self.init_y_dir = 0
         self.level = 0
         self.block_count = 0
+        self.score_level = 0
        
         self.usable_blocks = []
         self.all_blocks = [0, 1, 2, 5, 4, 3]
@@ -72,6 +73,7 @@ class Scene_MainGame(Scene):
 
     def resetGame(self):
         self.level = 1
+        self.score_level = 1
         self.score = 0
         self.block_count = 0
         self.board.reset()
@@ -157,7 +159,7 @@ class Scene_MainGame(Scene):
         print self, "is hiding"
 
     def addBlockScore(self, block):
-        self.score += self.level * 10
+        self.score += self.score_level * POINTS_PER_LEVEL_FOR_BLOCK_SCORE
 
     def addCircleScore(self, blocks):
         num_blocks = len(blocks)
@@ -167,12 +169,12 @@ class Scene_MainGame(Scene):
 
         self.block_count += num_blocks
 
-        while self.block_count >= self.level * 20:
+        while self.block_count >= self.level * NUM_BLOCKS_FOR_LEVEL:
             self.newLevel()
 
-        score = (num_blocks-4)*10*self.level
+        score = (num_blocks-MIN_BLOCKS_FOR_CIRCLE_SCORE)*POINTS_PER_LEVEL_FOR_CIRCLE_SCORE*self.score_level
         self.score += score
-        self.hourglass.value += (float(num_blocks)/40.0)*self.hourglass.max;
+        self.hourglass.value += (float(num_blocks)*PERCENTAGE_TIME_GIVEN_PER_BLOCK)*self.hourglass.max;
 
         if not score:
             return
@@ -221,16 +223,14 @@ class Scene_MainGame(Scene):
 
         delay = 0.7 / float(len(blocks))
 
-        if delay > 0.1:
-            delay = 0.1
+        if delay > 0.08:
+            delay = 0.08
 
         scale_blocks = blocks[:]
         
         def block_scale_done(block):
-            if block:
+            if(scale_blocks): 
                 self.addBlockScore(block)
-
-            if(scale_blocks):
                 next_block = scale_blocks.pop()
                 next_block.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, delay, block_scale_done)
                 next_block.rotateTo(720.0, self.currentTime, delay)
@@ -238,6 +238,7 @@ class Scene_MainGame(Scene):
                 for block in blocks:
                     self.board.clear(block.boardx, block.boardy)
                 self.hourglass.unpause()
+                self.score_level = self.level
                     
         def block_wait_done(block):
             block.scaleTo((1.0, 1.0), self.currentTime, 0.5, block_scale_done)
