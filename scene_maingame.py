@@ -65,7 +65,7 @@ class Scene_MainGame(Scene):
         self.block_count = 0
        
         self.usable_blocks = []
-        self.all_blocks = range(0,6)
+        self.all_blocks = [0, 1, 2, 5, 4, 3]
         
         
         self.resetGame()
@@ -80,7 +80,7 @@ class Scene_MainGame(Scene):
         self.init_y = BOARD_HEIGHT*2-1
         self.init_x_dir = 1
         self.init_y_dir = -1
-        self.usable_blocks = range(0,4)
+        self.usable_blocks = self.all_blocks[0:4]
 
         self.init_counter = BOARD_WIDTH*BOARD_HEIGHT
         self.sprites.remove_sprites_of_layer(LAYER_BLOCKS)
@@ -242,7 +242,7 @@ class Scene_MainGame(Scene):
         if maxblocks > len(self.all_blocks):
             maxblocks = len(self.all_blocks)
 
-        self.usable_blocks = range(0, maxblocks)
+        self.usable_blocks = self.all_blocks[0:maxblocks]
 
         self.hourglass.scaleValue(0.8)
         
