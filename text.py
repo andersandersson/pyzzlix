@@ -44,14 +44,13 @@ class Text(Sprite):
             drawposx = 0
         elif (self.anchor == "right"):
             drawposx = -self.length * self.font.width
-            print self.width, self.length, self.font.width
             #self.center = ((self.length * self.font.width), 0)
         elif (self.anchor == "center"):
             #self.center = ((self.length * self.font.width) / 2, 0)
             drawposx = -(self.length * self.font.width) / 2
 
         self.subSprites = []
-        print drawposx
+
         for char in self.chars:
             glyph = self.font.getGlyph(char)
             sprite = Sprite()

@@ -92,7 +92,7 @@ class Scene_MainGame(Scene):
 
     def showEnterHighscore(self):
         enter_highscore = Scene_EnterHighscore()
-        enter_highscore.setHighscore(self.score)
+        enter_highscore.setHighscore(self.score, self.level)
         SceneHandler().pushScene(enter_highscore)
 
     def fillZigZag(self):
@@ -156,14 +156,46 @@ class Scene_MainGame(Scene):
     def hide(self):
         print self, "is hiding"
 
-    def addScore(self, blocks):
-        self.block_count += len(blocks)
+    def addBlockScore(self, block):
+        self.score += self.level * 10
 
-        if self.block_count >= self.level * 20:
+    def addCircleScore(self, blocks):
+        num_blocks = len(blocks)
+        text_x = 0
+        text_y = 0
+        text_count = len(blocks)
+
+        self.block_count += num_blocks
+
+        while self.block_count >= self.level * 20:
             self.newLevel()
 
-        self.score += pow(2,len(blocks)-2)
-        self.hourglass.value += pow(len(blocks),2)*10
+        score = (num_blocks-4)*10*self.level
+        self.score += score
+        self.hourglass.value += (float(num_blocks)/40.0)*self.hourglass.max;
+
+        if not score:
+            return
+
+        for block in blocks:
+            text_x += block._pos_ref[0]
+            text_y += block._pos_ref[1]
+
+        text_x = text_x/text_count + self.board.pos[0] - self.font.width/2*len(str(len(blocks)))
+        text_y = text_y/text_count + self.board.pos[1] - self.font.height/2
+        text = Text(text_x, text_y, self.font, str(score))
+        text._layer = LAYER_EFFECTS
+        
+        def text_fade_done(sprite):
+            self.sprites.remove(text)
+                
+        def text_scale_done(sprite):
+            text.scaleTo([20.0, 20.0], self.currentTime, 0.3)
+            text.fadeTo([0.0, 0.0, 0.0, 0.0], self.currentTime, 0.3, text_fade_done)
+                
+        text.scaleTo([10.0,10.0], self.currentTime, 0.7, text_scale_done)
+        text.moveTo([320, -100], self.currentTime, 1.0)
+        self.sprites.add(text)
 
     def sortBlocksZigZag(self, blocks):
         start_y = blocks[0].boardy
@@ -187,9 +219,6 @@ class Scene_MainGame(Scene):
 
         self.hourglass.pause()
 
-        text_x = 0
-        text_y = 0
-        text_count = len(blocks)
         delay = 0.7 / float(len(blocks))
 
         if delay > 0.1:
@@ -198,6 +227,9 @@ class Scene_MainGame(Scene):
         scale_blocks = blocks[:]
         
         def block_scale_done(block):
+            if block:
+                self.addBlockScore(block)
+
             if(scale_blocks):
                 next_block = scale_blocks.pop()
                 next_block.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, delay, block_scale_done)
@@ -214,26 +246,6 @@ class Scene_MainGame(Scene):
             block.fadeTo((1.0, 0.0, 0.4, 1.0), self.currentTime, 0.1)
 
         blocks[-1].fadeTo((1.0, 0.0, 0.4, 1.0), self.currentTime, 0.1, block_wait_done)
-
-        for block in blocks:
-            text_x += block._pos_ref[0]
-            text_y += block._pos_ref[1]
-
-        text_x = text_x/text_count + self.board.pos[0] - self.font.width/2*len(str(len(blocks)))
-        text_y = text_y/text_count + self.board.pos[1] - self.font.height/2
-        text = Text(text_x, text_y, self.font, str(len(blocks)))
-        text._layer = LAYER_EFFECTS
-        
-        def text_fade_done(sprite):
-            self.sprites.remove(text)
-                
-        def text_scale_done(sprite):
-            text.scaleTo([20.0, 20.0], self.currentTime, 0.3)
-            text.fadeTo([0.0, 0.0, 0.0, 0.0], self.currentTime, 0.3, text_fade_done)
-                
-        text.scaleTo([10.0,10.0], self.currentTime, 0.7, text_scale_done)
-        text.moveTo([320, -100], self.currentTime, 1.0)
-        self.sprites.add(text)
 
     def newLevel(self):
         self.level += 1
@@ -263,7 +275,7 @@ class Scene_MainGame(Scene):
 
     def handleEvent(self, event):
         if event.type == board.EVENT_CIRCLE_FOUND:
-            self.addScore(event.blocks)
+            self.addCircleScore(event.blocks)
             self.removeBlocks(event.blocks)            
 
         if event.type == EVENT_GAME_OVER:

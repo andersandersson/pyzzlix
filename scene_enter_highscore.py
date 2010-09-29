@@ -46,9 +46,11 @@ class Scene_EnterHighscore(Scene):
         
         self.ticker = 0
         self.highscore = 0
+        self.level = 0
 
-    def setHighscore(self, highscore):
+    def setHighscore(self, highscore, level):
         self.highscore = highscore
+        self.level = level
         self.initials = ""
         self.initials_counter = 0
         self.current_initial = "A"
@@ -98,7 +100,7 @@ class Scene_EnterHighscore(Scene):
                     self.initials += self.current_initial
 
                 elif self.initials_counter >= 3:
-                    scene_highscore.Scene_Highscore().addNewHighscore(self.initials, self.highscore)
+                    scene_highscore.Scene_Highscore().addNewHighscore(self.initials, self.highscore, self.level)
                     SceneHandler().pushScene(scene_highscore.Scene_Highscore())
                     SceneHandler().removeScene(self)
             
