@@ -10,6 +10,7 @@ from font import *
 from text import *
 from sprite import *
 from marker import *
+from image import *
 import random
 
 import scene_maingame
@@ -29,7 +30,7 @@ class Scene_GameOver(Scene):
         self.gameovertext_2.setAnchor("center")
 
         self.background = Sprite()
-        self.background.loadSheet("pixel.png", 1, 1)
+        self.background.setImage(loadImage("pixel.png"))
         self.background.scaleTo((320,240),0,0)
         self.background.fadeTo((0.0,0.0,0.0, 0.7),0,0)
         self.background._layer = 0

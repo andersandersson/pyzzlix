@@ -28,7 +28,7 @@ class Scene_EnterHighscore(Scene):
         self.initialstext.setAnchor("center")
 
         self.background = Sprite()
-        self.background.loadSheet("pixel.png", 1, 1)
+        self.background.setImage(loadImage("pixel.png"))
         self.background.scaleTo((320,240),0,0)
         self.background.fadeTo((0.0,0.0,0.0, 0.7),0,0)
         self.background._layer = 0
