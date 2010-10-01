@@ -31,7 +31,7 @@ class Scene_MainGame(Scene):
         self.blockcount = 0
         self.font = Font("font_normal.png", 8, 8)
         self.background = Sprite()
-        self.background.loadSheet("maingame.png", 320, 240)
+        self.background.setImage(loadImage("maingame.png", 320, 240))
         self.scorelabeltext = Text(220, 8, self.font, "SCORE:")
         self.scorelabeltext._layer = LAYER_GUI
         self.scoretext = Text(312, 18, self.font, "0")
@@ -234,6 +234,7 @@ class Scene_MainGame(Scene):
                 next_block = scale_blocks.pop()
                 next_block.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, delay, block_scale_done)
                 next_block.rotateTo(720.0, self.currentTime, delay)
+                next_block.scaleTo((4.0, 4.0), self.currentTime, 0.5)
             else:
                 for block in blocks:
                     self.board.clear(block.boardx, block.boardy)
@@ -243,10 +244,11 @@ class Scene_MainGame(Scene):
         def block_wait_done(block):
             block.scaleTo((1.0, 1.0), self.currentTime, 0.5, block_scale_done)
 
-        for block in blocks[:-1]:
-            block.fadeTo((1.0, 0.0, 0.4, 1.0), self.currentTime, 0.1)
+        for block in blocks[:]:
+            #block.fadeTo((1.0, 0.0, 0.4, 1.0), self.currentTime, 0.1)
+            block.doBlink()
 
-        blocks[-1].fadeTo((1.0, 0.0, 0.4, 1.0), self.currentTime, 0.1, block_wait_done)
+        blocks[-1].fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.5, block_wait_done)
 
     def newLevel(self):
         self.level += 1

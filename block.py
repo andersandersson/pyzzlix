@@ -5,6 +5,7 @@ from globals import *
 
 import random
 from sprite import *
+from animation import *
 
 STATUS_NONE = 0
 STATUS_MOVING = 1
@@ -18,8 +19,11 @@ class Block(Sprite):
     def __init__(self, boardx, boardy, type):
         Sprite.__init__(self)
         self.type = type
-        #self.loadSheet("new_block" + str(self.type) + ".png", 16, 16)
-        self.loadSheet("blocks.png", 16, 16, type * 16, 0, 16, 8 * 16)
+
+        self.blinkAnimation = Animation("blocks.png", 16, 16, type * 16, 0, 16, 6 * 16, 0.0, 0.016, "pingpong")
+        self.normalAnimation = Animation("blocks.png", 16, 16, type * 16, 0, 16, 16, 0.0, 0.2, "pingpong")
+        
+        self.setAnimation(self.normalAnimation)
     
         self.boardx = boardx
         self.boardy = boardy
@@ -36,6 +40,12 @@ class Block(Sprite):
         self.layer = type
 
         Sprite.setPos(self, (self.boardx * self.size[0] + self.offset_x, self.boardy * self.size[1] + self.offset_y))
+    
+    def doBlink(self):
+        self.setAnimation(self.blinkAnimation)
+        
+    def doNormal(self):    
+        self.setAnimation(self.normalAnimation)
 
     def moveToBoardCoord(self, boardx, boardy, currentTime):
         self.boardx = boardx

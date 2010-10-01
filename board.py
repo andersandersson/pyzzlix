@@ -29,7 +29,7 @@ class Board(Sprite):
         self.reset()
 
         self.background = Sprite()
-        self.background.loadSheet("pixel.png", 1, 1)
+        self.background.setImage(loadImage("pixel.png", 1, 1))
         self.background.setScale((160.0, 208.0))
         self.background.setCol((0.0, 0.0, 0.8, 0.3))
         self.subSprites.append(self.background)

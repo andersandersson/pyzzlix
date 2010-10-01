@@ -4,11 +4,12 @@ from globals import *
 #from pygame.locals import *
 
 from sprite import *
+from animation import *
 
 class Marker(Sprite):
     def __init__(self, x, y):
         Sprite.__init__(self)
-        self.loadSheet("marker.png", 32, 32)
+        self.setAnimation(Animation("marker.png", 32, 32))
         
         self.boardx = x
         self.boardy = y

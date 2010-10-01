@@ -7,12 +7,7 @@ class Sprite(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.subSprites = []
-        self.images = []
-        self.frameDelays = []
         self.currentImage = 0
-        self.frame = 0
-        self.frameTimer = 0.0
-        self.frameCount = 0.0
         self.center = (0.0, 0.0)
         self.pos = (0.0, 0.0)
         self._pos_lasttime = 0.0
@@ -34,18 +29,17 @@ class Sprite(pygame.sprite.Sprite):
         self._col_reftime = 0
         self._col_callbacks = []
         self._in_iter = False
+        self.currentAnimation = None
                     
     def setImage(self, image):
         self.currentImage = image
+        self.currentAnimation = None
+        
+    def setAnimation(self, animation):
+        self.currentAnimation = animation
+        self.currentImage = animation.getFrameImage(0.0)
                     
-    def loadSheet(self, name, width, height, srcx = 0, srcy = 0, srcw = None, srch = None):
-        self.images = loadImageSheet(name, width, height, srcx, srcy, srcw, srch)
-        self.frameCount = len(self.images)
-        self.frameDelays = self.frameCount * [0.02]
-        self.currentImage = self.images[0]
-        self.width = self.currentImage.width
-        self.height = self.currentImage.height
-
+   
     def calcPos(self, currentTime):
         if (self._pos_reftime <= currentTime):
             return self._pos_ref
@@ -120,14 +114,8 @@ class Sprite(pygame.sprite.Sprite):
         self.updateCol(currentTime)
         self.updateScale(currentTime)
         
-        if (self.frameCount > 0):
-            while (self.frameTimer + self.frameDelays[self.frame] <= currentTime):
-                self.frameTimer += self.frameDelays[self.frame]
-                self.frame += 1
-                if self.frame >= self.frameCount:
-                    self.frame = 0
-                   
-            self.currentImage = self.images[self.frame]        
+        if (self.currentAnimation != None):
+            self.currentImage = self.currentAnimation.getFrameImage(currentTime)
 
         for sprite in self.subSprites:
             sprite.update(currentTime)

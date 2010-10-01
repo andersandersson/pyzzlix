@@ -6,7 +6,7 @@ from image import *
 class Hourglass(Sprite):
     def __init__(self):
         Sprite.__init__(self)
-        self.loadSheet("pixel.png", 1, 1)
+        self.setImage(loadImage("pixel.png", 1, 1))
         
         self.setScale((90, -150))
         self.setPos((BOARD_WIDTH*16+4*16, 240 - 16))

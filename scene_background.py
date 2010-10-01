@@ -21,13 +21,14 @@ class Scene_Background(Scene):
         self.softblend = True
 
         self.background = Sprite()
-        self.background.loadSheet("pixel.png", 1, 1)
+        self.background.setImage(loadImage("pixel.png", 1, 1))
         self.background.setScale((320, 240))
 
+        self.bg_image = loadImage("bg_square.png", 128, 128)
         self.squares = []
         for i in xrange(10):
             s = Sprite()
-            s.loadSheet("bg_square.png", 128, 128)
+            s.setImage(self.bg_image)
             s.center = (64, 64)
             self.squares.append(s)
          
