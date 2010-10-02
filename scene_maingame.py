@@ -143,7 +143,7 @@ class Scene_MainGame(Scene):
                 type = self.usable_blocks[random.randint(0,len(self.usable_blocks)-1)]
         else:
             type = self.usable_blocks[random.randint(0,len(self.usable_blocks)-1)]
-                
+
         self.createBlock(x, y, type)
         
     def createBlock(self, x, y, type):
@@ -244,11 +244,12 @@ class Scene_MainGame(Scene):
         def block_wait_done(block):
             block.scaleTo((1.0, 1.0), self.currentTime, 0.5, block_scale_done)
 
-        for block in blocks[:]:
-            #block.fadeTo((1.0, 0.0, 0.4, 1.0), self.currentTime, 0.1)
+        for block in blocks[:-1]:
+            block.fadeTo((1.0, 0.0, 0.4, 1.0), self.currentTime, 0.1)
             block.doBlink()
 
-        blocks[-1].fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.5, block_wait_done)
+        blocks[-1].fadeTo((1.0, 0.0, 0.4, 1.0), self.currentTime, 0.1, block_wait_done)
+        blocks[-1].doBlink()
 
     def newLevel(self):
         self.level += 1
