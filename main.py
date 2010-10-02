@@ -103,7 +103,7 @@ def main():
             fpscounter += 1
             
         sys.stdout.flush()
-        #mainClock.tick(100) #sleeping
+        mainClock.tick(60) #sleeping
 
     #Game Over
 

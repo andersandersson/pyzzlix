@@ -48,6 +48,7 @@ class Scene_EnterHighscore(Scene):
         self.highscore = 0
         self.level = 0
 
+    ## TODO: Hmm, shouold scenes really have callable functions like this, handle with events?
     def setHighscore(self, highscore, level):
         self.highscore = highscore
         self.level = level

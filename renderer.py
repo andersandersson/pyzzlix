@@ -11,6 +11,8 @@ from OpenGL.GLU import *
 
 from globals import *
 
+RES_SCALE = 1
+
 import scenehandler
 
 class Renderer(Singleton):
@@ -37,9 +39,9 @@ class Renderer(Singleton):
         
     def setDisplay(self):
         if (self.fullscreen == True):
-            self.screen = pygame.display.set_mode((self.width * 2, self.height * 2), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.OPENGL)
+            self.screen = pygame.display.set_mode((self.width * RES_SCALE, self.height * RES_SCALE), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.OPENGL)
         else:
-            self.screen = pygame.display.set_mode((self.width * 2, self.height * 2), pygame.HWSURFACE | pygame.OPENGL | pygame.DOUBLEBUF)
+            self.screen = pygame.display.set_mode((self.width * RES_SCALE, self.height * RES_SCALE), pygame.HWSURFACE | pygame.OPENGL | pygame.DOUBLEBUF)
     
         pygame.display.set_caption(self.title)
         pygame.mouse.set_visible(0)
@@ -55,7 +57,7 @@ class Renderer(Singleton):
         #glEnableClientState(GL_TEXTURE_COORD_ARRAY)
         
         glClearColor(0.0, 0.0, 0.0, 0.0)
-        glViewport(0, 0, self.width * 2, self.height * 2)
+        glViewport(0, 0, self.width * RES_SCALE, self.height * RES_SCALE)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         glOrtho(0, self.width, self.height, 0, 0, 100)

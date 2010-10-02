@@ -311,16 +311,20 @@ class Scene_MainGame(Scene):
                 
             if (key == K_RIGHT):
                 if state == KEYDOWN:
-                    self.marker.move(1, 0, self.currentTime)
+                    if (self.marker.boardx < self.board.width - 2):
+                        self.marker.move(1, 0, self.currentTime)
             if (key == K_LEFT):
                 if state == KEYDOWN:
-                    self.marker.move(-1, 0, self.currentTime)
+                    if (self.marker.boardx > 0):
+                        self.marker.move(-1, 0, self.currentTime)
             if (key == K_UP):
                 if state == KEYDOWN:
-                    self.marker.move(0, -1, self.currentTime)
+                    if (self.marker.boardy >  self.board.height / 2):
+                        self.marker.move(0, -1, self.currentTime)
             if (key == K_DOWN):
                 if state == KEYDOWN:
-                    self.marker.move(0, 1, self.currentTime)
+                    if (self.marker.boardy < self.board.height - 2):
+                        self.marker.move(0, 1, self.currentTime)
 
             if (key == K_x):
                 if state == KEYDOWN:

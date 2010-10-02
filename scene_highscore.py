@@ -57,7 +57,8 @@ class Scene_Highscore(Scene):
         if string:
             hs = json.loads(string)
             for obj in zip(hs, self.highscores):
-                self.updateHighscore(obj[1], obj[0][0].encode(), obj[0][1], obj[0][2])
+                print obj
+                #self.updateHighscore(obj[1], obj[0][0].encode(), obj[0][1], obj[0][2])
 
         fp.close()
 
@@ -82,7 +83,7 @@ class Scene_Highscore(Scene):
         score[0] = name
         score[1] = highscore
         score[2] = level
-        score[3].setText("%2d. %3s: %5d <L%d>" % (score[4]+1, name, highscore, score[2]))
+        score[3].setText("%2d. %3s: %5d LVL:%2d" % (score[4]+1, name, highscore, score[2]))
 
     def addNewHighscore(self, name, highscore, level):
         next_score = None
