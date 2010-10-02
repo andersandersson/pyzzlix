@@ -245,10 +245,10 @@ class Scene_MainGame(Scene):
             block.scaleTo((1.0, 1.0), self.currentTime, 0.5, block_scale_done)
 
         for block in blocks[:-1]:
-            block.fadeTo((1.0, 0.0, 0.4, 1.0), self.currentTime, 0.1)
+            block.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1)
             block.doBlink()
 
-        blocks[-1].fadeTo((1.0, 0.0, 0.4, 1.0), self.currentTime, 0.1, block_wait_done)
+        blocks[-1].fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, block_wait_done)
         blocks[-1].doBlink()
 
     def newLevel(self):
