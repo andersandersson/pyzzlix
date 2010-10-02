@@ -32,7 +32,7 @@ EVENT_LEVEL_UP = USEREVENT+2
 textures = dict()
 
 
-def initTexture(texture):
+def loadTexture(texture):
     imagefile = 0
     fullname = texture.fullname
     try:
@@ -58,13 +58,18 @@ def loadImage(filename, srcx = 0, srcy = 0, srcw = None, srch = None):
     except:            
         fullname = os.path.join('data', filename)
         texture = Texture(fullname)
-        initTexture(texture)
+        loadTexture(texture)
         textures[filename] = texture 
     return Image(texture, srcx, srcy, srcw, srch)
 
-def reloadTextures():
+def unloadTextures():
     for t in textures:
-        initTexture(textures[t])
+        glDeleteTextures(textures[t].texID)
+
+def reloadTextures():
+    unloadTextures()
+    for t in textures:
+        loadTexture(textures[t])
 
 # Loads a list of images from a larger ones. Each subimage is the same size.
 # This function generates as many subimages that fits wholly on the source image.

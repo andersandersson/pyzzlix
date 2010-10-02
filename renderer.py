@@ -11,7 +11,7 @@ from OpenGL.GLU import *
 
 from globals import *
 
-RES_SCALE = 1
+RES_SCALE = 2
 
 import scenehandler
 
@@ -36,8 +36,13 @@ class Renderer(Singleton):
         self.fullscreen = fullscreen
         # Initialize screen and window
         self.setDisplay()
+    
+    def cleanup():
+        unloadTextures()
+        pygame.display.quit()
         
     def setDisplay(self):
+        ##pygame.display.quit()
         if (self.fullscreen == True):
             self.screen = pygame.display.set_mode((self.width * RES_SCALE, self.height * RES_SCALE), pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.OPENGL)
         else:

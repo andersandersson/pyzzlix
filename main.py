@@ -17,26 +17,30 @@ from scene_maingame import *
 from scene_background import *
 from font import *
 
-sceneHandler = 0
-renderer = 0
-screen = 0
+sceneHandler = SceneHandler()
+renderer = Renderer()
 fullscreen = False
 
 def init():
     global sceneHandler
-    global screen
     global renderer
     
     # Initialize renderer
-    renderer = Renderer()
     renderer.init('Pyzzlix', 320, 240, fullscreen)
     
     # Initialize and populate scene stack
-    sceneHandler = SceneHandler()
     mainscene = Scene_MainGame()
     background = Scene_Background()
     sceneHandler.pushScene(background)
     sceneHandler.pushScene(mainscene)
+
+def cleanup():
+    global renderer
+    
+    # Clean up renderer
+    renderer.cleanup()
+    
+    
 
 def main():
     global fullscreen
@@ -106,6 +110,7 @@ def main():
         mainClock.tick(60) #sleeping
 
     #Game Over
+    cleanup()
 
 #this calls the 'main' function when this script is executed
 if __name__ == '__main__': main()
