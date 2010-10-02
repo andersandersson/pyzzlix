@@ -7,6 +7,7 @@ class Sprite(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.subSprites = []
+        self.currentTime = 0.0
         self.currentImage = 0
         self.center = (0.0, 0.0)
         self.pos = (0.0, 0.0)
@@ -36,8 +37,9 @@ class Sprite(pygame.sprite.Sprite):
         self.currentAnimation = None
         
     def setAnimation(self, animation):
+        animation.reset(self.currentTime)
         self.currentAnimation = animation
-        self.currentImage = animation.getFrameImage(0.0)
+        self.currentImage = animation.getFrameImage(self.currentTime)
                     
    
     def calcPos(self, currentTime):
@@ -109,6 +111,8 @@ class Sprite(pygame.sprite.Sprite):
         self._rot_lasttime = currentTime
 
     def update(self, currentTime): 
+        self.currentTime = currentTime
+
         self.updatePos(currentTime)
         self.updateRot(currentTime)
         self.updateCol(currentTime)
