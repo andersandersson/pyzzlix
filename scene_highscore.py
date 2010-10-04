@@ -38,21 +38,19 @@ class Scene_Highscore(Scene):
         self.highscores = []
 
         for i in range(0,10):
-            self.highscores.append(["AAA", 0, 0, Text(80, 60+i*10, self.font, "AAA: 0"), i])
+            self.highscores.append(["AAA", 0, 0, Text(80, 60+i*10, self.font, "---"), i])
             self.sprites.add(self.highscores[i][3])
 
         self.loadHighscores()
 
     def loadHighscores(self):
         if not os.path.isfile("pyzzlix.dat"):
+            print "FUCKING HIGH SCORE NOT FOUND?!?!??????"
             return
 
         fp = open("pyzzlix.dat", "r")
 
-        try:
-            string = zlib.decompress(fp.read())
-        except zlib.error:
-            string = ""
+        string = zlib.decompress(fp.read())
 
         if string:
             hs = json.loads(string)
@@ -70,7 +68,7 @@ class Scene_Highscore(Scene):
         fp = open("pyzzlix.dat", "w")
         fp.write(zlib.compress(json.dumps(data)))
         fp.close()
-
+            
     def isNewHighscore(self, highscore):
         for score in self.highscores:
             if score[1] < highscore:

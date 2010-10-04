@@ -39,19 +39,17 @@ class Hourglass(Sprite):
         self.value *= perc
         self.max *= perc
 
-    def pause(self):
-        self._pause += 1
+    def pause(self, time):
+        self._pause += time
     
-    def unpause(self):
-        self._pause -= 1
-
     def update(self, currentTime):
         if self.value <= 0:
             pygame.event.post(pygame.event.Event(EVENT_GAME_OVER))
             return
 
-        if self._pause <= 0:
+        if self._pause <= currentTime:
             self.value -= 1
+            self._pause = currentTime
 
         #self.image.fill([0,0,0])
         #self.image.set_alpha(200);
