@@ -37,6 +37,8 @@ class Block(Sprite):
         self.offset_x = self.center[0]
         self.offset_y = -BOARD_HEIGHT*16 + self.center[1]
 
+        self.comboCounter = 0
+
         self.layer = type
 
         Sprite.setPos(self, (self.boardx * self.size[0] + self.offset_x, self.boardy * self.size[1] + self.offset_y))

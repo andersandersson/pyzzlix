@@ -161,8 +161,10 @@ class Scene_MainGame(Scene):
     def addBlockScore(self, block):
         self.score += self.score_level * POINTS_PER_LEVEL_FOR_BLOCK_SCORE
 
-    def addCircleScore(self, blocks):
+    def addCircleScore(self, blocks, falling=False):
         num_blocks = len(blocks)
+        score = 0
+        factor = blocks[0].comboCounter
         text_x = 0
         text_y = 0
         text_count = len(blocks)
@@ -172,8 +174,14 @@ class Scene_MainGame(Scene):
         while self.block_count >= self.level * NUM_BLOCKS_FOR_LEVEL:
             self.newLevel()
 
-        score = (num_blocks-MIN_BLOCKS_FOR_CIRCLE_SCORE)*POINTS_PER_LEVEL_FOR_CIRCLE_SCORE*self.score_level
-        self.score += score
+        if num_blocks >= MIN_BLOCKS_FOR_CIRCLE_SCORE or falling:
+            score = num_blocks*POINTS_PER_LEVEL_FOR_CIRCLE_SCORE*self.score_level
+
+            if factor:
+                score *= factor
+            
+            self.score += score
+        
         self.hourglass.value += (float(num_blocks)*PERCENTAGE_TIME_GIVEN_PER_BLOCK)*self.hourglass.max;
 
         if not score:
@@ -185,18 +193,24 @@ class Scene_MainGame(Scene):
 
         text_x = text_x/text_count + self.board.pos[0] - self.font.width/2*len(str(len(blocks)))
         text_y = text_y/text_count + self.board.pos[1] - self.font.height/2
-        text = Text(text_x, text_y, self.font, str(score))
+        
+        if factor >= 2.0:
+            text = Text(text_x, text_y, self.font, str(score/factor) + "X%d" % int(factor))
+        else:
+            text = Text(text_x, text_y, self.font, str(score))
+
+        text.setAnchor("center")
         text._layer = LAYER_EFFECTS
         
         def text_fade_done(sprite):
             self.sprites.remove(text)
                 
         def text_scale_done(sprite):
-            text.scaleTo([20.0, 20.0], self.currentTime, 0.3)
+            #text.scaleTo([20.0, 20.0], self.currentTime, 0.3)
             text.fadeTo([0.0, 0.0, 0.0, 0.0], self.currentTime, 0.3, text_fade_done)
                 
-        text.scaleTo([10.0,10.0], self.currentTime, 0.7, text_scale_done)
-        text.moveTo([320, -100], self.currentTime, 1.0)
+        text.scaleTo([5.0,5.0], self.currentTime, 0.7, text_scale_done)
+        #text.moveTo([320, -100], self.currentTime, 1.0)
         self.sprites.add(text)
 
     def sortBlocksZigZag(self, blocks):
@@ -278,8 +292,13 @@ class Scene_MainGame(Scene):
 
     def handleEvent(self, event):
         if event.type == board.EVENT_CIRCLE_FOUND:
-            self.addCircleScore(event.blocks)
-            self.removeBlocks(event.blocks)            
+            if event.fall_blocks:
+                self.addCircleScore(event.fall_blocks, True)
+                self.removeBlocks(event.fall_blocks)
+
+            if event.rotation_blocks:
+                self.addCircleScore(event.rotation_blocks)
+                self.removeBlocks(event.rotation_blocks)
 
         if event.type == EVENT_GAME_OVER:
             if Scene_Highscore().isNewHighscore(self.score):
