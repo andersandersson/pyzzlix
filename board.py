@@ -33,6 +33,7 @@ class Board(Sprite):
         self.background.setScale((160.0, 208.0))
         self.background.setCol((0.0, 0.0, 0.0, 0.5))
         self.subSprites.append(self.background)
+        self.blocksFalling = False
 
     def __str__(self):
         val = ""
@@ -42,7 +43,7 @@ class Board(Sprite):
         for y in range(self.height):
             for x in range(self.width):
                 if self.grid[x][y]:
-                    val = "%s|%d" % (val, self.grid[x][y].status)
+                    val = "%s|%d" % (val, self.grid[x][y].comboCounter)
                 else:
                     val = "%s|_" % (val)
             val = val + "|\n"
@@ -110,6 +111,7 @@ class Board(Sprite):
             y = point[1]
 
             self.grid[x][y].status |= STATUS_IN_CIRCLE
+            self.grid[x][y].comboCounter += 1
 
             if self.grid[x][y] not in blocks:
                 blocks.append(self.grid[x][y])
@@ -135,13 +137,15 @@ class Board(Sprite):
                     y = y+y_dir
                     self.grid[x][y].status |= STATUS_IN_CIRCLE
                     if self.grid[x][y] not in blocks:
+                        self.grid[x][y].comboCounter += 1
                         blocks.append(self.grid[x][y])
 
             last_point = point
 
-        pygame.event.post(pygame.event.Event(EVENT_CIRCLE_FOUND, blocks=blocks))
+        return blocks
 
-    def findCircle(self, points):        
+
+    def findCircle(self, rotation_points, fall_points):        
         if self.gameOver:
             return
 
@@ -176,12 +180,27 @@ class Board(Sprite):
                     new_path = pa
             
             return new_path
-            
-        for p in points:
+
+        rotation_circles = []
+        fall_circles = []
+    
+        for p in rotation_points:
             if self.grid[p[0]][p[1]]:
                 circle = finder(p[0], p[1], [], p, self.grid[p[0]][p[1]].type)
                 if circle and len(circle) >= 4:
-                    self.handleCircle(circle)
+                    rotation_circles += self.handleCircle(circle)
+
+        for p in fall_points:
+            if self.grid[p[0]][p[1]]:
+                circle = finder(p[0], p[1], [], p, self.grid[p[0]][p[1]].type)
+                if circle and len(circle) >= 4:
+                    fall_circles += self.handleCircle(circle)
+
+        if rotation_circles or fall_circles:
+            pygame.event.post(pygame.event.Event(EVENT_CIRCLE_FOUND, fall_blocks=fall_circles, rotation_blocks=rotation_circles))
+            return True
+
+        return False
 
     def rotate(self, x, y, direction, radius):
         if self.gameOver:
@@ -275,7 +294,7 @@ class Board(Sprite):
         if self.gameOver:
             return
 
-        points = self.last_rotated
+        points = []
 
         for y in reversed(range(self.height-1)):
             for x in range(self.width):
@@ -288,7 +307,10 @@ class Board(Sprite):
 
                     tile_under.gravityDelay = DEFAULT_GRAVITY_DELAY
                     tile_under.status &= ~STATUS_MOVING
-                    
+
+                    if not tile_under.status & STATUS_IN_CIRCLE:
+                        tile_under.comboCounter = 0
+                                        
                 if tile_over and not tile_under:
                     if tile_over and not tile_over.status & STATUS_WEIGHTLESS and not tile_over.status & STATUS_IN_CIRCLE:
                         if tile_over.gravityDelay <= 0:
@@ -311,12 +333,18 @@ class Board(Sprite):
                     
                     tile_over.gravityDelay = tile_under.gravityDelay
 
+                    if not tile_over.status & STATUS_MOVING and not tile_over.status & STATUS_IN_CIRCLE:
+                        tile_over.comboCounter = tile_under.comboCounter
+                    else:
+                        tile_over.comboCounter = max(tile_under.comboCounter, tile_over.comboCounter)
+                        tile_under.comboCounter = max(tile_under.comboCounter, tile_over.comboCounter)
+
                     if tile_under.status & STATUS_MOVING:
                         tile_over.status |= STATUS_MOVING
                     else:
                         tile_over.status &= ~STATUS_MOVING
 
-        if points:
-            self.findCircle(points)
+        if points or self.last_rotated:
+            self.findCircle(self.last_rotated, points)
 
         self.last_rotated = []
