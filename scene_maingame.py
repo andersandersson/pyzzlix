@@ -49,14 +49,14 @@ class Scene_MainGame(Scene):
         self.scorebg.setImage(loadImage("pixel.png", 1, 1))
         self.scorebg.setPos((208.0, 16.0))
         self.scorebg.setScale((96.0, 56.0))
-        self.scorebg.setCol((0.0, 0.0, 0.0, 0.5))
+        self.scorebg.setCol((0.0, 0.0, 0.0, 0.3))
         self.sprites.add(self.scorebg)
         
         self.hourbg = Sprite()
         self.hourbg.setImage(loadImage("pixel.png", 1, 1))
         self.hourbg.setPos((232.0, 119.0))
         self.hourbg.setScale((72.0, 96.0))
-        self.hourbg.setCol((0.0, 0.0, 0.0, 0.5))
+        self.hourbg.setCol((0.0, 0.0, 0.0, 0.3))
         self.sprites.add(self.hourbg)
         
         self.score = 0

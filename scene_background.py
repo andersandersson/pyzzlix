@@ -39,21 +39,22 @@ class Scene_Background(Scene):
             self.squares[i+1].vely = 6 + (i % 2) * -12
         
         
-        self.squares[0].setScale((3.0, 3.0))
+        self.squares[0].setScale((2.5, 2.5))
         self.squares[0].setPos((160, 120))
         
         
-        self.svx = 40
-        self.svy = 40
+        self.svx = 0
+        self.svy = 0
 
-        self.sprites.add(self.background)
+        ##self.sprites.add(self.background)
         self.sprites.add(self.squares[0])
 
         self.updateBlocker = True
         self.renderBlocker = True
-      
-        self.squares[0].fadeTo((0.2, 1.0, 0.01, 1.0), self.currentTime, 5.0)
-        self.background.fadeTo((0.4, 1.0, 0.2, 1.0), self.currentTime, 5.0)
+        
+        self.squares[0].rotateTo((360000), self.currentTime, 150000.0)
+        self.squares[0].fadeTo((0.35, 1.0, 0.3, 1.0), self.currentTime, 0.5)
+        self.background.fadeTo((0.4, 1.0, 0.2, 1.0), self.currentTime, 0.5)
       
    
     def tick(self):
@@ -64,10 +65,10 @@ class Scene_Background(Scene):
         if (sx > 240 and self.svx > 0):
             self.svx = -self.svx
             self.squares[0].rotateTo((rot - 360), self.currentTime, 15.0)
-            self.squares[0].fadeTo((0.6, 1.0, 0.4, 1.0), self.currentTime, 10.0)
+            self.squares[0].fadeTo((0.35, 1.0, 0.3, 1.0), self.currentTime, 10.0)
         if (sx < 80 and self.svx < 0):
             self.squares[0].rotateTo((rot - 360), self.currentTime, 15.0)
-            self.squares[0].fadeTo((0.2, 1.0, 0.01, 1.0), self.currentTime, 10.0)
+            self.squares[0].fadeTo((0.1, 1.0, 0.1, 1.0), self.currentTime, 10.0)
             self.svx = -self.svx
         if (sy > 160 and self.svy > 0):
             self.squares[0].rotateTo((rot + 360), self.currentTime, 15.0)
