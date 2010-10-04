@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import sys
+sys.path += ['.']
 
 # Import Pygame modules
 import os, pygame

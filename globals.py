@@ -1,10 +1,11 @@
+from ctypes import util
+
 import os, pygame
 from pygame import *
 
 from image import *
 
 from OpenGL.GL import *
-from OpenGL.GLU import *
 
 from texture import *
 
