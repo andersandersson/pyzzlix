@@ -57,8 +57,7 @@ class Scene_Highscore(Scene):
         if string:
             hs = json.loads(string)
             for obj in zip(hs, self.highscores):
-                print obj
-                #self.updateHighscore(obj[1], obj[0][0].encode(), obj[0][1], obj[0][2])
+                self.updateHighscore(obj[1], obj[0][0].encode(), obj[0][1], obj[0][2])
 
         fp.close()
 
