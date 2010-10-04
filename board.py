@@ -31,7 +31,7 @@ class Board(Sprite):
         self.background = Sprite()
         self.background.setImage(loadImage("pixel.png", 1, 1))
         self.background.setScale((160.0, 208.0))
-        self.background.setCol((0.0, 0.0, 0.8, 0.3))
+        self.background.setCol((0.0, 0.0, 0.0, 0.5))
         self.subSprites.append(self.background)
 
     def __str__(self):

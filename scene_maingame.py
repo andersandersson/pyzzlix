@@ -32,16 +32,32 @@ class Scene_MainGame(Scene):
         self.font = Font("font_normal.png", 8, 8)
         self.background = Sprite()
         self.background.setImage(loadImage("maingame.png", 320, 240))
-        self.scorelabeltext = Text(220, 8, self.font, "SCORE:")
+        
+        self.scorelabeltext = Text(212, 20, self.font, "SCORE:")
         self.scorelabeltext._layer = LAYER_GUI
-        self.scoretext = Text(312, 18, self.font, "0")
+        self.scoretext = Text(300, 30, self.font, "0")
         self.scoretext._layer = LAYER_GUI
         self.scoretext.setAnchor("right")
-        self.levellabeltext = Text(220, 32, self.font, "LEVEL:")
+        self.levellabeltext = Text(212, 42, self.font, "LEVEL:")
         self.levellabeltext._layer = LAYER_GUI
-        self.leveltext = Text(312, 42, self.font, "0")
+        self.leveltext = Text(300, 52, self.font, "0")
         self.leveltext._layer = LAYER_GUI
         self.leveltext.setAnchor("right")
+        
+        ## Fix this mess:
+        self.scorebg = Sprite()
+        self.scorebg.setImage(loadImage("pixel.png", 1, 1))
+        self.scorebg.setPos((208.0, 16.0))
+        self.scorebg.setScale((96.0, 56.0))
+        self.scorebg.setCol((0.0, 0.0, 0.0, 0.5))
+        self.sprites.add(self.scorebg)
+        
+        self.hourbg = Sprite()
+        self.hourbg.setImage(loadImage("pixel.png", 1, 1))
+        self.hourbg.setPos((232.0, 119.0))
+        self.hourbg.setScale((72.0, 96.0))
+        self.hourbg.setCol((0.0, 0.0, 0.0, 0.5))
+        self.sprites.add(self.hourbg)
         
         self.score = 0
         self.marker = Marker(2,14)
@@ -49,11 +65,11 @@ class Scene_MainGame(Scene):
         self.hourglass = Hourglass()
         self.sprites.add(self.hourglass)
         self.sprites.add(self.board)
-        self.sprites.add(self.background)
         self.sprites.add(self.scoretext)
         self.sprites.add(self.leveltext)
         self.sprites.add(self.scorelabeltext)
         self.sprites.add(self.levellabeltext)
+        self.sprites.add(self.background)
         self.sprites.add(self.marker)
         self.ticker = 20
         self.init_counter = 0
@@ -66,7 +82,7 @@ class Scene_MainGame(Scene):
         self.score_level = 0
        
         self.usable_blocks = []
-        self.all_blocks = [0, 1, 2, 5, 4, 3]
+        self.all_blocks = [0, 1, 2, 3, 4, 5, 6]
         
         
         self.resetGame()
@@ -82,7 +98,7 @@ class Scene_MainGame(Scene):
         self.init_y = BOARD_HEIGHT*2-1
         self.init_x_dir = 1
         self.init_y_dir = -1
-        self.usable_blocks = self.all_blocks[0:4]
+        self.usable_blocks = self.all_blocks[0:3]
 
         self.init_counter = BOARD_WIDTH*BOARD_HEIGHT
         self.sprites.remove_sprites_of_layer(LAYER_BLOCKS)
