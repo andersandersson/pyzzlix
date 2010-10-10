@@ -18,8 +18,11 @@ from scene_maingame import *
 from scene_background import *
 from font import *
 
+from mixer import *
+
 sceneHandler = SceneHandler()
 renderer = Renderer()
+mixer = Mixer()
 fullscreen = False
 
 def init():
@@ -28,6 +31,7 @@ def init():
     
     # Initialize renderer
     renderer.init('Pyzzlix', 320, 240, fullscreen)
+    mixer.init()
     
     # Initialize and populate scene stack
     mainscene = Scene_MainGame()
@@ -38,8 +42,10 @@ def init():
 def cleanup():
     global renderer
     
-    # Clean up renderer
+    # Clean up stuff
+    mixer.cleanup()
     renderer.cleanup()
+
     
     
 

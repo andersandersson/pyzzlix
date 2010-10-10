@@ -16,6 +16,9 @@ from scene_highscore import *
 from scenehandler import *
 import random
 
+from mixer import *
+from sound import *
+
 LAYER_EFFECTS = 4
 LAYER_GUI = 3
 LAYER_MARKER = 2
@@ -170,6 +173,9 @@ class Scene_MainGame(Scene):
         
     def show(self):
         print self, "is showing"
+        mixer = Mixer()
+        music =  mixer.loadAudiofile("test.wav")
+        mixer.playMusic(music)
         
     def hide(self):
         print self, "is hiding"
