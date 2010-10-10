@@ -16,6 +16,7 @@ from scenehandler import *
 from renderer import *
 from scene_maingame import *
 from scene_background import *
+from scene_mainmenu import *
 from font import *
 
 from mixer import *
@@ -34,10 +35,14 @@ def init():
     mixer.init()
     
     # Initialize and populate scene stack
-    mainscene = Scene_MainGame()
     background = Scene_Background()
+    mainscene = Scene_MainGame()
+    mainmenu = Scene_MainMenu()
+    
     sceneHandler.pushScene(background)
     sceneHandler.pushScene(mainscene)
+    sceneHandler.pushScene(mainmenu)
+    
 
 def cleanup():
     global renderer
