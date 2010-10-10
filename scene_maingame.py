@@ -29,7 +29,7 @@ class Scene_MainGame(Scene):
         self.board.setPos((16.0, 16.0))
         self.blocks = pygame.sprite.Group()
         self.blockcount = 0
-        self.font = Font("font_normal.png", 8, 8)
+        self.font = Font("font_fat.png", 8, 8)
         self.background = Sprite()
         self.background.setImage(loadImage("maingame.png", 320, 240))
         

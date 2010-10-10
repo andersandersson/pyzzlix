@@ -9,6 +9,9 @@ class SceneHandler(Singleton):
         self.focus = 0
         self.currentTime = 0
         
+    def clear(self):
+        pass
+        
     def pushScene(self, scene):
         try:
             self.sceneStack.remove(scene)
