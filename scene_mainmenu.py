@@ -53,8 +53,8 @@ class Scene_MainMenu(Scene):
                                 
         self.menucount = len(self.menuitems)
         self.menufocus = 0
-        
-        #self.music =  Mixer().loadAudiofile("menu.wav") 
+       
+        self.music =  Mixer().loadAudiofile("menu.wav") 
         self.movesound =  Mixer().loadAudiofile("menumove.wav") 
         self.selectsound =  Mixer().loadAudiofile("menuselect.wav") 
         
@@ -74,11 +74,11 @@ class Scene_MainMenu(Scene):
     def show(self):
         print self, "is showing"
         self.menuitems[self.menufocus].focus(self.currentTime)
-        #Mixer().playMusic(self.music)
+        Mixer().playMusic(self.music, 1.0, 2.0)
         
     def hide(self):
         print self, "is hiding"
-        #Mixer().stopMusic(self.music) 
+        Mixer().stopMusic(self.music) 
         
     def handleEvent(self, event):
         if event.type == KEYDOWN:
@@ -104,7 +104,13 @@ class Scene_MainMenu(Scene):
                 self.menuitems[self.menufocus].unfocus(self.currentTime)
                 self.menuitems[self.newmenufocus].focus(self.currentTime)
                 self.menufocus = self.newmenufocus
-        
+                
+            if (key == K_1):
+                print "PUNG"
+                Mixer().setVolume(self.music, 0.0, 0.0)
+            if (key == K_2):
+                print "PUNG"
+                Mixer().setVolume(self.music, 1.0, 0.0)
             
     def menu_start(self):
         SceneHandler().removeScene(self)

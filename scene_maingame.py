@@ -47,11 +47,11 @@ class Scene_MainGame(Scene):
         self.leveltext._layer = LAYER_GUI
         self.leveltext.setAnchor("right")
         
-        #self.music1 =  Mixer().loadAudiofile("music1_1.wav")
-        #self.music2 =  Mixer().loadAudiofile("music1_2.wav")
-        #self.music3 =  Mixer().loadAudiofile("music1_3.wav")
-        #self.music4 =  Mixer().loadAudiofile("music1_4.wav")
-        #self.music5 =  Mixer().loadAudiofile("music1_5.wav")
+        self.music1 =  Mixer().loadAudiofile("music1_1.wav")
+        self.music2 =  Mixer().loadAudiofile("music1_2.wav")
+        self.music3 =  Mixer().loadAudiofile("music1_3.wav")
+        self.music4 =  Mixer().loadAudiofile("music1_4.wav")
+        self.music5 =  Mixer().loadAudiofile("music1_5.wav")
         
         ## Fix this mess:
         self.scorebg = Sprite()
@@ -102,23 +102,20 @@ class Scene_MainGame(Scene):
             
     def show(self):
         print self, "is showing"
-        #Mixer().playMusic(self.music1)
-        #Mixer().playMusic(self.music2)
-        #Mixer().playMusic(self.music3)
-        #Mixer().playMusic(self.music4)
-        #Mixer().playMusic(self.music5)
-        #Mixer().setVolume(self.music2, 0.0)
-        #Mixer().setVolume(self.music3, 0.0)
-        #Mixer().setVolume(self.music4, 0.0)
-        #Mixer().setVolume(self.music5, 0.0)
+        Mixer().playMusic(self.music1)
+        Mixer().playMusic(self.music2, 0.0)
+        Mixer().playMusic(self.music3, 0.0)
+        Mixer().playMusic(self.music4, 0.0)
+        Mixer().playMusic(self.music5, 0.0)
+
         
     def hide(self):
         print self, "is hiding"
-        #Mixer().stopMusic(self.music1) 
-        #Mixer().stopMusic(self.music2) 
-        #Mixer().stopMusic(self.music3) 
-        #Mixer().stopMusic(self.music4) 
-        #Mixer().stopMusic(self.music5) 
+        Mixer().stopMusic(self.music1) 
+        Mixer().stopMusic(self.music2) 
+        Mixer().stopMusic(self.music3) 
+        Mixer().stopMusic(self.music4) 
+        Mixer().stopMusic(self.music5) 
 
     def resetGame(self):
         self.level = 1
@@ -396,20 +393,20 @@ class Scene_MainGame(Scene):
                 if state == KEYDOWN:
                     self.board.rotate(self.marker.boardx, self.marker.boardy, -1, 2)
             
-            #if state == KEYDOWN:        
-                #if (key == K_1):
-                    #Mixer().setVolume(self.music2, 1.0, 3.1)
-                #if (key == K_2):
-                    #Mixer().setVolume(self.music3, 1.0, 3.1) 
-                #if (key == K_3):
-                    #Mixer().setVolume(self.music4, 1.0, 3.1) 
-                #if (key == K_4):
-                    #Mixer().setVolume(self.music5, 1.0, 3.1) 
-                #if (key == K_5):
-                    #Mixer().setVolume(self.music2, 0.0, 5.0)  
-                    #Mixer().setVolume(self.music3, 0.0, 5.0)
-                    #Mixer().setVolume(self.music4, 0.0, 5.0)
-                    #Mixer().setVolume(self.music5, 0.0, 5.0)
+            if state == KEYDOWN:        
+                if (key == K_1):
+                    Mixer().setVolume(self.music2, 1.0, 3.1)
+                if (key == K_2):
+                    Mixer().setVolume(self.music3, 1.0, 3.1) 
+                if (key == K_3):
+                    Mixer().setVolume(self.music4, 1.0, 3.1) 
+                if (key == K_4):
+                    Mixer().setVolume(self.music5, 1.0, 3.1) 
+                if (key == K_5):
+                    Mixer().setVolume(self.music2, 0.0, 5.0)  
+                    Mixer().setVolume(self.music3, 0.0, 5.0)
+                    Mixer().setVolume(self.music4, 0.0, 5.0)
+                    Mixer().setVolume(self.music5, 0.0, 5.0)
                     
         
                 

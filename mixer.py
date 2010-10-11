@@ -26,8 +26,9 @@ class Mixer(Singleton):
         return int((self.samplerate + 0.0) * time)
         
     def init(self):
-        swmixer.init(self.samplerate, chunksize=96, stereo=False)
+        swmixer.init(self.samplerate, chunksize=256, stereo=True)
         swmixer.start()
+        pass
       
     def loadAudiofile(self, filename):
         sound = 0
@@ -38,8 +39,18 @@ class Mixer(Singleton):
             sound = Sound(swmixer.Sound(fullname))
             sounds[filename] = sound 
         return sound
-            
         
+    def loadMusic(self, filename):
+        sound = 0
+        try: 
+            sound = sounds[filename]
+        except:            
+            fullname = os.path.join('data', filename)
+            sound = Sound(swmixer.StreamingSound(fullname, False))
+            sounds[filename] = sound 
+        return sound   
+                 
+
     def playSound(self, sound):
         if (sound.channel != None):
             if (sound.channel.get_position() < sound.sound.get_length()):
@@ -49,18 +60,22 @@ class Mixer(Singleton):
         else:
             sound.channel = sound.sound.play(offset=self._timeToSamples(0.0))
         
-    def playMusic(self, music, fadein=0.01):
+    def playMusic(self, music, volume=1.0, fadein=0.01):
+        if (volume > 1.0):
+            volume = 1.0
         if (music.channel != None):
             if (music.channel.get_position() < music.sound.get_length()):
                 music.channel.set_position(0)
             else:    
-                music.channel = music.sound.play(volume=0.7, fadein=self._timeToSamples(fadein), loops=-1)
+                music.channel = music.sound.play(volume=volume, fadein=self._timeToSamples(fadein), loops=-1)
         else:
-            music.channel = music.sound.play(volume=0.7,fadein=self._timeToSamples(fadein), loops=-1)
+            music.channel = music.sound.play(volume=volume,fadein=self._timeToSamples(fadein), loops=-1)
             
     def setVolume(self, music, volume, fadein=0.0):  
+        if (volume > 1.0):
+            volume = 1.0
         if (music.channel != None):
-            music.channel.set_volume(volume, fadetime=fadein)
+            music.channel.set_volume(volume, fadetime=self._timeToSamples(fadein))
 
     def stopMusic(self, music):
         if (music.channel != None):
