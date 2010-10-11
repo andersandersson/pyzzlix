@@ -54,6 +54,10 @@ class Scene_MainMenu(Scene):
         self.menucount = len(self.menuitems)
         self.menufocus = 0
         
+        #self.music =  Mixer().loadAudiofile("menu.wav") 
+        self.movesound =  Mixer().loadAudiofile("menumove.wav") 
+        self.selectsound =  Mixer().loadAudiofile("menuselect.wav") 
+        
         self.background = Sprite()
         self.background.setImage(loadImage("pixel.png"))
         self.background.scaleTo((320,240),0,0)
@@ -70,11 +74,12 @@ class Scene_MainMenu(Scene):
     def show(self):
         print self, "is showing"
         self.menuitems[self.menufocus].focus(self.currentTime)
-        
+        #Mixer().playMusic(self.music)
         
     def hide(self):
         print self, "is hiding"
-
+        #Mixer().stopMusic(self.music) 
+        
     def handleEvent(self, event):
         if event.type == KEYDOWN:
             key = event.key
@@ -89,21 +94,21 @@ class Scene_MainMenu(Scene):
                 self.newmenufocus += 1
                 if (self.newmenufocus >= self.menucount):
                     self.newmenufocus = self.menucount - 1
-                print self.menufocus, self.newmenufocus
             
             if (key == K_RETURN):
+                Mixer().playSound(self.selectsound)
                 self.menuitems[self.menufocus].select()
             
             if (self.newmenufocus != self.menufocus):
-                print self.menufocus
+                Mixer().playSound(self.movesound)
                 self.menuitems[self.menufocus].unfocus(self.currentTime)
                 self.menuitems[self.newmenufocus].focus(self.currentTime)
                 self.menufocus = self.newmenufocus
         
             
     def menu_start(self):
-        Scene_MainGame().resetGame()
         SceneHandler().removeScene(self)
+        Scene_MainGame().run()
         pass
     
     def menu_options(self):

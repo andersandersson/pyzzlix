@@ -13,11 +13,11 @@ from hourglass import *
 from scene_gameover import *
 from scene_enter_highscore import *
 from scene_highscore import *
+from scene_background import *
 from scenehandler import *
 import random
 
 from mixer import *
-from sound import *
 
 LAYER_EFFECTS = 4
 LAYER_GUI = 3
@@ -46,6 +46,12 @@ class Scene_MainGame(Scene):
         self.leveltext = Text(300, 52, self.font, "0")
         self.leveltext._layer = LAYER_GUI
         self.leveltext.setAnchor("right")
+        
+        #self.music1 =  Mixer().loadAudiofile("music1_1.wav")
+        #self.music2 =  Mixer().loadAudiofile("music1_2.wav")
+        #self.music3 =  Mixer().loadAudiofile("music1_3.wav")
+        #self.music4 =  Mixer().loadAudiofile("music1_4.wav")
+        #self.music5 =  Mixer().loadAudiofile("music1_5.wav")
         
         ## Fix this mess:
         self.scorebg = Sprite()
@@ -89,6 +95,30 @@ class Scene_MainGame(Scene):
         
         
         self.resetGame()
+        
+    def run(self):
+        SceneHandler().pushScene(Scene_Background())
+        SceneHandler().pushScene(self)
+            
+    def show(self):
+        print self, "is showing"
+        #Mixer().playMusic(self.music1)
+        #Mixer().playMusic(self.music2)
+        #Mixer().playMusic(self.music3)
+        #Mixer().playMusic(self.music4)
+        #Mixer().playMusic(self.music5)
+        #Mixer().setVolume(self.music2, 0.0)
+        #Mixer().setVolume(self.music3, 0.0)
+        #Mixer().setVolume(self.music4, 0.0)
+        #Mixer().setVolume(self.music5, 0.0)
+        
+    def hide(self):
+        print self, "is hiding"
+        #Mixer().stopMusic(self.music1) 
+        #Mixer().stopMusic(self.music2) 
+        #Mixer().stopMusic(self.music3) 
+        #Mixer().stopMusic(self.music4) 
+        #Mixer().stopMusic(self.music5) 
 
     def resetGame(self):
         self.level = 1
@@ -170,15 +200,6 @@ class Scene_MainGame(Scene):
         block._layer = LAYER_BLOCKS
         self.board.add(x, y, block)
         block.animatePopup(self.currentTime)
-        
-    def show(self):
-        print self, "is showing"
-        mixer = Mixer()
-        music =  mixer.loadAudiofile("test.wav")
-        mixer.playMusic(music)
-        
-    def hide(self):
-        print self, "is hiding"
 
     def addBlockScore(self, block):
         self.score += self.score_level * POINTS_PER_LEVEL_FOR_BLOCK_SCORE
@@ -205,7 +226,7 @@ class Scene_MainGame(Scene):
             self.score += score
         
         self.hourglass.value += (float(num_blocks)*PERCENTAGE_TIME_GIVEN_PER_BLOCK)*self.hourglass.max;
-
+              
         if not score:
             return
 
@@ -234,6 +255,7 @@ class Scene_MainGame(Scene):
         text.scaleTo([5.0,5.0], self.currentTime, 0.7, text_scale_done)
         #text.moveTo([320, -100], self.currentTime, 1.0)
         self.sprites.add(text)
+
 
     def sortBlocksZigZag(self, blocks):
         start_y = blocks[0].boardy
@@ -373,6 +395,24 @@ class Scene_MainGame(Scene):
             if (key == K_z):
                 if state == KEYDOWN:
                     self.board.rotate(self.marker.boardx, self.marker.boardy, -1, 2)
+            
+            #if state == KEYDOWN:        
+                #if (key == K_1):
+                    #Mixer().setVolume(self.music2, 1.0, 3.1)
+                #if (key == K_2):
+                    #Mixer().setVolume(self.music3, 1.0, 3.1) 
+                #if (key == K_3):
+                    #Mixer().setVolume(self.music4, 1.0, 3.1) 
+                #if (key == K_4):
+                    #Mixer().setVolume(self.music5, 1.0, 3.1) 
+                #if (key == K_5):
+                    #Mixer().setVolume(self.music2, 0.0, 5.0)  
+                    #Mixer().setVolume(self.music3, 0.0, 5.0)
+                    #Mixer().setVolume(self.music4, 0.0, 5.0)
+                    #Mixer().setVolume(self.music5, 0.0, 5.0)
+                    
+        
+                
 
         return False
         
