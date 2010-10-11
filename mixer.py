@@ -7,8 +7,6 @@ import swmixer
 from globals import *
 from singleton import *
 
-from sound import *
-
 # Dictionary with all sounds
 sounds = dict()
 
