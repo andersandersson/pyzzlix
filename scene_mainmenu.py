@@ -17,6 +17,9 @@ import random
 
 from scene_maingame import *
 from scene_highscore import *
+from scene_dialogyesno import *
+
+from menuitem import *
 
 class MenuItem(Text):
     def __init__(self, x, y, label, callfunc):
@@ -161,19 +164,10 @@ class Scene_MainMenu(Scene):
                 self.menuitems[self.menufocus].unfocus(self.currentTime)
                 self.menuitems[self.newmenufocus].focus(self.currentTime)
                 self.menufocus = self.newmenufocus
-                
-            if (key == K_1):
-                print "PUNG"
-                Mixer().setVolume(self.music, 0.0, 0.0)
-            if (key == K_2):
-                print "PUNG"
-                Mixer().setVolume(self.music, 1.0, 0.0)
-            
+
     def menu_start(self):
         SceneHandler().removeScene(self)
-        sm = Scene_MainGame()
-        print sm
-        sm.run()
+        Scene_MainGame().run()
         pass
     
     def menu_options(self):
@@ -187,7 +181,17 @@ class Scene_MainMenu(Scene):
         pass
         
     def menu_quit(self):
-        SceneHandler().clear()
+        Mixer().setVolume(self.music, 0.5, 0.5)
+        Scene_DialogYesNo().setQuery("Do you want to quit?", self.quitGame, self.doNothing)
+        SceneHandler().pushScene(Scene_DialogYesNo())
+        #SceneHandler().clear()
         pass
         
+    def quitGame(self):
+        pygame.event.post(pygame.event.Event(QUIT))
         
+        
+    def doNothing(self):
+        SceneHandler().removeScene(Scene_DialogYesNo())
+        Mixer().setVolume(self.music, 1.0, 0.5)
+        pass

@@ -9,9 +9,6 @@ class SceneHandler(Singleton):
         self.focus = 0
         self.currentTime = 0
         
-    def clear(self):
-        pass
-        
     def pushScene(self, scene):
         try:
             self.sceneStack.remove(scene)
@@ -20,7 +17,6 @@ class SceneHandler(Singleton):
         self.sceneStack.append(scene)
         print "pushed", scene, "onto", self.sceneStack
         scene.show()
-        self.focusScene(scene)
         
     def removeScene(self, scene):
         try:
@@ -29,20 +25,8 @@ class SceneHandler(Singleton):
             return
         print "removed", scene, "from", self.sceneStack
         scene.hide()
-        if (self.focus == scene):
-            self.focus = 0
-            if (len(self.sceneStack) > 0):
-                for s in reversed(self.sceneStack):
-                    if (s.canBeFocused() == True):
-                        this.focusScene(s)
         return scene
-        
-    def focusScene(self, scene):
-        if (self.focus != 0):
-            self.focus.unfocus()
-        scene.focus()
-        self.focus = scene
-        
+    
     def handleEvent(self, event):
         for scene in reversed(self.sceneStack):
             if (scene.handleEvent(event) == True):
