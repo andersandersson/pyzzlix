@@ -3,7 +3,7 @@ from globals import *
 #import pygame
 #from pygame.locals import *
 
-import random
+import random, pyopenal
 from sprite import *
 from animation import *
 
