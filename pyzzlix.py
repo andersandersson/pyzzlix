@@ -37,13 +37,7 @@ def init():
     mixer.init()
     
     # Initialize and populate scene stack
-    background = Scene_Background()
-    mainscene = Scene_MainGame()
-    mainmenu = Scene_MainMenu()
-    
-    sceneHandler.pushScene(background)
-    sceneHandler.pushScene(mainscene)
-    sceneHandler.pushScene(mainmenu)
+    sceneHandler.pushScene(Scene_MainMenu())
     
 
 def cleanup():
@@ -52,8 +46,6 @@ def cleanup():
     # Clean up stuff
     mixer.cleanup()
     renderer.cleanup()
-
-    
     
 
 def main():

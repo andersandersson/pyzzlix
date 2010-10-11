@@ -13,12 +13,12 @@ from hourglass import *
 from scene_gameover import *
 from scene_enter_highscore import *
 from scene_highscore import *
+from scene_background import *
 from scenehandler import *
 import random
 import pyopenal
 
 from mixer import *
-from sound import *
 
 LAYER_EFFECTS = 4
 LAYER_GUI = 3
@@ -48,34 +48,12 @@ class Scene_MainGame(Scene):
         self.leveltext._layer = LAYER_GUI
         self.leveltext.setAnchor("right")
 
-
-        self.listener = pyopenal.Listener(22050)
-
-        self.b1 = pyopenal.OggVorbisBuffer("music2.ogg")
-        self.b2 = pyopenal.OggVorbisBuffer("music.ogg")
-
-        self.s1 = pyopenal.Source()
-        self.s1.position = (0.0, 0.0, 1.0)
-        self.s1.velocity = (0.0, 0.0, 0.0)
-        self.s1.buffer  = self.b1
-        self.s1.looping = 0
-        self.s1.play()
-
-        self.s2 = pyopenal.Source()
-        self.s2.position = (0.0, 0.0, 10.0)
-        self.s2.velocity = (0.0, 0.0, 0.0)
-        self.s2.buffer  = self.b2
-        self.s2.looping = 0
-        self.s2.play()
-
-        self.s1_gain = 1.0
-        self.s2_gain = 0.0
-        self.s1_dir = 0.01
-        self.s2_dir = -0.01
-    
-        self.s1.gain = self.s1_gain
-        self.s2.gain = self.s2_gain
-                
+        #self.music1 =  Mixer().loadAudiofile("music1_1.wav")
+        #self.music2 =  Mixer().loadAudiofile("music1_2.wav")
+        #self.music3 =  Mixer().loadAudiofile("music1_3.wav")
+        #self.music4 =  Mixer().loadAudiofile("music1_4.wav")
+        #self.music5 =  Mixer().loadAudiofile("music1_5.wav")
+        
         ## Fix this mess:
         self.scorebg = Sprite()
         self.scorebg.setImage(loadImage("pixel.png", 1, 1))
@@ -118,6 +96,30 @@ class Scene_MainGame(Scene):
         
         
         self.resetGame()
+        
+    def run(self):
+        SceneHandler().pushScene(Scene_Background())
+        SceneHandler().pushScene(self)
+            
+    def show(self):
+        print self, "is showing"
+        #Mixer().playMusic(self.music1)
+        #Mixer().playMusic(self.music2)
+        #Mixer().playMusic(self.music3)
+        #Mixer().playMusic(self.music4)
+        #Mixer().playMusic(self.music5)
+        #Mixer().setVolume(self.music2, 0.0)
+        #Mixer().setVolume(self.music3, 0.0)
+        #Mixer().setVolume(self.music4, 0.0)
+        #Mixer().setVolume(self.music5, 0.0)
+        
+    def hide(self):
+        print self, "is hiding"
+        #Mixer().stopMusic(self.music1) 
+        #Mixer().stopMusic(self.music2) 
+        #Mixer().stopMusic(self.music3) 
+        #Mixer().stopMusic(self.music4) 
+        #Mixer().stopMusic(self.music5) 
 
     def resetGame(self):
         self.level = 1
@@ -165,33 +167,6 @@ class Scene_MainGame(Scene):
                     self.init_y -= 1
                             
     def tick(self):
-
-        if self.s1_gain > 1.0-abs(self.s1_dir):
-            self.s1_dir *= -1
-
-        if self.s1_gain < abs(self.s1_dir):
-            self.s1_dir *= -1
-
-        if self.s1_gain < abs(self.s1_dir):
-            self.s1_gain = 0.0
-
-        self.s1_gain += self.s1_dir
-
-        if self.s2_gain > 1.0-abs(self.s2_dir):
-            self.s2_dir *= -1
-
-        if self.s2_gain < abs(self.s2_dir):
-            self.s2_dir *= -1
-
-        if self.s2_gain < abs(self.s2_dir):
-            self.s2_gain = 0.0
-
-        self.s2_gain += self.s2_dir
-
-        self.s1.gain = self.s1_gain
-        self.s2.gain = self.s2_gain
-        self.s2.pitch = 1.7
-
         self.ticker += 1
         if not self.board.full():
             if self.init_counter > 0:
@@ -226,15 +201,6 @@ class Scene_MainGame(Scene):
         block._layer = LAYER_BLOCKS
         self.board.add(x, y, block)
         block.animatePopup(self.currentTime)
-        
-    def show(self):
-        print self, "is showing"
-        mixer = Mixer()
-        music =  mixer.loadAudiofile("test.wav")
-        mixer.playMusic(music)
-        
-    def hide(self):
-        print self, "is hiding"
 
     def addBlockScore(self, block):
         self.score += self.score_level * POINTS_PER_LEVEL_FOR_BLOCK_SCORE
@@ -261,7 +227,7 @@ class Scene_MainGame(Scene):
             self.score += score
         
         self.hourglass.value += (float(num_blocks)*PERCENTAGE_TIME_GIVEN_PER_BLOCK)*self.hourglass.max;
-
+              
         if not score:
             return
 
@@ -290,6 +256,7 @@ class Scene_MainGame(Scene):
         text.scaleTo([5.0,5.0], self.currentTime, 0.7, text_scale_done)
         #text.moveTo([320, -100], self.currentTime, 1.0)
         self.sprites.add(text)
+
 
     def sortBlocksZigZag(self, blocks):
         start_y = blocks[0].boardy
@@ -322,7 +289,6 @@ class Scene_MainGame(Scene):
         
         def block_scale_done(block):
             if(scale_blocks):                                 
-                block.s.play()
                 self.addBlockScore(block)
                 next_block = scale_blocks.pop()
                 next_block.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, delay, block_scale_done)
@@ -430,6 +396,24 @@ class Scene_MainGame(Scene):
             if (key == K_z):
                 if state == KEYDOWN:
                     self.board.rotate(self.marker.boardx, self.marker.boardy, -1, 2)
+            
+            #if state == KEYDOWN:        
+                #if (key == K_1):
+                    #Mixer().setVolume(self.music2, 1.0, 3.1)
+                #if (key == K_2):
+                    #Mixer().setVolume(self.music3, 1.0, 3.1) 
+                #if (key == K_3):
+                    #Mixer().setVolume(self.music4, 1.0, 3.1) 
+                #if (key == K_4):
+                    #Mixer().setVolume(self.music5, 1.0, 3.1) 
+                #if (key == K_5):
+                    #Mixer().setVolume(self.music2, 0.0, 5.0)  
+                    #Mixer().setVolume(self.music3, 0.0, 5.0)
+                    #Mixer().setVolume(self.music4, 0.0, 5.0)
+                    #Mixer().setVolume(self.music5, 0.0, 5.0)
+                    
+        
+                
 
         return False
         
