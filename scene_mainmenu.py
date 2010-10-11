@@ -2,6 +2,8 @@ import os, pygame, board
 from pygame.locals import *
 from pygame.sprite import *
 
+from math import *
+
 from scene import *
 from scenehandler import *
 from board import *
@@ -63,8 +65,26 @@ class Logo(Sprite):
             self.subSprites.append(self.LogoLetter(176, 0, 0, 160, 16, 64)) # i           
             self.subSprites.append(self.LogoLetter(160, 0, 16, 160, 96, 80)) # x
 
+            self.lastColorChange = 0
+            self.colorOrder = 0
       
-        def update(currentTime):
+        def cycleTextColor(self, order, currentTime, length):
+            i = order % 25
+            R = 0.5+sin((i*3.0+0.0)*1.3)*0.5
+            G = 0.5+sin((i*3.0+1.0)*1.3)*0.5
+            B = 0.5+sin((i*3.0+2.0)*1.3)*0.5
+            color = (R, G, B, 1.0)
+            self.setTextColor(color, currentTime, length)
+            self.lastColorChange = currentTime
+            
+        def setTextColor(self, color, currentTime, length):
+            for s in self.subSprites:
+                s.fadeTo(color, currentTime, length)
+ 
+        def update(self, currentTime):
+            if (currentTime - self.lastColorChange > 3.0):
+                self.colorOrder += 1
+                self.cycleTextColor(self.colorOrder, currentTime, 3.0)
             pass
             
         
@@ -95,23 +115,23 @@ class Scene_MainMenu(Scene):
         self.background._layer = 0
         
         self.logo = Logo(170, 50)
+        self.logo.setTextColor((1.0, 0.0, 0.0, 1.0), 0, 1.0)
         self.sprites.add(self.logo)        
-        for s in self.logo.subSprites:
-            s.fadeTo((1.0, 0.0, 0.0, 1.0), 0, 5.0)
-            
+     
 
-        self.music =  Mixer().loadAudiofile("menu.wav") 
+        self.music =  Mixer().loadAudiofile("menuselect.wav") 
         self.movesound =  Mixer().loadAudiofile("menumove.wav") 
         self.selectsound =  Mixer().loadAudiofile("menuselect.wav") 
                 
    
     def tick(self):
         self.ticker += 1
+        self.sprites.update(self.currentTime)
 
     def show(self):
         print self, "is showing"
         self.menuitems[self.menufocus].focus(self.currentTime)
-        Mixer().playMusic(self.music, 1.0, 2.0)
+        Mixer().playMusic(self.music)
         
     def hide(self):
         print self, "is hiding"
@@ -151,7 +171,9 @@ class Scene_MainMenu(Scene):
             
     def menu_start(self):
         SceneHandler().removeScene(self)
-        Scene_MainGame().run()
+        sm = Scene_MainGame()
+        print sm
+        sm.run()
         pass
     
     def menu_options(self):
