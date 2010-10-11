@@ -4,7 +4,7 @@ import sys
 sys.path += ['.']
 
 # Import Pygame modules
-import os, pygame, pyopenal
+import os, pygame
 from pygame.locals import *
 
 if not pygame.font: print 'Warning, fonts disabled'
@@ -53,7 +53,6 @@ def main():
 
     #Initialize Everything
     pygame.init()
-    pyopenal.init(None)
     
     # Initialize custom stuff
     init()
