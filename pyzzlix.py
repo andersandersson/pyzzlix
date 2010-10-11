@@ -16,10 +16,14 @@ from scenehandler import *
 from renderer import *
 from scene_maingame import *
 from scene_background import *
+from scene_mainmenu import *
 from font import *
+
+from mixer import *
 
 sceneHandler = SceneHandler()
 renderer = Renderer()
+mixer = Mixer()
 fullscreen = False
 listener = None
 
@@ -30,18 +34,25 @@ def init():
     
     # Initialize renderer
     renderer.init('Pyzzlix', 320, 240, fullscreen)
+    mixer.init()
     
     # Initialize and populate scene stack
-    mainscene = Scene_MainGame()
     background = Scene_Background()
+    mainscene = Scene_MainGame()
+    mainmenu = Scene_MainMenu()
+    
     sceneHandler.pushScene(background)
     sceneHandler.pushScene(mainscene)
+    sceneHandler.pushScene(mainmenu)
+    
 
 def cleanup():
     global renderer
     
-    # Clean up renderer
+    # Clean up stuff
+    mixer.cleanup()
     renderer.cleanup()
+
     
     
 

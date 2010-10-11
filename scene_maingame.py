@@ -17,6 +17,9 @@ from scenehandler import *
 import random
 import pyopenal
 
+from mixer import *
+from sound import *
+
 LAYER_EFFECTS = 4
 LAYER_GUI = 3
 LAYER_MARKER = 2
@@ -30,7 +33,7 @@ class Scene_MainGame(Scene):
         self.board.setPos((16.0, 16.0))
         self.blocks = pygame.sprite.Group()
         self.blockcount = 0
-        self.font = Font("font_normal.png", 8, 8)
+        self.font = Font("font_fat.png", 8, 8)
         self.background = Sprite()
         self.background.setImage(loadImage("maingame.png", 320, 240))
         
@@ -226,6 +229,9 @@ class Scene_MainGame(Scene):
         
     def show(self):
         print self, "is showing"
+        mixer = Mixer()
+        music =  mixer.loadAudiofile("test.wav")
+        mixer.playMusic(music)
         
     def hide(self):
         print self, "is hiding"
