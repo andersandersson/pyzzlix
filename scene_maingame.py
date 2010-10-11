@@ -47,12 +47,17 @@ class Scene_MainGame(Scene):
         self.leveltext._layer = LAYER_GUI
         self.leveltext.setAnchor("right")
         
-        self.music1 =  Mixer().loadAudiofile("music1_1.wav")
-        self.music2 =  Mixer().loadAudiofile("music1_2.wav")
-        self.music3 =  Mixer().loadAudiofile("music1_3.wav")
-        self.music4 =  Mixer().loadAudiofile("music1_4.wav")
-        self.music5 =  Mixer().loadAudiofile("music1_5.wav")
+        #self.music1 =  Mixer().loadAudiofile("music1_1.ogg")
+        #self.music2 =  Mixer().loadAudiofile("music1_2.ogg")
+        #self.music3 =  Mixer().loadAudiofile("music1_3.ogg")
+        #self.music4 =  Mixer().loadAudiofile("music1_4.ogg")
+        #self.music5 =  Mixer().loadAudiofile("music1_5.ogg")
         
+        self.music1 =  Mixer().loadAudiofile("menuselect.wav")
+        self.music2 =  Mixer().loadAudiofile("menuselect.wav")
+        self.music3 =  Mixer().loadAudiofile("menuselect.wav")
+        self.music4 =  Mixer().loadAudiofile("menuselect.wav")
+        self.music5 =  Mixer().loadAudiofile("menuselect.wav")
         ## Fix this mess:
         self.scorebg = Sprite()
         self.scorebg.setImage(loadImage("pixel.png", 1, 1))

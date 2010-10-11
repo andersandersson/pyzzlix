@@ -37,6 +37,37 @@ class MenuItem(Text):
 
     def select(self):
         self.callfunc()
+        
+        
+        
+        
+class Logo(Sprite):
+        class LogoLetter(Sprite):
+            def __init__(self, x, y, sx, sy, w, h):
+                Sprite.__init__(self)
+                self.setImage(loadImage("logo.png", sx, sy, w, h))
+                self.setPos((x, y))
+
+
+        def __init__(self, x, y):
+            Sprite.__init__(self)
+            self.setImage(loadImage("logo.png", 0, 0, 251, 73))
+            self.setPos((x - 251 / 2, y - 73 / 2))
+            
+            
+            self.subSprites.append(self.LogoLetter(0, 0, 0, 80, 48, 80)) # P
+            self.subSprites.append(self.LogoLetter(32, 16, 48, 96, 48, 48)) # y   
+            self.subSprites.append(self.LogoLetter(48, 16, 96, 96, 80, 48)) # z   
+            self.subSprites.append(self.LogoLetter(85, 16, 96, 96, 80, 48)) # z   
+            self.subSprites.append(self.LogoLetter(128, 16, 176, 96, 64, 48)) # l   
+            self.subSprites.append(self.LogoLetter(176, 0, 0, 160, 16, 64)) # i           
+            self.subSprites.append(self.LogoLetter(160, 0, 16, 160, 96, 80)) # x
+
+      
+        def update(currentTime):
+            pass
+            
+        
 
 class Scene_MainMenu(Scene):
     def _runOnce(self):
@@ -53,20 +84,26 @@ class Scene_MainMenu(Scene):
                                 
         self.menucount = len(self.menuitems)
         self.menufocus = 0
-       
-        self.music =  Mixer().loadAudiofile("menu.wav") 
-        self.movesound =  Mixer().loadAudiofile("menumove.wav") 
-        self.selectsound =  Mixer().loadAudiofile("menuselect.wav") 
         
+        for sprite in self.menuitems:
+            self.sprites.add(sprite)
+
         self.background = Sprite()
         self.background.setImage(loadImage("pixel.png"))
         self.background.scaleTo((320,240),0,0)
         self.background.fadeTo((0.0,0.0,0.0, 0.7),0,0)
         self.background._layer = 0
-
-        for sprite in self.menuitems:
-            self.sprites.add(sprite)
         
+        self.logo = Logo(170, 50)
+        self.sprites.add(self.logo)        
+        for s in self.logo.subSprites:
+            s.fadeTo((1.0, 0.0, 0.0, 1.0), 0, 5.0)
+            
+
+        self.music =  Mixer().loadAudiofile("menu.wav") 
+        self.movesound =  Mixer().loadAudiofile("menumove.wav") 
+        self.selectsound =  Mixer().loadAudiofile("menuselect.wav") 
+                
    
     def tick(self):
         self.ticker += 1
