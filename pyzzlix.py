@@ -4,7 +4,7 @@ import sys
 sys.path += ['.']
 
 # Import Pygame modules
-import os, pygame
+import os, pygame, pyopenal
 from pygame.locals import *
 
 if not pygame.font: print 'Warning, fonts disabled'
@@ -25,10 +25,12 @@ sceneHandler = SceneHandler()
 renderer = Renderer()
 mixer = Mixer()
 fullscreen = False
+listener = None
 
 def init():
     global sceneHandler
     global renderer
+    global listener
     
     # Initialize renderer
     renderer.init('Pyzzlix', 320, 240, fullscreen)
@@ -51,6 +53,7 @@ def main():
 
     #Initialize Everything
     pygame.init()
+    pyopenal.init(None)
     
     # Initialize custom stuff
     init()

@@ -3,6 +3,7 @@
 #from pygame.locals import *
 
 import swmixer
+import pyopenal
 
 from globals import *
 from singleton import *
@@ -11,9 +12,14 @@ from singleton import *
 sounds = dict()
 
 class Sound():
-    def __init__(self, sound):
+    def __init__(self, _buffer):
         self.channel = None
-        self.sound = sound
+        self.source = pyopenal.Source()
+        self.source.position = (0.0, 0.0, 0.0)
+        self.source.velocity = (0.0, 0.0, 0.0)
+        self.source.buffer  = _buffer
+        self.source.looping = 0
+        self.buffer = _buffer
 
 
 
@@ -26,8 +32,10 @@ class Mixer(Singleton):
         return int((self.samplerate + 0.0) * time)
         
     def init(self):
-        swmixer.init(self.samplerate, chunksize=96, stereo=False)
-        swmixer.start()
+        #swmixer.init(self.samplerate, chunksize=96, stereo=False)
+        #swmixer.start()
+        pyopenal.init(None)
+        self.listener = pyopenal.Listener(22050)
       
     def loadAudiofile(self, filename):
         sound = 0
@@ -35,28 +43,33 @@ class Mixer(Singleton):
             sound = sounds[filename]
         except:            
             fullname = os.path.join('data', filename)
-            sound = Sound(swmixer.Sound(fullname))
+            
+            #sound = Sound(swmixer.Sound(fullname))
+            sound = Sound(pyopenal.WaveBuffer(fullname))
             sounds[filename] = sound 
         return sound
             
         
     def playSound(self, sound):
-        if (sound.channel != None):
-            if (sound.channel.get_position() < sound.sound.get_length()):
-                sound.channel.set_position(0)
-            else:    
-                sound.channel = sound.sound.play(offset=self._timeToSamples(0.0))
-        else:
-            sound.channel = sound.sound.play(offset=self._timeToSamples(0.0))
+        sound.source.play()
+        #if (sound.channel != None):
+        #    if (sound.channel.get_position() < sound.sound.get_length()):
+        #        sound.channel.set_position(0)
+        #    else:    
+        #        sound.channel = sound.sound.play(offset=self._timeToSamples(0.0))
+        #else:
+        #    sound.channel = sound.sound.play(offset=self._timeToSamples(0.0))
+        pass
         
     def playMusic(self, music, fadein=0.01):
-        if (music.channel != None):
-            if (music.channel.get_position() < music.sound.get_length()):
-                music.channel.set_position(0)
-            else:    
-                music.channel = music.sound.play(volume=0.7, fadein=self._timeToSamples(fadein), loops=-1)
-        else:
-            music.channel = music.sound.play(volume=0.7,fadein=self._timeToSamples(fadein), loops=-1)
+        #if (music.channel != None):
+        #    if (music.channel.get_position() < music.sound.get_length()):
+        #        music.channel.set_position(0)
+        #    else:    
+        #        music.channel = music.sound.play(volume=0.7, fadein=self._timeToSamples(fadein), loops=-1)
+        #else:
+        #    music.channel = music.sound.play(volume=0.7,fadein=self._timeToSamples(fadein), loops=-1)
+        pass
             
     def setVolume(self, music, volume, fadein=0.0):  
         if (music.channel != None):

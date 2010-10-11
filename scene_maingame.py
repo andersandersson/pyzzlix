@@ -1,5 +1,5 @@
 from globals import *
-import os, pygame, board
+import os, pygame, board, sys
 from pygame.locals import *
 
 from scene import *
@@ -16,6 +16,7 @@ from scene_highscore import *
 from scene_background import *
 from scenehandler import *
 import random
+import pyopenal
 
 from mixer import *
 
@@ -46,7 +47,7 @@ class Scene_MainGame(Scene):
         self.leveltext = Text(300, 52, self.font, "0")
         self.leveltext._layer = LAYER_GUI
         self.leveltext.setAnchor("right")
-        
+
         #self.music1 =  Mixer().loadAudiofile("music1_1.wav")
         #self.music2 =  Mixer().loadAudiofile("music1_2.wav")
         #self.music3 =  Mixer().loadAudiofile("music1_3.wav")
@@ -287,7 +288,7 @@ class Scene_MainGame(Scene):
         scale_blocks = blocks[:]
         
         def block_scale_done(block):
-            if(scale_blocks): 
+            if(scale_blocks):                                 
                 self.addBlockScore(block)
                 next_block = scale_blocks.pop()
                 next_block.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, delay, block_scale_done)
