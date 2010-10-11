@@ -3,7 +3,7 @@ from globals import *
 #import pygame
 #from pygame.locals import *
 
-import random
+import random, pyopenal
 from sprite import *
 from animation import *
 
@@ -40,6 +40,14 @@ class Block(Sprite):
         self.comboCounter = 0
 
         self.layer = type
+
+        self.b = pyopenal.WaveBuffer("boom.wav")
+        self.s = pyopenal.Source()
+        self.s.position = (0.0, 0.0, 0.0)
+        self.s.velocity = (0.0, 0.0, 0.0)
+        self.s.buffer  = self.b
+        self.s.looping = 0
+        self.s.pitch = 2.0
 
         Sprite.setPos(self, (self.boardx * self.size[0] + self.offset_x, self.boardy * self.size[1] + self.offset_y))
     

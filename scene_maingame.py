@@ -1,5 +1,5 @@
 from globals import *
-import os, pygame, board
+import os, pygame, board, sys
 from pygame.locals import *
 
 from scene import *
@@ -15,6 +15,7 @@ from scene_enter_highscore import *
 from scene_highscore import *
 from scenehandler import *
 import random
+import pyopenal
 
 LAYER_EFFECTS = 4
 LAYER_GUI = 3
@@ -43,7 +44,35 @@ class Scene_MainGame(Scene):
         self.leveltext = Text(300, 52, self.font, "0")
         self.leveltext._layer = LAYER_GUI
         self.leveltext.setAnchor("right")
-        
+
+
+        self.listener = pyopenal.Listener(22050)
+
+        self.b1 = pyopenal.OggVorbisBuffer("music2.ogg")
+        self.b2 = pyopenal.OggVorbisBuffer("music.ogg")
+
+        self.s1 = pyopenal.Source()
+        self.s1.position = (0.0, 0.0, 1.0)
+        self.s1.velocity = (0.0, 0.0, 0.0)
+        self.s1.buffer  = self.b1
+        self.s1.looping = 0
+        self.s1.play()
+
+        self.s2 = pyopenal.Source()
+        self.s2.position = (0.0, 0.0, 10.0)
+        self.s2.velocity = (0.0, 0.0, 0.0)
+        self.s2.buffer  = self.b2
+        self.s2.looping = 0
+        self.s2.play()
+
+        self.s1_gain = 1.0
+        self.s2_gain = 0.0
+        self.s1_dir = 0.01
+        self.s2_dir = -0.01
+    
+        self.s1.gain = self.s1_gain
+        self.s2.gain = self.s2_gain
+                
         ## Fix this mess:
         self.scorebg = Sprite()
         self.scorebg.setImage(loadImage("pixel.png", 1, 1))
@@ -133,6 +162,33 @@ class Scene_MainGame(Scene):
                     self.init_y -= 1
                             
     def tick(self):
+
+        if self.s1_gain > 1.0-abs(self.s1_dir):
+            self.s1_dir *= -1
+
+        if self.s1_gain < abs(self.s1_dir):
+            self.s1_dir *= -1
+
+        if self.s1_gain < abs(self.s1_dir):
+            self.s1_gain = 0.0
+
+        self.s1_gain += self.s1_dir
+
+        if self.s2_gain > 1.0-abs(self.s2_dir):
+            self.s2_dir *= -1
+
+        if self.s2_gain < abs(self.s2_dir):
+            self.s2_dir *= -1
+
+        if self.s2_gain < abs(self.s2_dir):
+            self.s2_gain = 0.0
+
+        self.s2_gain += self.s2_dir
+
+        self.s1.gain = self.s1_gain
+        self.s2.gain = self.s2_gain
+        self.s2.pitch = 1.7
+
         self.ticker += 1
         if not self.board.full():
             if self.init_counter > 0:
@@ -259,7 +315,8 @@ class Scene_MainGame(Scene):
         scale_blocks = blocks[:]
         
         def block_scale_done(block):
-            if(scale_blocks): 
+            if(scale_blocks):                                 
+                block.s.play()
                 self.addBlockScore(block)
                 next_block = scale_blocks.pop()
                 next_block.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, delay, block_scale_done)
