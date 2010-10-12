@@ -131,7 +131,7 @@ class Scene_MainMenu(Scene):
         self.selectsound = None
                 
     def preload(self):        
-        self.music =  Mixer().loadAudiofile("menumusic.ogg") 
+        self.music =  Mixer().loadAudiofile("menumusic.ogg")
         pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
         self.movesound =  Mixer().loadAudiofile("menumove.ogg") 
         pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))

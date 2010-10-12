@@ -28,7 +28,6 @@ class Scene_Preload(Scene):
         self.mainmenuLoading = False
         self.mainmenuLoaded = False
 
-
         self.font = Font("font_normal.png", 8, 8);
 
         self.gameovertext = Text(160, 100, self.font, "")

@@ -45,12 +45,11 @@ class Scene_Splash(Scene):
         self.sprites.add(self.text2)    
         self.sprites.add(self.splash)
         
-        self.fading_out = False
+        self.fading_out = False     
         
     def tick(self):
-        self.sprites.update(self.currentTime)
+        self.sprites.update(self.currentTime) 
     
-
     def show(self):
         print self, "is showing"
         self.fading_out = False
@@ -59,24 +58,21 @@ class Scene_Splash(Scene):
     def presents_logofadein(self, sprite) :   
         self.splash.setCol((0.0, 0.0, 0.0, 0.0))
         self.splash.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 4.0, self.presents_textfadein)
-        print "logofadein1"
+        
     def presents_textfadein(self, sprite):
         self.text1.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 4.0, self.production_logofadein)
-        print "textfadein1"
+        
     def production_logofadein(self, sprite):
         self.text1.fadeTo((1.0, 1.0, 1.0, 0.0), self.currentTime, 4.0)
         self.splash.fadeTo((1.0, 0.0, 0.0, 1.0), self.currentTime, 3.0, self.production_textfadein)
-        print "logofadein2"
+        
     def production_textfadein(self, sprite):
-        print "textfadein2"
         self.text2.fadeTo((1.0, 0.0, 0.0, 1.0), self.currentTime, 4.0, self.donefading)
         
     def donefading(self, sprite):
-        print "done"
         self.text2.fadeTo((1.0, 0.0, 0.0, 1.0), self.currentTime, 4.0, self.fadeout)
         
     def fadeout(self, sprite):
-        print "fadeout"
         self.fading_out = True
         self.text2.fadeTo((0.0, 0.0, 0.0, 1.0), self.currentTime, 4.0)
         self.splash.fadeTo((0.0, 0.0, 0.0, 1.0), self.currentTime, 4.0, self.cleanup)

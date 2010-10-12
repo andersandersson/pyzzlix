@@ -135,8 +135,12 @@ class Scene_MainGame(Scene):
         for m in music:
             self.music.append(music[m])
             
-        self.marker.sound = mixer.loadAudiofile("markermove.ogg")  
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=5))
+        self.marker.movesound = Mixer().loadAudiofile("markermove.ogg")  
+        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
+        self.marker.turnsound = Mixer().loadAudiofile("markerturn.ogg")  
+        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
+        self.marker.failsound = Mixer().loadAudiofile("markerfail.ogg")  
+        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
         
 
                                
@@ -424,10 +428,16 @@ class Scene_MainGame(Scene):
 
             if (key == K_x):
                 if state == KEYDOWN:
-                    self.board.rotate(self.marker.boardx, self.marker.boardy, 1, 2)
+                    if (self.board.rotate(self.marker.boardx, self.marker.boardy, 1, 2)):
+                        self.marker.turn()
+                    else:
+                        self.marker.fail()
             if (key == K_z):
                 if state == KEYDOWN:
-                    self.board.rotate(self.marker.boardx, self.marker.boardy, -1, 2)
+                    if (self.board.rotate(self.marker.boardx, self.marker.boardy, -1, 2)):
+                        self.marker.turn()
+                    else:
+                        self.marker.fail()
             
             if state == KEYDOWN:        
                 if (key == K_1):

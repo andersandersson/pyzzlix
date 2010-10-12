@@ -708,6 +708,8 @@ def quit():
         gmicstream.close()
     gpyaudio.terminate()
     glock.release()
+    
+    pygame.mixer.quit()
 
 def set_chunksize(size=1024):
     """Set the audio chunk size for each frame of audio output

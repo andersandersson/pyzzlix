@@ -26,8 +26,9 @@ class Marker(Sprite):
         
         self.setPos((self.boardx * self.scale_x + self.offset_x, self.boardy * self.scale_y + self.offset_y))
         
+        self.movesound = None
+        self.turnsound = None
         
-        self.sound = None
         
     def moveToBoardCoord(self, boardx, boardy, currentTime):
         self.boardx = boardx
@@ -35,7 +36,12 @@ class Marker(Sprite):
         self.moveTo((self.boardx * self.scale_x + self.offset_x, self.boardy * self.scale_y + self.offset_y), currentTime, 0.0)
 
     def move(self, dx, dy, currentTime):
-        mixer.playSound(self.sound)
+        mixer.playSound(self.movesound)
         self.moveToBoardCoord(self.boardx + dx, self.boardy + dy, currentTime)
+              
+    def turn(self):
+        mixer.playSound(self.turnsound)
         
-            
+    def fail(self):
+        mixer.playSound(self.failsound)
+        
