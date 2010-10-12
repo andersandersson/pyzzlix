@@ -39,10 +39,10 @@ class Scene_Help(Scene):
         rotate(None)
 
         def scale_to(sprite):
-            self.help.scaleTo((1.1,1.1),self.currentTime, 2.0, scale_from)
+            self.help.scaleTo((1.05,1.05),self.currentTime, 4.0, scale_from)
             
         def scale_from(sprite):
-            self.help.scaleTo((0.9,0.9),self.currentTime, 2.0, scale_to)
+            self.help.scaleTo((0.95,0.95),self.currentTime, 4.0, scale_to)
 
         self.help = Sprite()
         self.help.setImage(loadImage("help.png"))
