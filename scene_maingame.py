@@ -93,6 +93,9 @@ class Scene_MainGame(Scene):
        
         self.usable_blocks = []
         self.all_blocks = [0, 1, 2, 3, 4, 5, 6]
+        self.levelMusic = {}
+        self.allMusic = []
+        self.music_states = []
         
         self.resetGame()
     
@@ -100,6 +103,17 @@ class Scene_MainGame(Scene):
         lock = thread.allocate_lock()
 
         load_list = ["music1_chord.ogg", "music1_hh.ogg", "music1_bass.ogg","music1_kick.ogg","music1_lead2.ogg", "music1_lead.ogg"]
+        
+        self.allMusic = range(0, len(load_list))
+        self.music_states = [0]*len(load_list)
+        
+        self.levelMusic[1] = [1,2]
+        self.levelMusic[3] = [0,1,2]
+        self.levelMusic[6] = [0,1,2,3]
+        self.levelMusic[9] = [1,2,3,5]
+        self.levelMusic[12] = [1,2,3,4,5]
+        self.levelMusic[15] = [0,1,2,3,4,5]
+        
         music = {}
         count = [0]
         max_count = 0
@@ -144,7 +158,8 @@ class Scene_MainGame(Scene):
         print self, "is showing"
         for mus in self.music:
             Mixer().playMusic(mus)
-
+            Mixer().setVolume(mus, 0.0, 0.0)
+        self.playMusicForLevel()
         
     def hide(self):
         print self, "is hiding"
@@ -165,6 +180,8 @@ class Scene_MainGame(Scene):
         self.init_counter = BOARD_WIDTH*BOARD_HEIGHT
         self.sprites.remove_sprites_of_layer(LAYER_BLOCKS)
         self.blocks.empty()
+        
+        self.playMusicForLevel()
 
     def showGameOver(self):
         game_over = Scene_GameOver()
@@ -175,6 +192,23 @@ class Scene_MainGame(Scene):
         enter_highscore.setHighscore(self.score, self.level)
         SceneHandler().pushScene(enter_highscore)
 
+    def playMusicForLevel(self):
+        close = self.allMusic[:]
+        to_play = []
+        for i in self.levelMusic:
+            if self.level >= i:
+                to_play = self.levelMusic[i]
+
+        for key in to_play:
+            if key in close:
+                close.remove(key)
+                Mixer().setVolume(self.music[key], 1.0, 3.1)
+                self.music_states[key] = 1
+
+        for key in close:
+            Mixer().setVolume(self.music[key], 0.0, 3.1)
+            self.music_states[key] = 0   
+        
     def fillZigZag(self):
         for i in range(0,4):
             if self.init_counter > 0:
@@ -362,6 +396,7 @@ class Scene_MainGame(Scene):
         text.scaleTo((2.0, 2.0), self.currentTime, 0.5, text_scale_done)
 
         self.sprites.add(text)
+        self.playMusicForLevel()
 
     def handleEvent(self, event):
         if event.type == EVENT_CIRCLE_FOUND:
@@ -386,21 +421,6 @@ class Scene_MainGame(Scene):
             state = event.type
             key = event.key
 
-            if key == K_p:
-                print self.board
-
-            if key == K_r:
-                self.resetGame()
-                
-            if key == K_g:
-                self.showGameOver()
-                
-            if key == K_n:
-                self.newLevel()
-
-            if key == K_h:
-                self.showEnterHighscore()
-                
             if (key == K_RIGHT):
                 if state == KEYDOWN:
                     if (self.marker.boardx < self.board.width - 2):
@@ -426,20 +446,50 @@ class Scene_MainGame(Scene):
                     self.board.rotate(self.marker.boardx, self.marker.boardy, -1, 2)
             
             if state == KEYDOWN:        
-                if (key == K_1):
-                    Mixer().setVolume(self.music[0], 1.0, 3.1)
-                if (key == K_2):
-                    Mixer().setVolume(self.music[1], 1.0, 3.1) 
-                if (key == K_3):
-                    Mixer().setVolume(self.music[2], 1.0, 3.1) 
-                if (key == K_4):
-                    Mixer().setVolume(self.music[3], 1.0, 3.1) 
-                if (key == K_5):
-                    Mixer().setVolume(self.music[4], 1.0, 3.1)  
-                if (key == K_6):
-                    for mus in self.music:
-                        Mixer().setVolume(mus, 0.0, 2.0)
+                if key == K_p:
+                    print self.board
+
+                if key == K_r:
+                    self.resetGame()
                     
+                if key == K_g:
+                    self.showGameOver()
+                    
+                if key == K_n:
+                    self.newLevel()
+
+                if key == K_h:
+                    self.showEnterHighscore()
+
+                num_key = 0
+                if (key == K_1):
+                    num_key = 1
+                if (key == K_2):
+                    num_key = 2
+                if (key == K_3):
+                    num_key = 3
+                if (key == K_4):
+                    num_key = 4
+                if (key == K_5):
+                    num_key = 5
+                if (key == K_6):
+                    num_key = 6
+                if (key == K_7):
+                    num_key = 7
+                if (key == K_8):
+                    num_key = 8
+                if (key == K_9):
+                    num_key = 9
+                if (key == K_0):
+                    num_key = 10
+                 
+                if num_key > 0 and num_key <= len(self.music_states):
+                    if self.music_states[num_key-1] == 1:
+                        Mixer().setVolume(self.music[num_key-1], 0.0, 3.1)
+                        self.music_states[num_key-1] = 0
+                    else:  
+                        Mixer().setVolume(self.music[num_key-1], 1.0, 3.1)
+                        self.music_states[num_key-1] = 1
         
                 
 
