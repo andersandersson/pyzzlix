@@ -125,13 +125,15 @@ class Scene_MainMenu(Scene):
         self.logo = Logo(170, 50)
         self.logo.setTextColor((1.0, 0.0, 0.0, 1.0), 0, 1.0)
         self.sprites.add(self.logo)        
-     
-
-        self.music =  Mixer().loadAudiofile("menuselect.wav") 
-        self.movesound =  Mixer().loadAudiofile("menumove.wav") 
-        self.selectsound =  Mixer().loadAudiofile("menuselect.wav") 
                 
-   
+    def preload(self):        
+        self.music =  Mixer().loadAudiofile("menumusic.ogg") 
+        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
+        self.movesound =  Mixer().loadAudiofile("menumove.ogg") 
+        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
+        self.selectsound =  Mixer().loadAudiofile("menuselect.ogg") 
+        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
+        
     def tick(self):
         self.ticker += 1
         self.sprites.update(self.currentTime)
@@ -169,6 +171,13 @@ class Scene_MainMenu(Scene):
                 self.menuitems[self.menufocus].unfocus(self.currentTime)
                 self.menuitems[self.newmenufocus].focus(self.currentTime)
                 self.menufocus = self.newmenufocus
+
+            if (key == K_1):
+                Mixer().setVolume(self.music, 0.0, 0.0)
+            
+            if (key == K_2):
+                Mixer().setVolume(self.music, 1.0, 0.0)
+            
 
     def menu_start(self):
         SceneHandler().removeScene(self)

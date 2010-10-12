@@ -14,12 +14,18 @@ class Scene(Singleton):
        
         self.sprites = pygame.sprite.LayeredUpdates()
         
+    def preload(self):
+        pass
+        
     def updateTimer(self, deltaTime):    
         self.currentTime += deltaTime
         self.renderTime = self.currentTime
 
     def handleEvent(self, event):
         return False
+
+    def preload(self):
+        pass
         
     def hide(self):
         #print "Hide not implemented!"

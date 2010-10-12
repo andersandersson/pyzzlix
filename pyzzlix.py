@@ -17,6 +17,7 @@ from renderer import *
 from scene_maingame import *
 from scene_background import *
 from scene_mainmenu import *
+from scene_preload import *
 from scene_splash import *
 from font import *
 
@@ -32,14 +33,15 @@ def init():
     global sceneHandler
     global renderer
     global listener
+
+    pygame.init()
     
     # Initialize renderer
     renderer.init('Pyzzlix', 320, 240, fullscreen)
     mixer.init()
     
     # Initialize and populate scene stack
-    sceneHandler.pushScene(Scene_Splash())
-    
+    sceneHandler.pushScene(Scene_Preload())    
 
 def cleanup():
     global renderer
@@ -52,9 +54,6 @@ def cleanup():
 def main():
     global fullscreen
 
-    #Initialize Everything
-    pygame.init()
-    
     # Initialize custom stuff
     init()
             
