@@ -14,6 +14,9 @@ Released under the LGPL
 
 """
 
+"""
+    Severely changed by joel lennartsson, 2010
+"""
 
 import time
 import wave
@@ -91,34 +94,54 @@ class _SoundSourceStream:
         self.pos = pos
         self.fileobj.seek_time(pos * 1000 / gsamplerate / 2)
     def get_samples(self, sz):
-        szb = sz * 2 # /for 16 bit
+        szb = sz * 2 # for 16 bit
+
+#        while len(self.buf) < szb:
+#            s = self.fileobj.read()
+#            if s is None or s == '': break
+#            self.buf += s[:]
+#        z = numpy.fromstring(self.buf[:szb], dtype=numpy.int16)
+#        self.pos += sz 
+#        if len(z) < sz:
+#            # In this case we ran out of stream data
+#            # append zeros (don't try to be sample accurate for streams)
+#            z = numpy.append(z, numpy.zeros(sz - len(z), numpy.int16))
+#            if self.loops != 0:
+#                self.loops -= 1
+#                self.pos = 0
+#                self.fileobj.seek_time(0)
+#                self.buf = ''
+#            else:
+#                self.done = True
+#        else:
+#            # remove head of buffer
+#            self.buf = self.buf[szb:]
+
 
         while len(self.buf) < szb:
             s = self.fileobj.read()
-            if s is None or s == '': break
-            self.buf += s[:]
+            # If buffer ends before chunk is filled then
+            # restart the buffer if loops is > 0
+            if s is None or s == '':
+                if self.loops != 0:
+                    print "RESTART!"
+                    sys.stdout.flush()
+                 
+                    self.loops -= 1
+                    self.pos = (len(self.buf) - szb) / 2 # Place pos "before" start
+                    self.fileobj.seek_time(0)
+                else:
+                    self.done = True
+                    break
+            else:
+                self.buf += s[:]
 
         z = numpy.fromstring(self.buf[:szb], dtype=numpy.int16)
-        self.pos += sz
-        
-        if len(z) < sz:
-            print "len(z):", len(z), "sz:", sz
-            sys.stdout.flush()
-                 
-            # In this case we ran out of stream data
-            # append zeros (don't try to be sample accurate for streams)
+        self.pos += sz       
+        if (self.done):
+            # In this case we ran out of stream data, and don't want to loop,
+            # append zeros
             z = numpy.append(z, numpy.zeros(sz - len(z), numpy.int16))
-            
-            print "newlen(z):", len(z), "sz:", sz
-            sys.stdout.flush()
-            
-            if self.loops != 0:
-                self.loops -= 1
-                self.pos = 0
-                self.fileobj.seek_time(0)
-                self.buf = ''
-            else:
-                self.done = True
         else:
             # remove head of buffer
             self.buf = self.buf[szb:]
@@ -195,33 +218,20 @@ class Channel:
         self.set_volume(0.0, fadetime=time)
         glock.release()
     def _get_samples(self, sz):
-    
-        print "---begin getsample!"
-        sys.stdout.flush() 
-    
         if not self.active: return None
         oldpos = self.src.pos
 
         e = calc_vol(self.src.pos, self.env)
         v = calc_vol(self.src.pos, self.vol)
-        
-        print "getting samples"
-        sys.stdout.flush() 
-        
+
         z = self.src.get_samples(sz) 
-        
-        print "cheking done, is:", self.src.done
-        sys.stdout.flush() 
-        
+
         if self.src.done: 
             self.done = True
         elif oldpos > self.src.pos:
             # If sound has looped, reset any master volume information
             self.vol = [[0, v]]
             
-        print "---end getsample!"
-        sys.stdout.flush()  
- 
         return z * (e * v)
 
 
@@ -506,7 +516,7 @@ def _create_stream(filename, checks):
     def str_seek_time(t):
         if t == 0: 
             stream.file.seek(0, 0)
-            stream.demuxer.reset()
+            #stream.demuxer.reset()
         else:
             assert(False) # unsupported
     
