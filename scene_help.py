@@ -24,18 +24,39 @@ class Scene_Help(Scene):
         self.background.scaleTo((320,240),0,0)
         self.background.fadeTo((0.0,0.0,0.0, 0.8),0,0)
         self.background._layer = 0
+        
+        self.anders = Sprite()
+        self.anders.setImage(loadImage("anders.png"))
+        self.anders.center = (30,40)
+        self.anders.setPos((162,96))
+        self.anders._layer = 3
+
+        self.angle = 360.0
+        def rotate(sprite):
+            self.anders.rotateTo(self.angle, self.currentTime, 1.0, rotate)
+            self.angle += 360.0
+            
+        rotate(None)
+
+        def scale_to(sprite):
+            self.help.scaleTo((1.1,1.1),self.currentTime, 2.0, scale_from)
+            
+        def scale_from(sprite):
+            self.help.scaleTo((0.9,0.9),self.currentTime, 2.0, scale_to)
 
         self.help = Sprite()
         self.help.setImage(loadImage("help.png"))
+        scale_from(None)
         self.help._layer = 1
 
         self.sprites.add(self.background)
         self.sprites.add(self.help)
+        self.sprites.add(self.anders)
 
         self.updateBlocker = True
         
     def tick(self):
-        pass        
+        self.sprites.update(self.currentTime)        
         
     def show(self):
         print self, "is showing"

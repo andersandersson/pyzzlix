@@ -24,6 +24,7 @@ class Sprite(pygame.sprite.Sprite):
         self._rot_lasttime = 0.0
         self._rot_ref = 0.0
         self._rot_reftime = 0.0
+        self._rot_callbacks = []
         self.col = (1.0, 1.0, 1.0, 1.0)
         self._col_lasttime = 0
         self._col_ref = (1.0, 1.0, 1.0, 1.0)
@@ -107,6 +108,14 @@ class Sprite(pygame.sprite.Sprite):
             return self._rot_ref - (self._rot_ref - self.rot) * factorT
 
     def updateRot(self, currentTime):
+        if (self._rot_reftime <= currentTime):                    
+            if len(self._rot_callbacks):
+                callbacks = self._rot_callbacks 
+                self._rot_callbacks = []
+                 
+                for callback in callbacks:
+                    callback(self)
+
         self.rot = self.calcRot(currentTime)
         self._rot_lasttime = currentTime
 
@@ -137,10 +146,13 @@ class Sprite(pygame.sprite.Sprite):
         self.pos = pos
         self._pos_reftime = 0
 
-    def rotateTo(self, rot, currentTime, duration):
+    def rotateTo(self, rot, currentTime, duration, callback=None):
         self.updateRot(currentTime)
         self._rot_ref = rot
         self._rot_reftime = currentTime + duration
+        
+        if callback:
+            self._rot_callbacks.append(callback)
         
     def setRot(self, rot):
         self._rot_ref = rot
