@@ -684,9 +684,6 @@ def init(samplerate=44100, chunksize=1024, stereo=True, microphone=False, input_
         output_device_index = output_device_index,
         output = True)
     ginit = True
-    
-    pygame.mixer.quit()
-    pygame.mixer.init(frequency=samplerate, size=-16, channels=gchannels)
 
 def start():
     """Start separate mixing thread"""

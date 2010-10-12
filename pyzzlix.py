@@ -34,6 +34,7 @@ def init():
     global renderer
     global listener
 
+    pygame.mixer.pre_init(frequency=44100, size=-16, channels=2)
     pygame.init()
     
     # Initialize renderer
