@@ -50,7 +50,7 @@ class Scene_Highscore(Scene):
 
         fp = open("pyzzlix.dat", "r")
 
-        string = zlib.decompress(fp.read())
+        string = fp.read()
 
         if string:
             hs = json.loads(string)
@@ -66,7 +66,7 @@ class Scene_Highscore(Scene):
             data.append([score[0], score[1], score[2]])
 
         fp = open("pyzzlix.dat", "w")
-        fp.write(zlib.compress(json.dumps(data)))
+        fp.write(json.dumps(data))
         fp.close()
             
     def isNewHighscore(self, highscore):

@@ -50,7 +50,7 @@ class Scene_MainGame(Scene):
         self.leveltext._layer = LAYER_GUI
         self.leveltext.setAnchor("right")
         
-        self.music =  [None] * 6
+        self.music =  []
 
         ### Fix this mess:
         self.scorebg = Sprite()
