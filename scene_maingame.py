@@ -16,6 +16,9 @@ from scene_highscore import *
 from scene_background import *
 from scenehandler import *
 import random
+import thread
+from time import sleep
+import sys
 
 from mixer import *
 
@@ -47,24 +50,16 @@ class Scene_MainGame(Scene):
         self.leveltext._layer = LAYER_GUI
         self.leveltext.setAnchor("right")
         
-        #self.music1 =  Mixer().loadAudiofile("music1_1.ogg")
-        #self.music2 =  Mixer().loadAudiofile("music1_2.ogg")
-        #self.music3 =  Mixer().loadAudiofile("music1_3.ogg")
-        #self.music4 =  Mixer().loadAudiofile("music1_4.ogg")
-        #self.music5 =  Mixer().loadAudiofile("music1_5.ogg")
-        
-        self.music1 =  Mixer().loadAudiofile("menuselect.wav")
-        self.music2 =  Mixer().loadAudiofile("menuselect.wav")
-        self.music3 =  Mixer().loadAudiofile("menuselect.wav")
-        self.music4 =  Mixer().loadAudiofile("menuselect.wav")
-        self.music5 =  Mixer().loadAudiofile("menuselect.wav")
-        ## Fix this mess:
+        self.music =  []
+
+        ### Fix this mess:
         self.scorebg = Sprite()
         self.scorebg.setImage(loadImage("pixel.png", 1, 1))
         self.scorebg.setPos((208.0, 16.0))
         self.scorebg.setScale((96.0, 56.0))
         self.scorebg.setCol((0.0, 0.0, 0.0, 0.3))
         self.sprites.add(self.scorebg)
+
         
         self.hourbg = Sprite()
         self.hourbg.setImage(loadImage("pixel.png", 1, 1))
@@ -73,7 +68,6 @@ class Scene_MainGame(Scene):
         self.hourbg.setCol((0.0, 0.0, 0.0, 0.3))
         self.sprites.add(self.hourbg)
         
-        self.score = 0
         self.marker = Marker(2,14)
         self.marker._layer = LAYER_MARKER
         self.hourglass = Hourglass()
@@ -85,6 +79,8 @@ class Scene_MainGame(Scene):
         self.sprites.add(self.levellabeltext)
         self.sprites.add(self.background)
         self.sprites.add(self.marker)
+        
+        self.score = 0
         self.ticker = 20
         self.init_counter = 0
         self.init_x = 0
@@ -98,29 +94,60 @@ class Scene_MainGame(Scene):
         self.usable_blocks = []
         self.all_blocks = [0, 1, 2, 3, 4, 5, 6]
         
-        
         self.resetGame()
+    
+    def preload(self):
+        lock = thread.allocate_lock()
+
+        load_list = ["music1_chord.ogg", "music1_hh.ogg", "music1_bass.ogg","music1_kick.ogg","music1_lead2.ogg", "music1_lead.ogg"]
+        music = {}
+        count = [0]
+        max_count = 0
         
+        def load(index, list, count):
+            for filename in list:
+                file = Mixer().loadAudiofile(filename)
+                lock.acquire()
+                music[index] = file
+                index += 1
+                lock.release()
+                pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=10))
+                sleep(0.1)
+            
+            lock.acquire()
+            count[0] += 1
+            lock.release()
+        
+        num_threads = 2
+        part_size = len(load_list)/num_threads
+        for i in range(0,num_threads):
+            if i < num_threads-1:
+                part_list = load_list[i*part_size:(i+1)*part_size]
+            else:
+                part_list = load_list[i*part_size:]
+            
+            thread.start_new_thread(load, (i*part_size, part_list, count))        
+            max_count += 1
+        
+        while count[0] < max_count:
+            sleep(0.1)
+        
+        for m in music:
+            self.music.append(music[m])
+
+                               
     def run(self):
         SceneHandler().pushScene(Scene_Background())
         SceneHandler().pushScene(self)
             
     def show(self):
         print self, "is showing"
-        Mixer().playMusic(self.music1)
-        Mixer().playMusic(self.music2, 0.0)
-        Mixer().playMusic(self.music3, 0.0)
-        Mixer().playMusic(self.music4, 0.0)
-        Mixer().playMusic(self.music5, 0.0)
+        for mus in self.music:
+            Mixer().playMusic(mus)
 
         
     def hide(self):
         print self, "is hiding"
-        Mixer().stopMusic(self.music1) 
-        Mixer().stopMusic(self.music2) 
-        Mixer().stopMusic(self.music3) 
-        Mixer().stopMusic(self.music4) 
-        Mixer().stopMusic(self.music5) 
 
     def resetGame(self):
         self.level = 1
@@ -337,7 +364,7 @@ class Scene_MainGame(Scene):
         self.sprites.add(text)
 
     def handleEvent(self, event):
-        if event.type == board.EVENT_CIRCLE_FOUND:
+        if event.type == EVENT_CIRCLE_FOUND:
             if event.fall_blocks:
                 self.addCircleScore(event.fall_blocks, True)
                 self.removeBlocks(event.fall_blocks)
@@ -400,18 +427,18 @@ class Scene_MainGame(Scene):
             
             if state == KEYDOWN:        
                 if (key == K_1):
-                    Mixer().setVolume(self.music2, 1.0, 3.1)
+                    Mixer().setVolume(self.music[0], 1.0, 3.1)
                 if (key == K_2):
-                    Mixer().setVolume(self.music3, 1.0, 3.1) 
+                    Mixer().setVolume(self.music[1], 1.0, 3.1) 
                 if (key == K_3):
-                    Mixer().setVolume(self.music4, 1.0, 3.1) 
+                    Mixer().setVolume(self.music[2], 1.0, 3.1) 
                 if (key == K_4):
-                    Mixer().setVolume(self.music5, 1.0, 3.1) 
+                    Mixer().setVolume(self.music[3], 1.0, 3.1) 
                 if (key == K_5):
-                    Mixer().setVolume(self.music2, 0.0, 5.0)  
-                    Mixer().setVolume(self.music3, 0.0, 5.0)
-                    Mixer().setVolume(self.music4, 0.0, 5.0)
-                    Mixer().setVolume(self.music5, 0.0, 5.0)
+                    Mixer().setVolume(self.music[4], 1.0, 3.1)  
+                if (key == K_6):
+                    for mus in self.music:
+                        Mixer().setVolume(mus, 0.0, 2.0)
                     
         
                 

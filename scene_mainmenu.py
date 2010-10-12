@@ -98,13 +98,15 @@ class Scene_MainMenu(Scene):
         self.sprites.add(self.logo)        
         for s in self.logo.subSprites:
             s.fadeTo((1.0, 0.0, 0.0, 1.0), 0, 5.0)
-            
-
-        self.music =  Mixer().loadAudiofile("menu.wav") 
-        self.movesound =  Mixer().loadAudiofile("menumove.wav") 
-        self.selectsound =  Mixer().loadAudiofile("menuselect.wav") 
                 
-   
+    def preload(self):        
+        self.music =  Mixer().loadAudiofile("menumusic.ogg") 
+        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
+        self.movesound =  Mixer().loadAudiofile("menumove.ogg") 
+        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
+        self.selectsound =  Mixer().loadAudiofile("menuselect.ogg") 
+        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
+        
     def tick(self):
         self.ticker += 1
 
@@ -143,10 +145,9 @@ class Scene_MainMenu(Scene):
                 self.menufocus = self.newmenufocus
                 
             if (key == K_1):
-                print "PUNG"
                 Mixer().setVolume(self.music, 0.0, 0.0)
+            
             if (key == K_2):
-                print "PUNG"
                 Mixer().setVolume(self.music, 1.0, 0.0)
             
     def menu_start(self):
