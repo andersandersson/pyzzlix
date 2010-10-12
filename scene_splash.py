@@ -63,10 +63,10 @@ class Scene_Splash(Scene):
         self.text1.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 4.0, self.production_logofadein)
         
     def production_logofadein(self, sprite):
-        self.text1.fadeTo((1.0, 1.0, 1.0, 0.0), self.currentTime, 4.0)
         self.splash.fadeTo((1.0, 0.0, 0.0, 1.0), self.currentTime, 3.0, self.production_textfadein)
         
     def production_textfadein(self, sprite):
+        self.text1.fadeTo((1.0, 1.0, 1.0, 0.0), self.currentTime, 2.0)
         self.text2.fadeTo((1.0, 0.0, 0.0, 1.0), self.currentTime, 4.0, self.donefading)
         
     def donefading(self, sprite):
