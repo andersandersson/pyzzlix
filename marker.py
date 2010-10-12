@@ -27,8 +27,8 @@ class Marker(Sprite):
         self.setPos((self.boardx * self.scale_x + self.offset_x, self.boardy * self.scale_y + self.offset_y))
         
         
-        self.sound = mixer.loadAudiofile("markermove.wav")
-
+        self.sound = None
+        
     def moveToBoardCoord(self, boardx, boardy, currentTime):
         self.boardx = boardx
         self.boardy = boardy

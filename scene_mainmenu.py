@@ -124,7 +124,11 @@ class Scene_MainMenu(Scene):
         
         self.logo = Logo(170, 50)
         self.logo.setTextColor((1.0, 0.0, 0.0, 1.0), 0, 1.0)
-        self.sprites.add(self.logo)        
+        self.sprites.add(self.logo)    
+
+        self.music = None
+        self.movesound = None
+        self.selectsound = None
                 
     def preload(self):        
         self.music =  Mixer().loadAudiofile("menumusic.ogg") 

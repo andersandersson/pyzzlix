@@ -61,23 +61,25 @@ class Scene_Splash(Scene):
         self.splash.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 4.0, self.presents_textfadein)
         print "logofadein1"
     def presents_textfadein(self, sprite):
-        self.text1.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 2.0, self.production_logofadein)
+        self.text1.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 4.0, self.production_logofadein)
         print "textfadein1"
     def production_logofadein(self, sprite):
-        self.text1.fadeTo((1.0, 1.0, 1.0, 0.0), self.currentTime, 4.0, self.production_logofadein)
-        self.splash.fadeTo((1.0, 0.0, 0.0, 1.0), self.currentTime, 2.0, self.production_textfadein)
+        self.text1.fadeTo((1.0, 1.0, 1.0, 0.0), self.currentTime, 4.0)
+        self.splash.fadeTo((1.0, 0.0, 0.0, 1.0), self.currentTime, 3.0, self.production_textfadein)
         print "logofadein2"
     def production_textfadein(self, sprite):
         print "textfadein2"
-        self.text2.fadeTo((1.0, 0.0, 0.0, 1.0), self.currentTime, 4.0, self.done)
+        self.text2.fadeTo((1.0, 0.0, 0.0, 1.0), self.currentTime, 4.0, self.donefading)
         
-    def done(self, sprite):  
-        self.text2.fadeTo((1.0, 0.0, 0.0, 1.0), self.currentTime, 2.0, self.done)
+    def donefading(self, sprite):
+        print "done"
+        self.text2.fadeTo((1.0, 0.0, 0.0, 1.0), self.currentTime, 4.0, self.fadeout)
         
     def fadeout(self, sprite):
+        print "fadeout"
         self.fading_out = True
-        self.text2.fadeTo((0.0, 0.0, 0.0, 1.0), self.currentTime, 2.0)
-        self.splash.fadeTo((0.0, 0.0, 0.0, 1.0), self.currentTime, 2.0, self.cleanup)
+        self.text2.fadeTo((0.0, 0.0, 0.0, 1.0), self.currentTime, 4.0)
+        self.splash.fadeTo((0.0, 0.0, 0.0, 1.0), self.currentTime, 4.0, self.cleanup)
     
     def cleanup(self, sprite):
         SceneHandler().removeScene(self)

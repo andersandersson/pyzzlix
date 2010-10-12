@@ -54,6 +54,8 @@ class Mixer(Singleton):
                  
 
     def playSound(self, sound):
+        if (sound == None):
+            return
         if (sound.channel != None):
             if (sound.channel.get_position() < sound.sound.get_length()):
                 sound.channel.set_position(0)
@@ -64,6 +66,8 @@ class Mixer(Singleton):
         pass
         
     def playMusic(self, music, volume=1.0, fadein=0.01):
+        if (music == None):
+            return
         if (volume > 1.0):
             volume = 1.0
         if (music.channel != None):
@@ -76,18 +80,24 @@ class Mixer(Singleton):
 
             
     def setVolume(self, music, volume, fadein=0.0):  
+        if (music == None):
+            return
         if (volume > 1.0):
             volume = 1.0
         if (music.channel != None):
             music.channel.set_volume(volume, fadetime=self._timeToSamples(fadein))
 
     def stopMusic(self, music):
+        if (music == None):
+            return
         if (music.channel != None):
             music.channel.stop()
             music.channel = None
         
         
     def stopSound(self, sound):
+        if (sound == None):
+            return
         if (sound.channel != None):
             sound.channel.stop()
             sound.channel = None

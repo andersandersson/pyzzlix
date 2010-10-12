@@ -14,6 +14,9 @@ Released under the LGPL
 
 """
 
+"""
+    Modified by Joel Lennartsson and Anders Andersson, 2010
+"""
 
 import time
 import wave

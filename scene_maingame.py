@@ -50,7 +50,7 @@ class Scene_MainGame(Scene):
         self.leveltext._layer = LAYER_GUI
         self.leveltext.setAnchor("right")
         
-        self.music =  []
+        self.music =  [None] * 6
 
         ### Fix this mess:
         self.scorebg = Sprite()
@@ -131,9 +131,13 @@ class Scene_MainGame(Scene):
         
         while count[0] < max_count:
             sleep(0.1)
-        
+            
         for m in music:
             self.music.append(music[m])
+            
+        self.marker.sound = mixer.loadAudiofile("markermove.ogg")  
+        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=5))
+        
 
                                
     def run(self):
