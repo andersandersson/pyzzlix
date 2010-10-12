@@ -14,6 +14,7 @@ import random
 
 from scene_maingame import *
 from scene_highscore import *
+from scene_mainmenu import *
 
 from menuitem import *
 
@@ -26,7 +27,7 @@ class Scene_Splash(Scene):
         self.splash = Sprite()
         self.splash.setImage(loadImage("splash.png"))
         self.splash.setPos((160, 80))
-        self.splash.center = (128, 128)
+        self.splash.center = (64, 64)
         self.splash._layer = 0
         
         self.font = Font("font_clean.png", 4, 8)
@@ -44,12 +45,15 @@ class Scene_Splash(Scene):
         self.sprites.add(self.text2)    
         self.sprites.add(self.splash)
         
+        self.fading_out = False
+        
     def tick(self):
         self.sprites.update(self.currentTime)
     
 
     def show(self):
         print self, "is showing"
+        self.fading_out = False
         self.presents_logofadein(None)
         
     def presents_logofadein(self, sprite) :   
@@ -67,19 +71,28 @@ class Scene_Splash(Scene):
         print "textfadein2"
         self.text2.fadeTo((1.0, 0.0, 0.0, 1.0), self.currentTime, 4.0, self.done)
         
-    def done(self):  
-        self.done = True
-  
+    def done(self, sprite):  
+        self.text2.fadeTo((1.0, 0.0, 0.0, 1.0), self.currentTime, 2.0, self.done)
+        
+    def fadeout(self, sprite):
+        self.fading_out = True
+        self.text2.fadeTo((0.0, 0.0, 0.0, 1.0), self.currentTime, 2.0)
+        self.splash.fadeTo((0.0, 0.0, 0.0, 1.0), self.currentTime, 2.0, self.cleanup)
+    
+    def cleanup(self, sprite):
+        SceneHandler().removeScene(self)
+        SceneHandler().pushScene(Scene_MainMenu())
+    
     def hide(self):
         print self, "is hiding"
         
     def handleEvent(self, event):
         if event.type == KEYDOWN:
-            key = event.k
+            key = event.key
             
             if (key == K_RETURN):
-                if (self.done):
-                    self.splash.fadeTo((1.0, 0.0, 0.0, 0.0), 0, 5.0)
+                if (self.fading_out == False):
+                    self.cleanup(None)
 
         return True        
        
