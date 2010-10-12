@@ -166,17 +166,14 @@ class Scene_MainMenu(Scene):
                 self.menuitems[self.menufocus].unfocus(self.currentTime)
                 self.menuitems[self.newmenufocus].focus(self.currentTime)
                 self.menufocus = self.newmenufocus
-<<<<<<< HEAD
-                
+
             if (key == K_1):
                 Mixer().setVolume(self.music, 0.0, 0.0)
             
             if (key == K_2):
                 Mixer().setVolume(self.music, 1.0, 0.0)
             
-=======
 
->>>>>>> 09c259fb29791417402c13e4d2bbdc281ecdaa70
     def menu_start(self):
         SceneHandler().removeScene(self)
         Scene_MainGame().run()
