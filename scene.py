@@ -10,7 +10,6 @@ class Scene(Singleton):
         self.done = False
         self.renderBlocker = False
         self.updateBlocker = False
-        self.focusable = True
         self.softblend = False
        
         self.sprites = pygame.sprite.LayeredUpdates()
@@ -28,12 +27,6 @@ class Scene(Singleton):
     def preload(self):
         pass
         
-    def focus(self):
-        #print "Focus not implemented!"
-        pass
-    def unfocus(self):
-        #print "Unfocus not implemented!"
-        pass
     def hide(self):
         #print "Hide not implemented!"
         pass
@@ -42,10 +35,7 @@ class Scene(Singleton):
         pass
     def isDone(self):
         return self.done == True
-        
-    def canBeFocused(self):    
-        return self.focuable == True
-        
+
     def isBlockingUpdates(self):
         return self.updateBlocker == True
     
