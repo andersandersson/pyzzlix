@@ -156,6 +156,9 @@ class Scene_MainGame(Scene):
         self.marker.failsound = Mixer().loadAudiofile("markerfail.ogg")  
         pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
         
+        self.removeblocksound = Mixer().loadAudiofile("removeblock.ogg")  
+        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
+        
 
                                
     def run(self):
@@ -359,6 +362,7 @@ class Scene_MainGame(Scene):
         
         def block_scale_done(block):
             if(scale_blocks): 
+                Mixer().playSound(self.removeblocksound)
                 self.addBlockScore(block)
                 next_block = scale_blocks.pop()
                 next_block.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, delay, block_scale_done)
