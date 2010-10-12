@@ -22,8 +22,7 @@ from scene_dialogyesno import *
 from menuitem import *
 
 class MenuItem(Text):
-    def __init__(self, x, y, label, callfunc):
-        font = Font("font_fat.png", 8, 8);
+    def __init__(self, x, y, font, label, callfunc):
         Text.__init__(self, x, y, font, label)
         self.callfunc = callfunc
         self._layer = 2
@@ -95,15 +94,21 @@ class Logo(Sprite):
 class Scene_MainMenu(Scene):
     def _runOnce(self):
         Scene._runOnce(self)
+        self.menufont = Font("font_fat.png", 8, 8)
+        self.textfont = Font("font_clean.png", 4, 8)
         
         self.renderBlocker = True
         self.updateBlocker = True
+        
+        self.crtext = Text(160, 220, self.textfont, "Copyright Anders Andersson and Joel Lennartsson")
+        self.crtext.setAnchor("center")
+        self.sprites.add(self.crtext)
     
-        self.menuitems = [ MenuItem(160, 100, "Start Game", self.menu_start), 
-                             MenuItem(160, 116, "Options", self.menu_options), 
-                             MenuItem(160, 132, "High Scores", self.menu_highscores), 
-                             MenuItem(160, 148, "Credits", self.menu_credits), 
-                             MenuItem(160, 164, "Quit", self.menu_quit) ]
+        self.menuitems = [ MenuItem(160, 100, self.menufont, "Start Game", self.menu_start), 
+                             MenuItem(160, 116, self.menufont, "Options", self.menu_options), 
+                             MenuItem(160, 132, self.menufont, "High Scores", self.menu_highscores), 
+                             MenuItem(160, 148, self.menufont, "Credits", self.menu_credits), 
+                             MenuItem(160, 164, self.menufont, "Quit", self.menu_quit) ]
                                 
         self.menucount = len(self.menuitems)
         self.menufocus = 0
