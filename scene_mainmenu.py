@@ -17,6 +17,7 @@ import random
 
 from scene_maingame import *
 from scene_highscore import *
+from scene_help import *
 from scene_dialogyesno import *
 
 from menuitem import *
@@ -105,10 +106,10 @@ class Scene_MainMenu(Scene):
         self.sprites.add(self.crtext)
     
         self.menuitems = [ MenuItem(160, 100, self.menufont, "Start Game", self.menu_start), 
-                             MenuItem(160, 116, self.menufont, "Options", self.menu_options), 
-                             MenuItem(160, 132, self.menufont, "High Scores", self.menu_highscores), 
-                             MenuItem(160, 148, self.menufont, "Credits", self.menu_credits), 
-                             MenuItem(160, 164, self.menufont, "Quit", self.menu_quit) ]
+                             #MenuItem(160, 116, self.menufont, "Options", self.menu_options), 
+                             MenuItem(160, 132-16, self.menufont, "High Scores", self.menu_highscores), 
+                             MenuItem(160, 148-16, self.menufont, "Help", self.menu_help), 
+                             MenuItem(160, 164-16, self.menufont, "Quit", self.menu_quit) ]
                                 
         self.menucount = len(self.menuitems)
         self.menufocus = 0
@@ -193,10 +194,9 @@ class Scene_MainMenu(Scene):
         
     def menu_highscores(self):
         SceneHandler().pushScene(Scene_Highscore())
-        pass
 
-    def menu_credits(self):
-        pass
+    def menu_help(self):
+        SceneHandler().pushScene(Scene_Help())
         
     def menu_quit(self):
         Mixer().setVolume(self.music, 0.5, 0.5)

@@ -33,7 +33,7 @@ class Scene_Preload(Scene):
         self.gameovertext = Text(160, 100, self.font, "")
         self.gameovertext._layer = 2
         self.gameovertext.setAnchor("center")
-        self.gameovertext.setText("LOADED: 0%")
+        self.gameovertext.setText("LOADING: 0%")
 
         self.background = Sprite()
         self.background.setImage(loadImage("pixel.png"))
@@ -57,7 +57,7 @@ class Scene_Preload(Scene):
         if self.show_progress < self.progress:
             self.show_progress += ((self.progress - self.show_progress + 10.0) / 40.0)
         
-        self.gameovertext.setText("LOADED: %d%%" % (perc))
+        self.gameovertext.setText("LOADING: %d%%" % (perc))
         
         if not self.maingameLoading:
             self.maingameLoading = True
@@ -87,7 +87,6 @@ class Scene_Preload(Scene):
             self.fading = True
             
             def text_fade_done(sprite):
-                print "ANDERS"
                 SceneHandler().removeScene(self)
                 SceneHandler().pushScene(Scene_Splash())
                 
