@@ -40,6 +40,17 @@ class MenuItem(Text):
         self.fadeTo((0.6, 0.6, 0.6, 1.0), currentTime, 0.3)
         self.scaleTo((1.0, 1.0), currentTime, 0.3)
 
+    def blink(self, currentTime):
+    
+        def fadein(self, sprite):
+            self.fadeTo((1.0, 1.0, 1.0, 1.0), currentTime, 0.05, self.fadeout)
+        def fadeout(self, sprite):
+            self.fadeTo((0.0, 0.0, 0.0, 0.0), currentTime, 0.05, self.fadein)
+            
+        self.fadein(None)
+        
+    #def stopBlink    
+            
     def select(self):
         self.callfunc()
         
