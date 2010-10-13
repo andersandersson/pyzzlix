@@ -60,8 +60,6 @@ class _SoundSourceData:
     def set_position(self, pos):
         self.pos = pos % len(self.data)
     def get_samples(self, sz):
-        print "Get sound samples..."
-        sys.stdout.flush()
         z = self.data[self.pos:self.pos + sz]
         self.pos += sz
         if len(z) < sz:
@@ -84,8 +82,6 @@ class _SoundSourceData:
             else:
                 self.done = True
                 
-        print "Got sound samples!"     
-        sys.stdout.flush()    
         return z
 
 class _SoundSourceStream:
@@ -200,16 +196,11 @@ class Channel:
         self.set_volume(0.0, fadetime=time)
         glock.release()
     def _get_samples(self, sz):
-        print "get samples function"
-        sys.stdout.flush()
-        
         if not self.active: return None
         oldpos = self.src.pos
 
         e = calc_vol(self.src.pos, self.env)
         v = calc_vol(self.src.pos, self.vol)
-        print "lol"
-        sys.stdout.flush()
         z = self.src.get_samples(sz) 
 
         if self.src.done: 
@@ -217,10 +208,7 @@ class Channel:
         elif oldpos > self.src.pos:
             # If sound has looped, reset any master volume information
             self.vol = [[0, v]]
-         
-        print "luuul", len(z)
-        sys.stdout.flush()
-   
+
         return z * (e * v)
 
 
@@ -292,7 +280,7 @@ class Sound:
         stream = _open_stream(filename)
             
         self.data = ''
-        s = stream.file.read(32000)
+        s = stream.file.read(512)
         while len(s):
             frames= stream.demuxer.parse(s) # Try to parse frames from the stream
             for fr in frames:
@@ -305,9 +293,10 @@ class Sound:
                     else: 
                          self.data += str(r.data)        
 
-            s = stream.file.read(32000)
-            
-        print "sound init done, len(data):", len(self.data)    
+            s = stream.file.read(512)
+                
+        self.data = numpy.fromstring(''.join(self.data ), dtype=numpy.int16)    
+        
 
     def get_length(self):
         """Return the length of the sound in samples
@@ -638,20 +627,12 @@ def tick(extra=None):
 
     glock.acquire()
     for sndevt in gmixer_srcs:
-                 
-        print "lafafafl"
-        sys.stdout.flush()
         s = sndevt._get_samples(sz)
-        print "lukukukuol"
-        sys.stdout.flush()
+        
         if s is not None:
             b += s
         if sndevt.done:
             rmlist.append(sndevt)  
-         
-
-        print "luiyiyuoyuol"
-        sys.stdout.flush()
     
     if extra is not None:
         b += extra
