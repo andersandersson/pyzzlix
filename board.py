@@ -135,10 +135,11 @@ class Board(Sprite):
                 while (x+x_dir, y+y_dir) not in points:
                     x = x+x_dir
                     y = y+y_dir
-                    self.grid[x][y].status |= STATUS_IN_CIRCLE
-                    if self.grid[x][y] not in blocks:
-                        self.grid[x][y].comboCounter += 1
-                        blocks.append(self.grid[x][y])
+                    if not self.grid[x][y].status & STATUS_IN_CIRCLE:
+                        self.grid[x][y].status |= STATUS_IN_CIRCLE
+                        if self.grid[x][y] not in blocks:
+                            self.grid[x][y].comboCounter += 1
+                            blocks.append(self.grid[x][y])
 
             last_point = point
 
