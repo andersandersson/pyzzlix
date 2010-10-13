@@ -50,8 +50,8 @@ class Scene_DialogYesNo(Scene):
         self.background._layer = 0        
         self.sprites.add(self.background)
         
-        self.movesound =  Mixer().loadAudiofile("menumove.ogg") 
-        self.selectsound =  Mixer().loadAudiofile("menuselect.ogg") 
+        self.movesound =  Mixer().loadAudioFile("menumove.ogg") 
+        self.selectsound =  Mixer().loadAudioFile("menuselect.ogg") 
    
     def setQuery(self, query, yescall, nocall):
         self.query = query

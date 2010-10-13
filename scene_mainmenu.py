@@ -145,13 +145,13 @@ class Scene_MainMenu(Scene):
         self.state = "entrance"
                 
     def preload(self):        
-        self.music =  Mixer().loadAudiofile("menumusic.ogg")
+        self.music =  Mixer().loadAudioStream("menumusic.ogg")
         pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        self.movesound =  Mixer().loadAudiofile("menumove.ogg") 
+        self.movesound =  Mixer().loadAudioFile("menumove.ogg") 
         pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        self.selectsound =  Mixer().loadAudiofile("menuselect.ogg") 
+        self.selectsound =  Mixer().loadAudioFile("menuselect.ogg") 
         pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        self.startsound =  Mixer().loadAudiofile("menustart.ogg") 
+        self.startsound =  Mixer().loadAudioFile("menustart.ogg") 
         pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
         
     def tick(self):
@@ -161,7 +161,7 @@ class Scene_MainMenu(Scene):
     def show(self):
         print self, "is showing"
         self.state = "entrance"
-        Mixer().playMusic(self.music)
+        Mixer().playSound(self.music, loops=-1)
         self.startmenu.setPos((160, 160))
         self.startmenu.setCol((1.0,1.0,1.0,0.0))
         self.startmenu.fadeTo((1.0,1.0,1.0,1.0), self.currentTime, 0.3)
@@ -169,7 +169,7 @@ class Scene_MainMenu(Scene):
         
     def hide(self):
         print self, "is hiding"
-        Mixer().stopMusic(self.music) 
+        Mixer().stopSound(self.music) 
         
     def handleEvent(self, event):
         if event.type == KEYDOWN:
