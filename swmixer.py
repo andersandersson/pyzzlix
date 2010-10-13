@@ -26,6 +26,10 @@ import numpy
 import pyaudio
 import pygame
 
+import pymedia.muxer as muxer, pymedia.audio.acodec as acodec, pymedia.audio.sound as sound
+
+import sys
+
 try:
     import mad
 except:
@@ -79,6 +83,9 @@ class _SoundSourceData:
                 self.pos = 0
             else:
                 self.done = True
+          
+        print "sound data:", z[0:10]
+        sys.stdout.flush() 
         return z
 
 class _SoundSourceStream:
@@ -112,7 +119,16 @@ class _SoundSourceStream:
         else:
             # remove head of buffer
             self.buf = self.buf[szb:]
+
+        #print len(z)
+        #print "stream data:", z[0:10]
+        sys.stdout.flush()
         return z
+        
+        
+            #_data = numpy.fromstring(''.join(buffer.raw),dtype=numpy.int16)
+            #self.data = _data        
+        
 
 # A channel is a "sound event" that is playing
 class Channel:
@@ -167,9 +183,6 @@ class Channel:
         return v
     def get_position(self):
         """Return current position of sound in samples"""
-        # reset any master volume information
-        v = calc_vol(self.src.pos, self.vol)
-        self.vol = [[0, v]]
         glock.acquire()
         p = self.src.pos
         glock.release()
@@ -434,14 +447,100 @@ def _create_stream(filename, checks):
         stream.seek_time = str_seek_time
         return stream
     # Here's how to do it for MP3
-    if filename[-3:] in ['mp3','MP3']:
+    elif filename[-3:] in ['mp3','MP3']:
         mf = mad.MadFile(filename)
         if checks:
             assert(gchannels == 2) # MAD always returns stereo
             assert(mf.samplerate() == gsamplerate)
         stream = mf
         return stream
-    assert(False) # filename must have wav or mp3 extension
+    else:
+        # create stream object
+        stream = _Stream()
+        stream.demuxer = muxer.Demuxer( str.split(filename, '.' )[ -1 ].lower())
+        assert (stream.demuxer != 0) # file extension not recognized
+        stream.file = open(filename, 'rb')
+        s = stream.file.read(32000) # Read abit, should contain at least one frame
+        stream.device = None 
+        stream.resampler= None
+        stream.decoder= None
+        stream.samplerate = None
+        stream.channels = None
+        
+        ## Try to find out file info and set up decoder
+        while len(s):
+            frames= stream.demuxer.parse(s) # Try to parse frames from the stream
+            for fr in frames:
+            
+                # Configure decoder
+                if stream.decoder== None:
+                    print stream.demuxer.getHeaderInfo(), stream.demuxer.streams
+                    stream.decoder= acodec.Decoder(stream.demuxer.streams[fr[0]])
+            
+                # Decode frame and setup sound device and resampler
+                r = stream.decoder.decode(fr[1])
+                if (r and r.data): 
+                    print " this is sparta", r
+                    if stream.device== None:
+                        print 'Opening sound with %d channels' % (r.channels)
+                        #stream.device = sound.Output(gsamplerate, gchannels, sound.AFMT_S16_LE, 0)
+                        if (r.sample_rate != gsamplerate) or (r.channels != gchannels):
+                            stream.resampler = sound.Resampler((r.sample_rate, r.channels), (gsamplerate, gchannels))
+                            print 'Sound resampling %d->%d' % (r.sample_rate, gsamplerate)
+                    stream.samplerate = r.sample_rate
+                    stream.channels = r.channels
+        
+                # If all info has been loaded, we are done
+                if stream.decoder and stream.samplerate and stream.channels:
+                    break
+                    
+            if stream.decoder and stream.samplerate and stream.channels:
+                break    
+    
+            s= stream.file.read( 512 )
+            sys.stdout.flush()
+            
+        assert (stream.decoder) # Error loading device/decoder
+
+        print "File", filename, " loaded, with samplerate:", stream.samplerate, "and", stream.channels, "channels"
+        
+        # Reset stream
+        stream.demuxer.reset()
+        stream.file.seek(0, 0)
+        
+        def str_read(): 
+            data = ''
+            while len(data) <= 0:
+                s = stream.file.read(512)
+                if len(s):
+                    frames= stream.demuxer.parse(s) # Try to parse frames from the stream
+                    for fr in frames:
+
+                        # Decode frame and setup sound device and resampler
+                        r = stream.decoder.decode(fr[1])
+                        if (r and r.data): 
+                            if stream.resampler:
+                                data += stream.resampler.resample(r.data)  
+                            else: 
+                                data += str(r.data)
+        
+                sys.stdout.flush()
+                
+  
+            return data
+            
+        def str_seek_time(t):
+            if t == 0: 
+                stream.file.seek(0, 0)
+                stream.demuxer.reset()
+            assert(False) # unsupported
+        
+        stream.read = str_read
+        
+        return stream
+     
+      
+    assert(False) # file could not be loaded
 
 class StreamingSound:
     """Represents a playable sound stream"""
@@ -486,20 +585,23 @@ class StreamingSound:
 
         """
         stream = _create_stream(self.filename, self.checks)
-
+        
         if envelope != None:
             env = envelope
         else:
-            if volume == 1.0 and fadein == 0:
-                env = []
+            env = []    
+     
+        if volume == 1.0 and fadein == 0:
+            vol = []
+        else:
+            if fadein == 0:
+                vol = [[0, volume]]
             else:
-                if fadein == 0:
-                    env = [[0, volume]]
-                else:
-                    env = [[offset, 0.0], [offset + fadein, volume]]
+                vol = [[offset, 0.0], [offset + fadein, volume]]
+                       
         src = _SoundSourceStream(stream, loops)
         src.pos = offset
-        sndevent = Channel(src, env)
+        sndevent = Channel(src, env, vol)
         glock.acquire()
         gmixer_srcs.append(sndevent)
         glock.release()

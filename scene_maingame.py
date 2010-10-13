@@ -120,7 +120,7 @@ class Scene_MainGame(Scene):
         
         def load(index, list, count):
             for filename in list:
-                file = Mixer().loadAudiofile(filename)
+                file = Mixer().loadAudioStream(filename)
                 lock.acquire()
                 music[index] = file
                 index += 1
@@ -149,14 +149,14 @@ class Scene_MainGame(Scene):
         for m in music:
             self.music.append(music[m])
             
-        self.marker.movesound = Mixer().loadAudiofile("markermove.ogg")  
+        self.marker.movesound = Mixer().loadAudioFile("markermove.ogg")  
         pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        self.marker.turnsound = Mixer().loadAudiofile("markerturn.ogg")  
+        self.marker.turnsound = Mixer().loadAudioFile("markerturn.ogg")  
         pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        self.marker.failsound = Mixer().loadAudiofile("markerfail.ogg")  
+        self.marker.failsound = Mixer().loadAudioFile("markerfail.ogg")  
         pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
         
-        self.removeblocksound = Mixer().loadAudiofile("removeblock.ogg")  
+        self.removeblocksound = Mixer().loadAudioFile("removeblock.ogg")  
         pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
         
 
@@ -168,8 +168,7 @@ class Scene_MainGame(Scene):
     def show(self):
         print self, "is showing"
         for mus in self.music:
-            Mixer().playMusic(mus)
-            Mixer().setVolume(mus, 0.0, 0.0)
+            Mixer().playSound(mus, volume=0.0, loops=-1)
         self.playMusicForLevel()
         
     def hide(self):

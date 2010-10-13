@@ -280,7 +280,7 @@ class Sound:
         stream = _open_stream(filename)
             
         self.data = ''
-        s = stream.file.read(512)
+        s = stream.file.read(32000)
         while len(s):
             frames= stream.demuxer.parse(s) # Try to parse frames from the stream
             for fr in frames:
@@ -293,7 +293,7 @@ class Sound:
                     else: 
                          self.data += str(r.data)        
 
-            s = stream.file.read(512)
+            s = stream.file.read(32000)
                 
         self.data = numpy.fromstring(''.join(self.data ), dtype=numpy.int16)    
         
@@ -463,10 +463,14 @@ class StreamingSound:
         the keyword checks=False, but the sound will be distorted.
         
         """
+        
+        
+        2
         assert(ginit == True)
         if filename is None:
             assert False
         self.filename = filename
+        self.stream = _create_stream(self.filename)
 
     def get_length(self):
         """Return the length of the sound stream in samples
@@ -493,7 +497,7 @@ class StreamingSound:
         loops - how many times to play the sound (-1 is infinite)
 
         """
-        stream = _create_stream(self.filename)
+        #stream = _create_stream(self.filename)
  
         if envelope != None:
             env = envelope
@@ -508,7 +512,7 @@ class StreamingSound:
             else:
                 vol = [[offset, 0.0], [offset + fadein, volume]]
                        
-        src = _SoundSourceStream(stream, loops)
+        src = _SoundSourceStream(self.stream, loops)
         src.pos = offset
         sndevent = Channel(src, env, vol)
         glock.acquire()
