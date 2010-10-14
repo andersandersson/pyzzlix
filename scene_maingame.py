@@ -71,6 +71,7 @@ class Scene_MainGame(Scene):
         self.marker = Marker(2,14)
         self.marker._layer = LAYER_MARKER
         self.hourglass = Hourglass()
+        self.hourglass.setPos((232, 119+96))
         self.sprites.add(self.hourglass)
         self.sprites.add(self.board)
         self.sprites.add(self.scoretext)
