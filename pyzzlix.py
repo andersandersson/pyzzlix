@@ -27,19 +27,23 @@ sceneHandler = SceneHandler()
 renderer = Renderer()
 mixer = Mixer()
 fullscreen = False
+enableSound = True
 listener = None
 
 def init():
     global sceneHandler
     global renderer
     global listener
+    global enableSound
 
-    pygame.mixer.pre_init(frequency=44100, size=-16, channels=2)
+    if enableSound:
+        pygame.mixer.pre_init(frequency=44100, size=-16, channels=2)
+
     pygame.init()
     
     # Initialize renderer
     renderer.init('Pyzzlix', 320, 240, fullscreen)
-    mixer.init()
+    mixer.init(enableSound)
     
     # Initialize and populate scene stack
     sceneHandler.pushScene(Scene_Preload())    
@@ -130,4 +134,8 @@ def doNothing():
 
 
 #this calls the 'main' function when this script is executed
-if __name__ == '__main__': main()
+if __name__ == '__main__': 
+    if "--no-sound" in sys.argv:
+        enableSound = False
+
+    main()

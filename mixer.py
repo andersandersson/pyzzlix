@@ -20,18 +20,23 @@ class Sound():
 class Mixer(Singleton):
     def _runOnce(self):
         self.samplerate = 44100
-        pass
         
     def _timeToSamples(self, time):
         return int((self.samplerate + 0.0) * time)
         
-    def init(self):
+    def init(self, enableSound = True):
+        self.enableSound = enableSound
+
+        if not self.enableSound:
+            return
+
         swmixer.init(self.samplerate, chunksize=2048, stereo=True)
         swmixer.start()
-        pass
-
       
     def loadAudioFile(self, filename):
+        if not self.enableSound:
+            return None
+
         sound = 0
         try: 
             sound = sounds[filename]
@@ -43,6 +48,9 @@ class Mixer(Singleton):
         return sound
         
     def loadAudioStream(self, filename):
+        if not self.enableSound:
+            return None
+
         sound = 0
         try: 
             sound = streams[filename]
@@ -55,6 +63,9 @@ class Mixer(Singleton):
                  
 
     def playSound(self, sound, volume=1.0, fadein=0.01, loops=0):
+        if not self.enableSound:
+            return
+
         if (sound == None):
             return
         if (volume > 1.0):
@@ -69,6 +80,9 @@ class Mixer(Singleton):
         pass
             
     def setVolume(self, sound, volume, fadein=0.0):  
+        if not self.enableSound:
+            return
+
         if (sound == None):
             return
         if (volume > 1.0):
@@ -77,6 +91,9 @@ class Mixer(Singleton):
             sound.channel.set_volume(volume, fadetime=self._timeToSamples(fadein))
 
     def stopSound(self, sound):
+        if not self.enableSound:
+            return
+
         if (sound == None):
             return
         if (sound.channel != None):
@@ -84,5 +101,8 @@ class Mixer(Singleton):
             sound.channel = None
         
     def cleanup(self):
+        if not self.enableSound:
+            return
+
         swmixer.quit()
     
