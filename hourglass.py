@@ -1,15 +1,21 @@
+from math import *
 from globals import *
 
 from sprite import *
 from image import *
+from font import *
+from text import *
 
 class Hourglass(Sprite):
     def __init__(self):
         Sprite.__init__(self)
-        self.setImage(loadImage("pixel.png", 1, 1))
-        
-        self.setScale((72, -96))
-        self.setPos((232, 119 + 96))
+
+        self.font = Font("font_fat.png", 8, 8)
+
+        self.bar = Sprite()
+        self.bar.setImage(loadImage("pixel.png", 1, 1))        
+        self.bar.setScale((72, -96))
+
         self.max = 0
         
         self.timeatlastframe = 0
@@ -19,6 +25,21 @@ class Hourglass(Sprite):
         self._pause = 0
         
         self.reset(1000)
+
+        self.pausebg = Sprite()
+        self.pausebg.setImage(loadImage("pixel.png", 1, 1))
+        self.pausebg.setScale((72, -96))
+        self.pausebg.setCol((0.0, 0.0, 0.0, 0.0))
+        self.pausetext = Text(36, -60, self.font, "0")
+        self.pausetext.setScale((3.0, 3.0))
+        self.pausetext.setAnchor("center")
+        self.pausetext.setCol((0.0, 0.0, 0.0, 0.0))
+
+        self.pauseVisible = False
+
+        self.subSprites.append(self.bar)
+        self.subSprites.append(self.pausebg)
+        self.subSprites.append(self.pausetext)
 
     def getValue(self):
         return self._value
@@ -41,8 +62,26 @@ class Hourglass(Sprite):
 
     def pause(self, time):
         self._pause += time
+
+    def showPause(self):
+        if self.pauseVisible:
+            return
+        
+        self.pauseVisible = True
+        self.pausebg.fadeTo((0.0, 0.0, 0.0, 0.7), self.currentTime, 0.2)
+        self.pausetext.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.2)
+
+    def hidePause(self):
+        if not self.pauseVisible:
+            return
+        
+        self.pauseVisible = False
+        self.pausebg.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.2)
+        self.pausetext.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.2)
     
     def update(self, currentTime):
+        Sprite.update(self, currentTime)
+
         if self.value <= 0:
             pygame.event.post(pygame.event.Event(EVENT_GAME_OVER))
             return
@@ -50,6 +89,14 @@ class Hourglass(Sprite):
         if self._pause <= currentTime:
             self.value -= 1
             self._pause = currentTime
+        elif (self._pause - currentTime) > MAX_PAUSE_TIME_SEC:
+            self._pause = currentTime + MAX_PAUSE_TIME_SEC
+
+        if self._pause > currentTime:
+            self.pausetext.setText("%d" % ceil(self._pause-currentTime))
+            self.showPause()
+        else:
+            self.hidePause()
 
         #self.image.fill([0,0,0])
         #self.image.set_alpha(200);
@@ -58,6 +105,6 @@ class Hourglass(Sprite):
         if p > 1.0:
             p = 1.0
 
-        self.scaleTo((72, -p*96), currentTime, 0.1)
-        self.fadeTo((1 - p, p, 0.0, 1.0), currentTime, 0.1)
+        self.bar.scaleTo((72, -p*96), currentTime, 0.1)
+        self.bar.fadeTo((1 - p, p, 0.0, 1.0), currentTime, 0.1)
         #pygame.draw.rect(self.image, [(1-p)*255,p*255,0], [0,(1-p)*150,90,150])
