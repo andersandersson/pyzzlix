@@ -1,3 +1,10 @@
+import random
+import thread
+from time import sleep
+import sys
+
+from mixer import *
+
 from scene import *
 from board import *
 from block import *
@@ -13,12 +20,8 @@ from scene_background import *
 from scene_dialogyesno import *
 from scene_mainmenu import *
 from scenehandler import *
-import random
-import thread
-from time import sleep
-import sys
 
-from mixer import *
+from levelsplash import *
 
 LAYER_EFFECTS = 4
 LAYER_GUI = 3
@@ -50,6 +53,12 @@ class Scene_MainGame(Scene):
         
         self.music =  []
 
+        self.levelsplash = LevelSplash()
+        self.background = Background() 
+
+        self.sprites.add(self.background)
+        self.sprites.add(self.levelsplash)
+        
         ### Fix this mess:
         self.scorebg = Sprite()
         self.scorebg.setImage(loadImage("pixel.png", 1, 1))
@@ -88,15 +97,15 @@ class Scene_MainGame(Scene):
         self.init_y_dir = 0
         self.level = 0
         self.block_count = 0
-        self.score_level = 0
        
         self.usable_blocks = []
         self.all_blocks = [0, 1, 2, 3, 4, 5, 6]
         self.levelMusic = {}
         self.allMusic = []
         self.music_states = []
-        
-        self.resetGame()
+
+        self.statelist = {"idle":0, "running":1, "gameover":2, "levelsplash":3, "welcomesplash":4}
+        self.state = self.statelist["idle"]
     
     def preload(self):
         lock = thread.allocate_lock()
@@ -157,26 +166,30 @@ class Scene_MainGame(Scene):
         
         self.removeblocksound = Mixer().loadAudioFile("removeblock.ogg")  
         pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        
-
                                
-    def run(self):
-        SceneHandler().pushScene(Scene_Background())
-        SceneHandler().pushScene(self)
-        self.resetGame()
-            
+    def startGame(self):
+        self.state = self.statelist["running"]
+
+    def pauseGame(self):
+        self.state = self.statelist["idle"]
+        
     def show(self):
         print self, "is showing"
         for mus in self.music:
             Mixer().playSound(mus, volume=0.0, loops=-1)
-        self.playMusicForLevel()
-        
+        SceneHandler().pushScene(Scene_Background())
+        self.resetGame()
+        self.newLevel()
+            
     def hide(self):
         print self, "is hiding"
-
+        self.pauseGame()
+        for mus in self.music:
+            Mixer().stopSound()
+        SceneHandler().removeScene(Scene_Background())
+        
     def resetGame(self):
-        self.level = 1
-        self.score_level = 1
+        self.level = 0
         self.score = 0
         self.block_count = 0
         self.board.reset()
@@ -186,12 +199,13 @@ class Scene_MainGame(Scene):
         self.init_x_dir = 1
         self.init_y_dir = -1
         self.usable_blocks = self.all_blocks[0:3]
-
         self.init_counter = BOARD_WIDTH*BOARD_HEIGHT
         self.sprites.remove_sprites_of_layer(LAYER_BLOCKS)
         self.blocks.empty()
-        
+
+        self.state = self.statelist["idle"]
         self.playMusicForLevel()
+        
 
     def showGameOver(self):
         game_over = Scene_GameOver()
@@ -239,24 +253,24 @@ class Scene_MainGame(Scene):
                     self.init_y -= 1
                             
     def tick(self):
-        self.ticker += 1
-        if not self.board.full():
-            if self.init_counter > 0:
-                self.fillZigZag()
-                   
-            else:
-                for x in range(0, BOARD_WIDTH):
-                    for y in range(0, BOARD_HEIGHT):
-                        if not self.board.grid[x][y]:
-                            self.addRandom(x, y)
-        
-
-        self.scoretext.setText(str(self.score))
-        self.leveltext.setText(str(self.level))
-        
+        if (self.state == self.statelist["running"]):
+            if not self.board.full():
+                if self.init_counter > 0:
+                    self.fillZigZag()
+                    
+                else:
+                    for x in range(0, BOARD_WIDTH):
+                        for y in range(0, BOARD_HEIGHT):
+                            if not self.board.grid[x][y]:
+                                self.addRandom(x, y)
+                                
+                                
+            self.scoretext.setText(str(self.score))
+            self.leveltext.setText(str(self.level))
+            
         self.board.updateBoard()
         self.sprites.update(self.currentTime)
-
+                                
     def addRandom(self, x, y):
         if y < self.board.height - 1:
             type = self.usable_blocks[random.randint(0,len(self.usable_blocks)-1)]
@@ -275,7 +289,7 @@ class Scene_MainGame(Scene):
         block.animatePopup(self.currentTime)
 
     def addBlockScore(self, block):
-        self.score += self.score_level * POINTS_PER_LEVEL_FOR_BLOCK_SCORE
+        self.score += self.level * POINTS_PER_LEVEL_FOR_BLOCK_SCORE
 
     def addCircleScore(self, blocks, falling=False):
         num_blocks = len(blocks)
@@ -291,7 +305,7 @@ class Scene_MainGame(Scene):
             self.newLevel()
 
         if num_blocks >= MIN_BLOCKS_FOR_CIRCLE_SCORE or falling:
-            score = num_blocks*POINTS_PER_LEVEL_FOR_CIRCLE_SCORE*self.score_level
+            score = num_blocks*POINTS_PER_LEVEL_FOR_CIRCLE_SCORE*self.level
 
             if factor:
                 score *= factor
@@ -373,7 +387,6 @@ class Scene_MainGame(Scene):
             else:
                 for block in blocks:
                     self.board.clear(block.boardx, block.boardy)
-                self.score_level = self.level
                 self.hourglass.unhalt()
                     
         def block_wait_done(block):
@@ -396,21 +409,24 @@ class Scene_MainGame(Scene):
         self.usable_blocks = self.all_blocks[0:maxblocks]
 
         self.hourglass.scaleValue(0.8)
+
+        self.levelsplash.display(self.level, self.currentTime)
         
-        text = Text(160, 90, self.font, "LEVEL: "+str(self.level))
+        #text = Text(160, 90, self.font, "LEVEL: "+str(self.level))
 
-        def text_fade_done(sprite):
-            self.sprites.remove(text)
+        #def text_fade_done(sprite):
+        #    self.sprites.remove(text)
 
-        def text_scale_done(sprite):
-            text.scaleTo((4.0, 4.0), self.currentTime, 0.5)
-            text.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.5, text_fade_done)
+        #def text_scale_done(sprite):
+        #    text.scaleTo((4.0, 4.0), self.currentTime, 0.5)
+        #    text.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.5, text_fade_done)
             
-        text.setAnchor("center")
-        text._layer = LAYER_EFFECTS
-        text.scaleTo((2.0, 2.0), self.currentTime, 0.5, text_scale_done)
+        #text.setAnchor("center")
+        #text._layer = LAYER_EFFECTS
+        #text.scaleTo((2.0, 2.0), self.currentTime, 0.5, text_scale_done)
+        #self.sprites.add(text)
+        
 
-        self.sprites.add(text)
         self.playMusicForLevel()
 
     def handleEvent(self, event):
@@ -448,30 +464,40 @@ class Scene_MainGame(Scene):
                 Scene_DialogYesNo().setQuery("Do you want to exit to the menu?", quit_game, do_nothing)
                 SceneHandler().pushScene(Scene_DialogYesNo())
 
-            if (key == K_RIGHT):
-                if (self.marker.boardx < self.board.width - 2):
-                    self.marker.move(1, 0, self.currentTime)
-            if (key == K_LEFT):
-                if (self.marker.boardx > 0):
-                    self.marker.move(-1, 0, self.currentTime)
-            if (key == K_UP):
-                if (self.marker.boardy >  self.board.height / 2):
-                    self.marker.move(0, -1, self.currentTime)
-            if (key == K_DOWN):
-                    if (self.marker.boardy < self.board.height - 2):
-                        self.marker.move(0, 1, self.currentTime)
+                if (self.state == self.statelist["running"]):
+                    if (key == K_RIGHT):
+                        if (self.marker.boardx < self.board.width - 2):
+                            self.marker.move(1, 0, self.currentTime)
+                        if (key == K_LEFT):
+                            if (self.marker.boardx > 0):
+                                self.marker.move(-1, 0, self.currentTime)
+                        if (key == K_UP):
+                            if (self.marker.boardy >  self.board.height / 2):
+                                self.marker.move(0, -1, self.currentTime)
+                        if (key == K_DOWN):
+                            if (self.marker.boardy < self.board.height - 2):
+                                self.marker.move(0, 1, self.currentTime)
 
-            if (key == K_x):
-                if (self.board.rotate(self.marker.boardx, self.marker.boardy, 1, 2)):
-                    self.marker.turn()
-                else:
-                    self.marker.fail()
-            if (key == K_z):
-                if (self.board.rotate(self.marker.boardx, self.marker.boardy, -1, 2)):
-                    self.marker.turn()
-                else:
-                    self.marker.fail()
-            
+                        if (key == K_x):
+                            if (self.board.rotate(self.marker.boardx, self.marker.boardy, 1, 2)):
+                                self.marker.turn()
+                            else:
+                                self.marker.fail()
+                        if (key == K_z):
+                            if (self.board.rotate(self.marker.boardx, self.marker.boardy, -1, 2)):
+                                self.marker.turn()
+                            else:
+                                self.marker.fail()
+                elif (self.state == self.statelist["levelsplash"]):
+                    if (key == K_RETURN):
+                        self.levelsplash.hide()
+                        self.startGame()
+                elif (self.state == self.statelist["welcomesplash"]):
+                    if (key == K_RETURN):
+                        self.welcomesplash.hide()
+                        self.newLevel()
+
+                                
             if key == K_p:
                 print self.board
 
@@ -486,38 +512,7 @@ class Scene_MainGame(Scene):
 
             if key == K_h:
                 self.showEnterHighscore()
-
-            num_key = 0
-            if (key == K_1):
-                num_key = 1
-            if (key == K_2):
-                num_key = 2
-            if (key == K_3):
-                num_key = 3
-            if (key == K_4):
-                num_key = 4
-            if (key == K_5):
-                num_key = 5
-            if (key == K_6):
-                num_key = 6
-            if (key == K_7):
-                num_key = 7
-            if (key == K_8):
-                num_key = 8
-            if (key == K_9):
-                num_key = 9
-            if (key == K_0):
-                num_key = 10
-             
-            if num_key > 0 and num_key <= len(self.music_states):
-                if self.music_states[num_key-1] == 1:
-                    Mixer().setVolume(self.music[num_key-1], 0.0, 3.1)
-                    self.music_states[num_key-1] = 0
-                else:  
-                    Mixer().setVolume(self.music[num_key-1], 1.0, 3.1)
-                    self.music_states[num_key-1] = 1
         
-                
 
         return False
         

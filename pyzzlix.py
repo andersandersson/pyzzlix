@@ -13,6 +13,7 @@ from renderer import *
 from mixer import *
 
 from scene_preload import *
+from scene_mainmenu import *
 
 sceneHandler = None
 renderer = None
@@ -35,8 +36,8 @@ def init():
     
     # Initialize and populate scene stack
     sceneHandler = SceneHandler()
-    sceneHandler.pushScene(Scene_Preload())    
-
+    #sceneHandler.pushScene(Scene_Preload())    
+    sceneHandler.pushScene(Scene_MainMenu())    
 def cleanup():
     global renderer
     

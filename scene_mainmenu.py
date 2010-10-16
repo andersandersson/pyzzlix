@@ -227,13 +227,12 @@ class Scene_MainMenu(Scene):
 
     def menu_start(self):
         Mixer().playSound(self.startsound)
-        #SceneHandler().removeScene(self)
-        scene_maingame.Scene_MainGame().run()
+        SceneHandler().pushScene(scene_maingame.Scene_MainGame())
         pass
     
     def menu_options(self):
         pass
-        
+
     def menu_highscores(self):
         Mixer().playSound(self.selectsound)
         SceneHandler().pushScene(Scene_Highscore())

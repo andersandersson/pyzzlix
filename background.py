@@ -9,10 +9,8 @@ from sprite import *
 from math import *
 import random
 
-import scene_maingame
-
-class Scene_Background(Scene):
-    def _runOnce(self):
+class Background(Sprite):
+    def __init__(self):
         Scene._runOnce(self)
         self.softblend = True
 
@@ -43,39 +41,36 @@ class Scene_Background(Scene):
         self.svy = 0
 
         ##self.sprites.add(self.background)
-        self.sprites.add(self.squares[0])
-
-        self.updateBlocker = True
-        self.renderBlocker = True
+        self.subSprites.append(self.squares[0])
         
         self.squares[0].rotateTo((360000), self.currentTime, 150000.0)
         self.squares[0].fadeTo((0.35, 1.0, 0.3, 1.0), self.currentTime, 0.5)
         self.background.fadeTo((0.4, 1.0, 0.2, 1.0), self.currentTime, 0.5)
       
    
-    def tick(self):
+    def update(self, currentTime):
         sx, sy = self.squares[0].pos
         scalex, scaley = self.squares[0].scale
         rot = self.squares[0].rot
     
         if (sx > 240 and self.svx > 0):
             self.svx = -self.svx
-            self.squares[0].rotateTo((rot - 360), self.currentTime, 15.0)
-            self.squares[0].fadeTo((0.35, 1.0, 0.3, 1.0), self.currentTime, 10.0)
+            self.squares[0].rotateTo((rot - 360), currentTime, 15.0)
+            self.squares[0].fadeTo((0.35, 1.0, 0.3, 1.0), currentTime, 10.0)
         if (sx < 80 and self.svx < 0):
-            self.squares[0].rotateTo((rot - 360), self.currentTime, 15.0)
-            self.squares[0].fadeTo((0.1, 1.0, 0.1, 1.0), self.currentTime, 10.0)
+            self.squares[0].rotateTo((rot - 360), currentTime, 15.0)
+            self.squares[0].fadeTo((0.1, 1.0, 0.1, 1.0), currentTime, 10.0)
             self.svx = -self.svx
         if (sy > 160 and self.svy > 0):
-            self.squares[0].rotateTo((rot + 360), self.currentTime, 15.0)
-            self.background.fadeTo((0.05, 0.2, 0.01, 1.0), self.currentTime, 10.0)
+            self.squares[0].rotateTo((rot + 360), currentTime, 15.0)
+            self.background.fadeTo((0.05, 0.2, 0.01, 1.0), currentTime, 10.0)
             self.svy = -self.svy
         if (sy < 80 and self.svy < 0):
-            self.squares[0].rotateTo((rot + 360), self.currentTime, 15.0)
-            self.background.fadeTo((0.2, 0.6, 0.1, 1.0), self.currentTime, 10.0)
+            self.squares[0].rotateTo((rot + 360), currentTime, 15.0)
+            self.background.fadeTo((0.2, 0.6, 0.1, 1.0), currentTime, 10.0)
             self.svy = -self.svy
                        
-        self.squares[0].moveTo((sx + self.svx, sy + self.svy), self.currentTime, 1.0)
+        self.squares[0].moveTo((sx + self.svx, sy + self.svy), currentTime, 1.0)
         
         for i in xrange(9):
             j = i + 1
@@ -96,19 +91,5 @@ class Scene_Background(Scene):
                 square.rotateTo((rot + 360), self.currentTime, 30.0)
                 square.vely = -square.vely
                            
-            square.moveTo((sx + square.velx, sy + square.vely), self.currentTime, 1.0)
+            square.moveTo((sx + square.velx, sy + square.vely), currentTime, 1.0)
             
-            
-        
-        
-    def show(self):
-        print self, "is showing"
-        
-    def hide(self):
-        print self, "is hiding"
-
-    def handleEvent(self, event):
-        
-
-        return True
-        
