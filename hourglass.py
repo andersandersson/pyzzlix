@@ -113,6 +113,8 @@ class Hourglass(Sprite):
 
         if p > 1.0:
             p = 1.0
+            
+        p = (exp(2.0*p) - 1.0)/(exp(2.0) - 1.0)
 
         self.bar.scaleTo((72, -p*96), currentTime, 0.1)
         self.bar.fadeTo((1 - p, p, 0.0, 1.0), currentTime, 0.1)

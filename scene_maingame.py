@@ -299,7 +299,9 @@ class Scene_MainGame(Scene):
             
             self.score += score
         
-        self.hourglass.value += (float(num_blocks)*PERCENTAGE_TIME_GIVEN_PER_BLOCK)*self.hourglass.max;
+        perc = (float(num_blocks)*PERCENTAGE_TIME_GIVEN_PER_BLOCK)
+        
+        self.hourglass.value += perc*self.hourglass.max;
               
         if not score:
             return
