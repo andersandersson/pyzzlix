@@ -35,7 +35,7 @@ class Scene_MainGame(Scene):
         self.board.setPos((8.0, 0.0))
         
         self.scoreboard = Scoreboard()
-        self.scoreboard.setPos((208.0, 0.0))
+        self.scoreboard.setPos((200.0, 0.0))
         
         self.blocks = pygame.sprite.Group()
         self.blockcount = 0
@@ -43,15 +43,8 @@ class Scene_MainGame(Scene):
                 
         self.music =  []
 
-        self.hourbg = Sprite()
-        self.hourbg.setImage(loadImage("pixel.png", 1, 1))
-        self.hourbg.setPos((232.0, 119.0))
-        self.hourbg.setScale((72.0, 96.0))
-        self.hourbg.setCol((0.0, 0.0, 0.0, 0.3))
-        self.sprites.add(self.hourbg)
-        
         self.hourglass = Hourglass()
-        self.hourglass.setPos((232, 119+96))
+        self.hourglass.setPos((224, 119))
         
         self.sprites.add(self.hourglass)
         self.sprites.add(self.board)
@@ -441,10 +434,14 @@ class Scene_MainGame(Scene):
                     self.board.marker.fail()
             
             if key == K_q:
-                self.board.pulseBorder((1.0, 0.0, 0.0, 1.0), 0.2)
+                self.board.pulseBorder((1.0, 0.0, 0.0, 0.7), 0.1)
+                self.scoreboard.pulseBorder((0.0, 0.0, 1.0, 1.0), 0.1)
+                self.hourglass.pulseBorder((1.0, 0.0, 0.0, 0.7), 0.1)
 
             if key == K_w:
                 self.board.stopPulseBorder()
+                self.scoreboard.stopPulseBorder()
+                self.hourglass.stopPulseBorder()
 
             if key == K_p:
                 print self.board

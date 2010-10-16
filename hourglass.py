@@ -15,6 +15,7 @@ class Hourglass(Sprite):
         self.bar = Sprite()
         self.bar.setImage(loadImage("pixel.png", 1, 1))        
         self.bar.setScale((72, -96))
+        self.bar.setPos((8.0, 112.0))
 
         self.max = 0
         
@@ -27,21 +28,64 @@ class Hourglass(Sprite):
         
         self.reset(1000)
 
+        self.background = Sprite()
+        self.background.setImage(loadImage("pixel.png", 1, 1))
+        self.background.setScale((72.0, 96.0))
+        self.background.setPos((8.0, 8.0))
+        self.background.setCol((0.0, 0.0, 0.0, 0.3))
+        
+        self.border = Sprite()
+        self.border.setImage(loadImage("hourglass_border.png"))
+        self.border.setPos((0.0,0.0))
+        
         self.pausebg = Sprite()
         self.pausebg.setImage(loadImage("pixel.png", 1, 1))
-        self.pausebg.setScale((72, -96))
+        self.pausebg.setScale((72.0, 96.0))
+        self.pausebg.setPos((8.0, 8.0))
         self.pausebg.setCol((0.0, 0.0, 0.0, 0.0))
-        self.pausetext = Text(36, -60, self.font, "0")
+
+        self.pausetext = Text(44, 48, self.font, "0")
         self.pausetext.setScale((3.0, 3.0))
         self.pausetext.setAnchor("center")
         self.pausetext.setCol((0.0, 0.0, 0.0, 0.0))
 
+        self.glow = Sprite()
+        self.glow.setImage(loadImage("hourglass_glow.png"))
+        self.glow.setPos((0.0,0.0))
+        self.glow.setCol((0.0, 0.0, 0.0, 0.0))
+
         self.pauseVisible = False
 
+        self.subSprites.append(self.background)       
         self.subSprites.append(self.bar)
         self.subSprites.append(self.pausebg)
         self.subSprites.append(self.pausetext)
+        self.subSprites.append(self.border)
+        self.subSprites.append(self.glow)
 
+        self._glow_col = (0.0, 0.0, 0.0, 0.0)
+        self._glow_duration = 0.0
+    
+    def pulseBorder(self, col, duration):
+        self._glow_col = col
+        self._glow_duration = duration
+        from_col = (self._glow_col[0], self._glow_col[1], self._glow_col[2], 0.0)
+        
+        def fade_to_done(s):
+            self.glow.fadeTo(from_col, self.currentTime, duration, fade_from_done)
+            
+        def fade_from_done(s):
+            self.glow.fadeTo(col, self.currentTime, duration, fade_to_done)
+            
+        self.glow.clearColCallbacks()
+        fade_from_done(None)
+
+    def stopPulseBorder(self):
+        from_col = (self._glow_col[0], self._glow_col[1], self._glow_col[2], 0.0)
+        
+        self.glow.clearColCallbacks()
+        self.glow.fadeTo(from_col, self.currentTime, self._glow_duration)
+        
     def getValue(self):
         return self._value
 
