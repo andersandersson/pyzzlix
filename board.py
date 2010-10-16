@@ -1,6 +1,8 @@
 from globals import *
 from block import *
 from sprite import *
+from marker import *
+from mixer import *
 
 def TriangleArea(a, b, c):
     return (b[0]-a[0]) * (c[1]-a[1]) - (c[0]-a[0])*(b[1]-a[1])
@@ -30,8 +32,34 @@ class Board(Sprite):
         self.background.setImage(loadImage("pixel.png", 1, 1))
         self.background.setScale((160.0, 208.0))
         self.background.setCol((0.0, 0.0, 0.0, 0.3))
+        self.background.setPos((8.0,16.0))
+        
+        self.blocks = Sprite()
+        self.blocks.setPos((8.0,16.0))
+        
+        self.border = Sprite()
+        self.border.setImage(loadImage("board_border.png"))
+        self.border.setPos((0.0,0.0))
+        
+        self.glow = Sprite()
+        self.glow.setImage(loadImage("board_glow.png"))
+        self.glow.setPos((0.0,8.0))
+        self.glow.setCol((0.0, 0.0, 0.0, 0.0))
+
+        self.marker = Marker()
+        self.marker.offset_x = self.blocks.pos[0]
+        self.marker.offset_y = -BOARD_HEIGHT*16.0 + self.blocks.pos[1]
+        self.marker.moveToBoardCoord(2, 14, self.currentTime)
+        
         self.subSprites.append(self.background)
+        self.subSprites.append(self.blocks)
+        self.subSprites.append(self.marker)
+        self.subSprites.append(self.border)
+        self.subSprites.append(self.glow)
         self.blocksFalling = False
+        
+        self._border_col = None
+        self._border_speed = 0.0
 
     def __str__(self):
         val = ""
@@ -50,6 +78,38 @@ class Board(Sprite):
     def __iter__(self):
         return iter(self.sprites)
 
+    def preload(self):
+        self.marker.movesound = Mixer().loadAudioFile("markermove.ogg")  
+        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
+        self.marker.turnsound = Mixer().loadAudioFile("markerturn.ogg")  
+        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
+        self.marker.failsound = Mixer().loadAudioFile("markerfail.ogg")  
+        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
+        
+        self.removeblocksound = Mixer().loadAudioFile("removeblock.ogg")  
+        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
+
+
+    def pulseBorder(self, col, speed):
+        self._border_col = col
+        self._border_speed = speed
+        
+        from_col = (col[0], col[1], col[2], 0.0)
+        
+        def fade_to_done(sprite):
+            self.glow.fadeTo(from_col, self.currentTime, speed, fade_from_done)
+            
+        def fade_from_done(sprite):
+            self.glow.fadeTo(col, self.currentTime, speed, fade_to_done)
+
+        fade_from_done(None)
+
+    def stopPulseBorder(self):
+        from_col = (self._border_col[0], self._border_col[1], self._border_col[2], 0.0)
+        
+        self.glow.clearColCallbacks()
+        self.glow.fadeTo(from_col, self.currentTime, self._border_speed)
+    
     def reset(self):
         for x in range(self.width):
             for y in range(self.height):
@@ -76,14 +136,14 @@ class Board(Sprite):
         self.grid[x][y] = block
 
         if y >= self.height/2:
-            self.subSprites.append(block)
+            self.blocks.subSprites.append(block)
 
         if y < self.height/2:
             block.status |= STATUS_OFFSCREEN
 
     def clear(self, x, y):
-        if self.grid[x][y] in self.subSprites:
-            self.subSprites.remove(self.grid[x][y])
+        if self.grid[x][y] in self.blocks.subSprites:
+            self.blocks.subSprites.remove(self.grid[x][y])
 
         self.grid[x][y] = None
 
@@ -283,8 +343,8 @@ class Board(Sprite):
         if y < self.height/2:
             block.status |= STATUS_OFFSCREEN
         else:
-            if not block in self.subSprites:
-                self.subSprites.append(block)
+            if not block in self.blocks.subSprites:
+                self.blocks.subSprites.append(block)
 
             block.status &= ~STATUS_OFFSCREEN
 

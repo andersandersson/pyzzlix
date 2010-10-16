@@ -6,6 +6,7 @@ from text import *
 from image import *
 from marker import *
 from hourglass import *
+from scoreboard import *
 from scene_gameover import *
 from scene_enter_highscore import *
 from scene_highscore import *
@@ -29,36 +30,19 @@ class Scene_MainGame(Scene):
     def _runOnce(self):
         Scene._runOnce(self)
         self.state = "running"
+        
         self.board = Board(self, BOARD_WIDTH, BOARD_HEIGHT)
-        self.board.setPos((16.0, 16.0))
+        self.board.setPos((8.0, 0.0))
+        
+        self.scoreboard = Scoreboard()
+        self.scoreboard.setPos((208.0, 0.0))
+        
         self.blocks = pygame.sprite.Group()
         self.blockcount = 0
         self.font = Font("font_fat.png", 8, 8)
-        self.background = Sprite()
-        self.background.setImage(loadImage("maingame.png", 320, 240))
-        
-        self.scorelabeltext = Text(212, 20, self.font, "SCORE:")
-        self.scorelabeltext._layer = LAYER_GUI
-        self.scoretext = Text(300, 30, self.font, "0")
-        self.scoretext._layer = LAYER_GUI
-        self.scoretext.setAnchor("right")
-        self.levellabeltext = Text(212, 42, self.font, "LEVEL:")
-        self.levellabeltext._layer = LAYER_GUI
-        self.leveltext = Text(300, 52, self.font, "0")
-        self.leveltext._layer = LAYER_GUI
-        self.leveltext.setAnchor("right")
-        
+                
         self.music =  []
 
-        ### Fix this mess:
-        self.scorebg = Sprite()
-        self.scorebg.setImage(loadImage("pixel.png", 1, 1))
-        self.scorebg.setPos((208.0, 16.0))
-        self.scorebg.setScale((96.0, 56.0))
-        self.scorebg.setCol((0.0, 0.0, 0.0, 0.3))
-        self.sprites.add(self.scorebg)
-
-        
         self.hourbg = Sprite()
         self.hourbg.setImage(loadImage("pixel.png", 1, 1))
         self.hourbg.setPos((232.0, 119.0))
@@ -66,18 +50,12 @@ class Scene_MainGame(Scene):
         self.hourbg.setCol((0.0, 0.0, 0.0, 0.3))
         self.sprites.add(self.hourbg)
         
-        self.marker = Marker(2,14)
-        self.marker._layer = LAYER_MARKER
         self.hourglass = Hourglass()
         self.hourglass.setPos((232, 119+96))
+        
         self.sprites.add(self.hourglass)
         self.sprites.add(self.board)
-        self.sprites.add(self.scoretext)
-        self.sprites.add(self.leveltext)
-        self.sprites.add(self.scorelabeltext)
-        self.sprites.add(self.levellabeltext)
-        self.sprites.add(self.background)
-        self.sprites.add(self.marker)
+        self.sprites.add(self.scoreboard)
         
         self.score = 0
         self.ticker = 20
@@ -148,16 +126,7 @@ class Scene_MainGame(Scene):
         for m in music:
             self.music.append(music[m])
             
-        self.marker.movesound = Mixer().loadAudioFile("markermove.ogg")  
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        self.marker.turnsound = Mixer().loadAudioFile("markerturn.ogg")  
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        self.marker.failsound = Mixer().loadAudioFile("markerfail.ogg")  
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        
-        self.removeblocksound = Mixer().loadAudioFile("removeblock.ogg")  
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        
+        self.board.preload()
 
                                
     def run(self):
@@ -192,7 +161,7 @@ class Scene_MainGame(Scene):
         self.blocks.empty()
         
         self.playMusicForLevel()
-
+        
     def showGameOver(self):
         game_over = Scene_GameOver()
         SceneHandler().pushScene(game_over)
@@ -251,8 +220,7 @@ class Scene_MainGame(Scene):
                             self.addRandom(x, y)
         
 
-        self.scoretext.setText(str(self.score))
-        self.leveltext.setText(str(self.level))
+        self.scoreboard.updateScoreboard(self.level, self.score)
         
         self.board.updateBoard()
         self.sprites.update(self.currentTime)
@@ -449,29 +417,35 @@ class Scene_MainGame(Scene):
                 SceneHandler().pushScene(Scene_DialogYesNo())
 
             if (key == K_RIGHT):
-                if (self.marker.boardx < self.board.width - 2):
-                    self.marker.move(1, 0, self.currentTime)
+                if (self.board.marker.boardx < self.board.width - 2):
+                    self.board.marker.move(1, 0, self.currentTime)
             if (key == K_LEFT):
-                if (self.marker.boardx > 0):
-                    self.marker.move(-1, 0, self.currentTime)
+                if (self.board.marker.boardx > 0):
+                    self.board.marker.move(-1, 0, self.currentTime)
             if (key == K_UP):
-                if (self.marker.boardy >  self.board.height / 2):
-                    self.marker.move(0, -1, self.currentTime)
+                if (self.board.marker.boardy >  self.board.height / 2):
+                    self.board.marker.move(0, -1, self.currentTime)
             if (key == K_DOWN):
-                    if (self.marker.boardy < self.board.height - 2):
-                        self.marker.move(0, 1, self.currentTime)
+                    if (self.board.marker.boardy < self.board.height - 2):
+                        self.board.marker.move(0, 1, self.currentTime)
 
             if (key == K_x):
-                if (self.board.rotate(self.marker.boardx, self.marker.boardy, 1, 2)):
-                    self.marker.turn()
+                if (self.board.rotate(self.board.marker.boardx, self.board.marker.boardy, 1, 2)):
+                    self.board.marker.turn()
                 else:
-                    self.marker.fail()
+                    self.board.marker.fail()
             if (key == K_z):
-                if (self.board.rotate(self.marker.boardx, self.marker.boardy, -1, 2)):
-                    self.marker.turn()
+                if (self.board.rotate(self.board.marker.boardx, self.board.marker.boardy, -1, 2)):
+                    self.board.marker.turn()
                 else:
-                    self.marker.fail()
+                    self.board.marker.fail()
             
+            if key == K_q:
+                self.board.pulseBorder((1.0, 0.0, 0.0, 1.0), 0.2)
+
+            if key == K_w:
+                self.board.stopPulseBorder()
+
             if key == K_p:
                 print self.board
 

@@ -8,15 +8,15 @@ from animation import *
 mixer = Mixer()
 
 class Marker(Sprite):
-    def __init__(self, x, y):
+    def __init__(self):
         Sprite.__init__(self)
         self.setAnimation(Animation("marker.png", 32, 32))
         
-        self.boardx = x
-        self.boardy = y
+        self.boardx = 0
+        self.boardy = 0
         
-        self.offset_x = 16
-        self.offset_y = -BOARD_HEIGHT*16+16
+        self.offset_x = 0
+        self.offset_y = 0
 
         self.scale_x = 16
         self.scale_y = 16
