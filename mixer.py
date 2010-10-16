@@ -61,7 +61,7 @@ class Mixer(Singleton):
     def playSound(self, sound, volume=1.0, fadein=0.01, loops=0):
         if not self.enableSound:
             return
-
+        
         if (sound == None):
             return
         if (volume > 1.0):

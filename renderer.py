@@ -24,10 +24,12 @@ class Renderer(Singleton):
         self.deltaT = 0.0
         self.colorStack = []
         self.currentColor = (1.0, 1.0, 1.0, 1.0)
+        self.softblend = False
+        
         self.width = 0
         self.height = 0
         self.currentTexture = None
-        self.softblend = False
+
         
     def init(self, title, width, height, fullscreen = False):
         self.width = width
@@ -83,12 +85,13 @@ class Renderer(Singleton):
         last_color = self.currentColor
         self.colorStack.append(self.currentColor)
 
-
         if (sprite.softblend != self.softblend):
             if (sprite.softblend == True):
                 glBlendFunc(GL_ONE, GL_ONE)
+                pass
             else:
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+                pass
             self.softblend = sprite.softblend    
 
         

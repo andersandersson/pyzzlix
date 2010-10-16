@@ -12,7 +12,6 @@ import random
 class Background(Sprite):
     def __init__(self):
         Sprite.__init__(self)
-        self.softblend = True
 
         self.background = Sprite()
         self.background.setImage(loadImage("pixel.png", 1, 1))
@@ -23,6 +22,7 @@ class Background(Sprite):
         for i in xrange(10):
             s = Sprite()
             s.setImage(self.bg_image)
+            s.softblend = True
             s.center = (64, 64)
             self.squares.append(s)
          

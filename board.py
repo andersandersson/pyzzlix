@@ -86,9 +86,6 @@ class Board(Sprite):
         self.marker.failsound = Mixer().loadAudioFile("markerfail.ogg")  
         pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
         
-        self.removeblocksound = Mixer().loadAudioFile("removeblock.ogg")  
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-
 
     def pulseBorder(self, col, duration):
         self._glow_col = col

@@ -246,7 +246,6 @@ class Scene_MainMenu(Scene):
         Mixer().setVolume(self.music, 0.5, 0.5)
         Scene_DialogYesNo().setQuery("Do you want to quit?", self.quitGame, self.doNothing)
         SceneHandler().pushScene(Scene_DialogYesNo())
-        #SceneHandler().clear()
         pass
       
 
@@ -256,6 +255,9 @@ class Scene_MainMenu(Scene):
         
         
     def doNothing(self):
-        SceneHandler().removeScene(Scene_DialogYesNo())
+        def killDialog(sprite):
+            SceneHandler().removeScene(Scene_DialogYesNo())
+        
+        Scene_DialogYesNo().remove(killDialog)
         Mixer().setVolume(self.music, 1.0, 0.5)
         pass

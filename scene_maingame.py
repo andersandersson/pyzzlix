@@ -75,6 +75,7 @@ class Scene_MainGame(Scene):
         self.levelMusic = {}
         self.allMusic = []
         self.music_states = []
+        self.removeblocksound = None
 
         self.tutorials = True
 
@@ -94,7 +95,7 @@ class Scene_MainGame(Scene):
         self.levelMusic[6] = [0,1,2,3]
         self.levelMusic[9] = [1,2,3,5]
         self.levelMusic[12] = [1,2,3,4,5]
-        self.levelMusic[15] = [0,1,2,3,4,5]
+        self.levelMusic[15] = [0,1,2,3,4,5]     
         
         music = {}
         count = [0]
@@ -131,6 +132,9 @@ class Scene_MainGame(Scene):
         for m in music:
             self.music.append(music[m])
 
+        self.removeblocksound = Mixer().loadAudioFile("removeblock.ogg")  
+        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
+            
         self.board.preload()
                                
     def startGame(self):
@@ -427,18 +431,20 @@ class Scene_MainGame(Scene):
             key = event.key
 
             if key == K_ESCAPE:
-                def quit_game():
-                    SceneHandler().removeScene(Scene_DialogYesNo())
+                def killGame(sprite):
+                    SceneHandler().removeScene(Scene_DialogYesNo)
                     SceneHandler().removeScene(self)
-
+                def killDialog(sprite):
+                    SceneHandler().removeScene(Scene_DialogYesNo)
+                def quit_game():
+                    Scene_DialogYesNo().remove(killGame)
                 def do_nothing():
-                    SceneHandler().removeScene(Scene_DialogYesNo())
+                    Scene_DialogYesNo().remove(killDialog)
                     
                 Scene_DialogYesNo().setQuery("Do you want to exit to the menu?", quit_game, do_nothing)
                 SceneHandler().pushScene(Scene_DialogYesNo())
 
             if (self.state == self.statelist["running"]):
-                print "BAD"
                 if (key == K_RIGHT):
                     if (self.board.marker.boardx < self.board.width - 2):
                         self.board.marker.move(1, 0, self.currentTime)
@@ -464,7 +470,6 @@ class Scene_MainGame(Scene):
                         self.board.marker.fail()
                     
             elif (self.state == self.statelist["levelsplash"]):
-                print "LOLOLO"
                 if (key == K_RETURN):
                     self.removeLevelSplash()
                     self.startGame()
