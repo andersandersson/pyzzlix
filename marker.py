@@ -1,8 +1,5 @@
 from globals import *
 
-#import pygame
-#from pygame.locals import *
-
 from mixer import *
 
 from sprite import *

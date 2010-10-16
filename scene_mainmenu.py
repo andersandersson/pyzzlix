@@ -1,7 +1,3 @@
-import os, pygame, board
-from pygame.locals import *
-from pygame.sprite import *
-
 from math import *
 
 from scene import *
@@ -11,7 +7,6 @@ from block import *
 from font import *
 from text import *
 from sprite import *
-from marker import *
 from image import *
 import random
 import scene_maingame
@@ -40,6 +35,17 @@ class MenuItem(Text):
         self.fadeTo((0.6, 0.6, 0.6, 1.0), currentTime, 0.3)
         self.scaleTo((1.0, 1.0), currentTime, 0.3)
 
+    def blink(self, currentTime):
+    
+        def fadein(self, sprite):
+            self.fadeTo((1.0, 1.0, 1.0, 1.0), currentTime, 0.05, self.fadeout)
+        def fadeout(self, sprite):
+            self.fadeTo((0.0, 0.0, 0.0, 0.0), currentTime, 0.05, self.fadein)
+            
+        self.fadein(None)
+        
+    #def stopBlink    
+            
     def select(self):
         self.callfunc()
         

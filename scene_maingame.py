@@ -1,7 +1,3 @@
-from globals import *
-import os, pygame, board
-from pygame.locals import *
-
 from scene import *
 from board import *
 from block import *

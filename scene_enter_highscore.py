@@ -1,7 +1,3 @@
-import os, pygame, board
-from pygame.locals import *
-from pygame.sprite import *
-
 from scene import *
 from scenehandler import *
 from board import *
@@ -9,7 +5,6 @@ from block import *
 from font import *
 from text import *
 from sprite import *
-from marker import *
 import random
 
 import scene_highscore
@@ -22,7 +17,7 @@ class Scene_EnterHighscore(Scene):
 
         self.scoretext = Text(160, 80, self.font, "NEW HIGH SCORE: ")
         self.nametext = Text(160, 100, self.font, "ENTER YOUR INITIALS")
-        self.initialstext = Text(160, 120, self.font, "   ")
+        self.initialstext = Text(160, 120, self.font, "...")
         self.scoretext.setAnchor("center")
         self.nametext.setAnchor("center")
         self.initialstext.setAnchor("center")

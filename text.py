@@ -1,5 +1,3 @@
-#import pygame
-#from pygame import *
 from font import *
 
 from sprite import *

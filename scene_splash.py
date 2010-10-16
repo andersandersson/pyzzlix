@@ -1,7 +1,3 @@
-import os, pygame, board
-from pygame.locals import *
-from pygame.sprite import *
-
 from math import *
 
 from scene import *
