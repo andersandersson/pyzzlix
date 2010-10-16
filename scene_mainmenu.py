@@ -189,12 +189,12 @@ class Scene_MainMenu(Scene):
                 if (key == K_UP):
                     self.newmenufocus -= 1
                     if (self.newmenufocus < 0):
-                        self.newmenufocus = 0
+                        self.newmenufocus = self.menucount - 1
                                                
                 if (key == K_DOWN):
                     self.newmenufocus += 1
                     if (self.newmenufocus >= self.menucount):
-                        self.newmenufocus = self.menucount - 1
+                        self.newmenufocus = 0
                 
                 if (key == K_RETURN):
                     self.menuitems[self.menufocus].select()

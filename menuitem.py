@@ -30,7 +30,11 @@ class MenuItem(Text):
             pass
         elif (self.state == "blinking"):
             self.timer
-    
+
+    def reset(self):
+        self.setCol((0.6, 0.6, 0.6, 1.0))
+        self.setScale((1.0, 1.0))
+            
     def focus(self, currentTime):
         self.fadeTo((1.0, 1.0, 1.0, 1.0), currentTime, 0.1)
         self.scaleTo((1.5, 1.5), currentTime, 0.05)    

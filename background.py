@@ -11,7 +11,7 @@ import random
 
 class Background(Sprite):
     def __init__(self):
-        Scene._runOnce(self)
+        Sprite.__init__(self)
         self.softblend = True
 
         self.background = Sprite()

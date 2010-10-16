@@ -27,6 +27,7 @@ class Renderer(Singleton):
         self.width = 0
         self.height = 0
         self.currentTexture = None
+        self.softblend = False
         
     def init(self, title, width, height, fullscreen = False):
         self.width = width
@@ -82,6 +83,15 @@ class Renderer(Singleton):
         last_color = self.currentColor
         self.colorStack.append(self.currentColor)
 
+
+        if (sprite.softblend != self.softblend):
+            if (sprite.softblend == True):
+                glBlendFunc(GL_ONE, GL_ONE)
+            else:
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            self.softblend = sprite.softblend    
+
+        
         x, y = sprite.calcPos(currentTime)
         rot = sprite.calcRot(currentTime)
         sx, sy = sprite.calcScale(currentTime)
@@ -142,11 +152,7 @@ class Renderer(Singleton):
                 
     def renderScene(self, scene):
         scene.renderTime += self.deltaT
-        if (scene.softblend == True):
-            glBlendFunc(GL_ONE, GL_ONE)
-        else:
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        
+
         if (self.screen != 0):
             #for layer in scene.sprites.layers():
                 #for sprite in scene.sprites.get_sprites_from_layer(layer):

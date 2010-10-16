@@ -10,7 +10,6 @@ class Scene(Singleton):
         self.done = False
         self.renderBlocker = False
         self.updateBlocker = False
-        self.softblend = False
        
         self.sprites = pygame.sprite.LayeredUpdates()
         

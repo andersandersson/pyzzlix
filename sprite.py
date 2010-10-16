@@ -6,6 +6,7 @@ from pygame.locals import *
 class Sprite(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
+        self.softblend = False
         self.subSprites = []
         self.currentTime = 0.0
         self.lastTime = 0.0
@@ -190,3 +191,17 @@ class Sprite(pygame.sprite.Sprite):
     def setFrame(self, frame):
         self.frame = frame
         self.currentImage = self.images[self.frame]
+        
+    def clearColCallbacks(self):
+        self._col_callbacks = []
+        
+    def clearScaleCallbacks(self):
+        self._scale_callbacks = []
+        
+    def clearPosCallbacks(self):
+        self._pos_callbacks = []
+
+    def clearRotCallbacks(self):
+        self._rot_callbacks = []
+        
+        

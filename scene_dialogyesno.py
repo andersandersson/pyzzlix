@@ -33,9 +33,9 @@ class Scene_DialogYesNo(Scene):
         self.menucount = len(self.menuitems)
         self.menufocus = 1
         
-        for sprite in self.menuitems:
-            self.sprites.add(sprite)
-            sprite._layer = 1 
+        for item in self.menuitems:
+            self.sprites.add(item)
+            item._layer = 1 
 
         self.background = Sprite()
         self.background.setImage(loadImage("pixel.png"))
@@ -60,12 +60,16 @@ class Scene_DialogYesNo(Scene):
 
     def show(self):
         print self, "is showing"
+        for item in self.menuitems:
+            item.reset()
+        self.menufocus = 1
         self.menuitems[self.menufocus].focus(self.currentTime)
         self.background.setCol((0.0, 0.0, 0.0, 0.0))
-        self.background.fadeTo((0.0, 0.0, 0.0, 1.0), 0, 1.0)
+        self.background.fadeTo((0.0, 0.0, 0.0, 1.0), self.currentTime, 1.0)
             
     def hide(self):
         print self, "is hiding"
+        
         
     def handleEvent(self, event):
         if event.type == KEYDOWN:
