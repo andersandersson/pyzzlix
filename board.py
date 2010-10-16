@@ -58,8 +58,8 @@ class Board(Sprite):
         self.subSprites.append(self.glow)
         self.blocksFalling = False
         
-        self._border_col = None
-        self._border_speed = 0.0
+        self._glow_col = (0.0, 0.0, 0.0, 0.0)
+        self._glow_duration = 0.0
 
     def __str__(self):
         val = ""
@@ -90,25 +90,25 @@ class Board(Sprite):
         pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
 
 
-    def pulseBorder(self, col, speed):
-        self._border_col = col
-        self._border_speed = speed
-        
-        from_col = (col[0], col[1], col[2], 0.0)
-        
-        def fade_to_done(sprite):
-            self.glow.fadeTo(from_col, self.currentTime, speed, fade_from_done)
+    def pulseBorder(self, col, duration):
+        self._glow_col = col
+        self._glow_duration = duration
+        from_col = (self._glow_col[0], self._glow_col[1], self._glow_col[2], 0.0)
+
+        def fade_to_done(s):
+            self.glow.fadeTo(from_col, self.currentTime, duration, fade_from_done)
             
-        def fade_from_done(sprite):
-            self.glow.fadeTo(col, self.currentTime, speed, fade_to_done)
-
+        def fade_from_done(s):
+            self.glow.fadeTo(col, self.currentTime, duration, fade_to_done)
+            
+        self.glow.clearColCallbacks()
         fade_from_done(None)
-
+        
     def stopPulseBorder(self):
-        from_col = (self._border_col[0], self._border_col[1], self._border_col[2], 0.0)
+        from_col = (self._glow_col[0], self._glow_col[1], self._glow_col[2], 0.0)
         
         self.glow.clearColCallbacks()
-        self.glow.fadeTo(from_col, self.currentTime, self._border_speed)
+        self.glow.fadeTo(from_col, self.currentTime, self._glow_duration)
     
     def reset(self):
         for x in range(self.width):

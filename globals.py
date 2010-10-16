@@ -37,7 +37,6 @@ EVENT_PRELOADED_PART = USEREVENT+3
 # Functions to create our resources
 textures = dict()
 
-
 def loadTexture(texture):
     imagefile = 0
     fullname = texture.fullname
