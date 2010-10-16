@@ -1,8 +1,5 @@
 from globals import *
 
-import pygame
-from pygame.locals import *
-
 class Animation():
     def __init__(self, name, width, height, srcx = 0, srcy = 0, srcw = None, srch = None, currentTime = 0.0, frameLength = 0.1, mode = "loop", reverse = False):
         self.images = loadImageSheet(name, width, height, srcx, srcy, srcw, srch)

@@ -1,7 +1,3 @@
-import os, pygame, board
-from pygame.locals import *
-from pygame.sprite import *
-
 from scene import *
 from scenehandler import *
 from board import *
@@ -9,7 +5,6 @@ from block import *
 from font import *
 from text import *
 from sprite import *
-from marker import *
 from image import *
 import random
 import thread

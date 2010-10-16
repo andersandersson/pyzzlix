@@ -1,7 +1,3 @@
-
-#import pygame
-#from pygame.locals import *
-
 import swmixer_pymedia as swmixer
 
 from globals import *

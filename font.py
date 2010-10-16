@@ -1,6 +1,4 @@
 from globals import *
-from singleton import *
-
 from sprite import *
 
 class Font():

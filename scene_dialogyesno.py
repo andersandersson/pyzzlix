@@ -1,7 +1,3 @@
-import os, pygame, board
-from pygame.locals import *
-from pygame.sprite import *
-
 from math import *
 
 from scene import *
@@ -11,9 +7,6 @@ from text import *
 from sprite import *
 from image import *
 import random
-
-from scene_maingame import *
-from scene_highscore import *
 
 from menuitem import *
 

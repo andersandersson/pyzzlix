@@ -1,8 +1,5 @@
 from globals import *
 
-#import pygame
-#from pygame.locals import *
-
 import random
 from sprite import *
 from animation import *

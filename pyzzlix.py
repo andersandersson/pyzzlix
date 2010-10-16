@@ -1,51 +1,40 @@
 #!/usr/bin/python
-
 import sys
 sys.path += ['.']
 
 # Import Pygame modules
-import os, pygame
+import pygame
 from pygame.locals import *
-
-if not pygame.font: print 'Warning, fonts disabled'
-if not pygame.mixer: print 'Warning, sound disabled'
 
 # Import important stuff
 from globals import *
 from scenehandler import *
 from renderer import *
-from scene_maingame import *
-from scene_background import *
-from scene_mainmenu import *
-from scene_preload import *
-from scene_splash import *
-from font import *
-
 from mixer import *
 
-sceneHandler = SceneHandler()
-renderer = Renderer()
-mixer = Mixer()
-fullscreen = False
+from scene_preload import *
+
+sceneHandler = None
+renderer = None
+mixer = None
 enableSound = True
 listener = None
+fullScreen = False
 
 def init():
     global sceneHandler
     global renderer
-    global listener
+    global fullScreen
     global enableSound
 
-    if enableSound:
-        pygame.mixer.pre_init(frequency=44100, size=-16, channels=2)
-
-    pygame.init()
-    
     # Initialize renderer
-    renderer.init('Pyzzlix', 320, 240, fullscreen)
+    renderer = Renderer()
+    renderer.init('Pyzzlix', 320, 240, fullScreen)
+    mixer = Mixer()
     mixer.init(enableSound)
     
     # Initialize and populate scene stack
+    sceneHandler = SceneHandler()
     sceneHandler.pushScene(Scene_Preload())    
 
 def cleanup():
@@ -57,8 +46,7 @@ def cleanup():
     
 
 def main():
-    global fullscreen
-
+    print "Running Pyzzlix!"
     # Initialize custom stuff
     init()
             
@@ -100,7 +88,6 @@ def main():
                         SceneHandler().pushScene(Scene_DialogYesNo())
                         #return
                     elif event.type == KEYDOWN and event.key == K_F1:
-                        fullscreen = not fullscreen
                         ptime = pygame.time.get_ticks() * 0.001
                         renderer.toggleFullScreen()
                         pausedTime += (pygame.time.get_ticks() * 0.001) - ptime

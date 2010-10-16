@@ -108,15 +108,3 @@ def loadImageSheet(filename, w, h, srcx = 0, srcy = 0, srcw = None, srch = None)
             
     return sheet
 
-def loadSound(name):
-    class NoneSound:
-        def play(self): pass
-    if not pygame.mixer or not pygame.mixer.get_init():
-        return NoneSound()
-    fullname = os.path.join('data', name)
-    try:
-        sound = pygame.mixer.Sound(fullname)
-    except pygame.error, message:
-        print 'Cannot load sound:', fullname
-        raise SystemExit, message
-    return sound
