@@ -46,6 +46,8 @@ class MenuItem(Text):
     def select(self):
         self.timer = 0
         self.state = "blinking"
-        self.callfunc()
+        
+        if self.callfunc:
+            self.callfunc()
         
     

@@ -14,6 +14,8 @@ from scene_gameover import *
 from scene_enter_highscore import *
 from scene_highscore import *
 from scene_background import *
+from scene_dialogyesno import *
+from scene_mainmenu import *
 from scenehandler import *
 import random
 import thread
@@ -165,6 +167,7 @@ class Scene_MainGame(Scene):
     def run(self):
         SceneHandler().pushScene(Scene_Background())
         SceneHandler().pushScene(self)
+        self.resetGame()
             
     def show(self):
         print self, "is showing"
@@ -433,85 +436,90 @@ class Scene_MainGame(Scene):
         if event.type == EVENT_LEVEL_UP:
             self.newLevel()
         
-        if event.type == KEYDOWN or event.type == KEYUP:
+        if event.type == KEYDOWN:
             state = event.type
             key = event.key
 
+            if key == K_ESCAPE:
+                def quit_game():
+                    SceneHandler().removeScene(Scene_DialogYesNo())
+                    SceneHandler().removeScene(self)
+                    SceneHandler().removeScene(Scene_Background())
+
+                def do_nothing():
+                    SceneHandler().removeScene(Scene_DialogYesNo())
+                    
+                Scene_DialogYesNo().setQuery("Do you want to exit to the menu?", quit_game, do_nothing)
+                SceneHandler().pushScene(Scene_DialogYesNo())
+
             if (key == K_RIGHT):
-                if state == KEYDOWN:
-                    if (self.marker.boardx < self.board.width - 2):
-                        self.marker.move(1, 0, self.currentTime)
+                if (self.marker.boardx < self.board.width - 2):
+                    self.marker.move(1, 0, self.currentTime)
             if (key == K_LEFT):
-                if state == KEYDOWN:
-                    if (self.marker.boardx > 0):
-                        self.marker.move(-1, 0, self.currentTime)
+                if (self.marker.boardx > 0):
+                    self.marker.move(-1, 0, self.currentTime)
             if (key == K_UP):
-                if state == KEYDOWN:
-                    if (self.marker.boardy >  self.board.height / 2):
-                        self.marker.move(0, -1, self.currentTime)
+                if (self.marker.boardy >  self.board.height / 2):
+                    self.marker.move(0, -1, self.currentTime)
             if (key == K_DOWN):
-                if state == KEYDOWN:
                     if (self.marker.boardy < self.board.height - 2):
                         self.marker.move(0, 1, self.currentTime)
 
             if (key == K_x):
-                if state == KEYDOWN:
-                    if (self.board.rotate(self.marker.boardx, self.marker.boardy, 1, 2)):
-                        self.marker.turn()
-                    else:
-                        self.marker.fail()
+                if (self.board.rotate(self.marker.boardx, self.marker.boardy, 1, 2)):
+                    self.marker.turn()
+                else:
+                    self.marker.fail()
             if (key == K_z):
-                if state == KEYDOWN:
-                    if (self.board.rotate(self.marker.boardx, self.marker.boardy, -1, 2)):
-                        self.marker.turn()
-                    else:
-                        self.marker.fail()
+                if (self.board.rotate(self.marker.boardx, self.marker.boardy, -1, 2)):
+                    self.marker.turn()
+                else:
+                    self.marker.fail()
             
-            if state == KEYDOWN:        
-                if key == K_p:
-                    print self.board
+            if key == K_p:
+                print self.board
 
-                if key == K_r:
-                    self.resetGame()
-                    
-                if key == K_g:
-                    self.showGameOver()
-                    
-                if key == K_n:
-                    self.newLevel()
+            if key == K_r:
+                self.resetGame()
+                
+            if key == K_g:
+                self.showGameOver()
+                
+            if key == K_n:
+                self.newLevel()
 
-                if key == K_h:
-                    self.showEnterHighscore()
+            if key == K_h:
+                self.showEnterHighscore()
 
-                num_key = 0
-                if (key == K_1):
-                    num_key = 1
-                if (key == K_2):
-                    num_key = 2
-                if (key == K_3):
-                    num_key = 3
-                if (key == K_4):
-                    num_key = 4
-                if (key == K_5):
-                    num_key = 5
-                if (key == K_6):
-                    num_key = 6
-                if (key == K_7):
-                    num_key = 7
-                if (key == K_8):
-                    num_key = 8
-                if (key == K_9):
-                    num_key = 9
-                if (key == K_0):
-                    num_key = 10
-                 
-                if num_key > 0 and num_key <= len(self.music_states):
-                    if self.music_states[num_key-1] == 1:
-                        Mixer().setVolume(self.music[num_key-1], 0.0, 3.1)
-                        self.music_states[num_key-1] = 0
-                    else:  
-                        Mixer().setVolume(self.music[num_key-1], 1.0, 3.1)
-                        self.music_states[num_key-1] = 1
+            num_key = 0
+            if (key == K_1):
+                num_key = 1
+            if (key == K_2):
+                num_key = 2
+            if (key == K_3):
+                num_key = 3
+            if (key == K_4):
+                num_key = 4
+            if (key == K_5):
+                num_key = 5
+            if (key == K_6):
+                num_key = 6
+            if (key == K_7):
+                num_key = 7
+            if (key == K_8):
+                num_key = 8
+            if (key == K_9):
+                num_key = 9
+            if (key == K_0):
+                num_key = 10
+             
+            if num_key > 0 and num_key <= len(self.music_states):
+                if self.music_states[num_key-1] == 1:
+                    Mixer().setVolume(self.music[num_key-1], 0.0, 3.1)
+                    self.music_states[num_key-1] = 0
+                else:  
+                    Mixer().setVolume(self.music[num_key-1], 1.0, 3.1)
+                    self.music_states[num_key-1] = 1
         
                 
 

@@ -56,6 +56,8 @@ class Hourglass(Sprite):
     def reset(self, maxValue):
         self.max = maxValue
         self.value = maxValue
+        self._halted = 0
+        self._pause = 0
 
     def scaleValue(self, perc):
         self.value *= perc

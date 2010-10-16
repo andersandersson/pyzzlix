@@ -14,7 +14,7 @@ from sprite import *
 from marker import *
 from image import *
 import random
-
+import scene_maingame
 from scene_maingame import *
 from scene_highscore import *
 from scene_help import *
@@ -175,6 +175,9 @@ class Scene_MainMenu(Scene):
         if event.type == KEYDOWN:
             key = event.key
 
+            if key == K_ESCAPE:
+                self.menu_quit()
+
             if (self.state == "menu"):
                 self.newmenufocus = self.menufocus
                 if (key == K_UP):
@@ -213,15 +216,13 @@ class Scene_MainMenu(Scene):
         self.menu.moveTo((160, 100), self.currentTime, 0.4, self.menu_enter3)
  
     def menu_enter3(self, sprite):  
-        print "HORRAY"
         self.menuitems[self.menufocus].focus(self.currentTime)
-        self.state = "menu"
- 
+        self.state = "menu" 
 
     def menu_start(self):
         Mixer().playSound(self.startsound)
-        SceneHandler().removeScene(self)
-        Scene_MainGame().run()
+        #SceneHandler().removeScene(self)
+        scene_maingame.Scene_MainGame().run()
         pass
     
     def menu_options(self):

@@ -28,6 +28,7 @@ class Marker(Sprite):
         
         self.movesound = None
         self.turnsound = None
+        self.failsound = None
         
         
     def moveToBoardCoord(self, boardx, boardy, currentTime):
