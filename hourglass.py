@@ -22,7 +22,8 @@ class Hourglass(Sprite):
         self.frameDelay = 0.1
         self.frame = 0
         self._value = 0
-        self._pause = 0
+        self._pause = 0        
+        self._halted = 0
         
         self.reset(1000)
 
@@ -60,8 +61,17 @@ class Hourglass(Sprite):
         self.value *= perc
         self.max *= perc
 
-    def pause(self, time):
+    def addPause(self, time):
         self._pause += time
+        
+        if self._pause > MAX_PAUSE_TIME_SEC:
+            self._pause = MAX_PAUSE_TIME_SEC
+
+    def halt(self):
+        self._halted += 1
+        
+    def unhalt(self):
+        self._halted -= 1
 
     def showPause(self):
         if self.pauseVisible:
@@ -86,14 +96,13 @@ class Hourglass(Sprite):
             pygame.event.post(pygame.event.Event(EVENT_GAME_OVER))
             return
 
-        if self._pause <= currentTime:
+        if self._pause <= 0 and self._halted <= 0:
             self.value -= 1
-            self._pause = currentTime
-        elif (self._pause - currentTime) > MAX_PAUSE_TIME_SEC:
-            self._pause = currentTime + MAX_PAUSE_TIME_SEC
+        elif self._halted <= 0:
+            self._pause -= (self.currentTime - self.lastTime)
 
-        if self._pause > currentTime:
-            self.pausetext.setText("%d" % ceil(self._pause-currentTime))
+        if self._pause > 0:
+            self.pausetext.setText("%d" % ceil(self._pause))
             self.showPause()
         else:
             self.hidePause()
@@ -108,3 +117,4 @@ class Hourglass(Sprite):
         self.bar.scaleTo((72, -p*96), currentTime, 0.1)
         self.bar.fadeTo((1 - p, p, 0.0, 1.0), currentTime, 0.1)
         #pygame.draw.rect(self.image, [(1-p)*255,p*255,0], [0,(1-p)*150,90,150])
+        

@@ -351,7 +351,8 @@ class Scene_MainGame(Scene):
     def removeBlocks(self, blocks):
         blocks = self.sortBlocksZigZag(blocks)
 
-        self.hourglass.pause(len(blocks)*PAUSE_TIME_PER_BLOCK)
+        self.hourglass.addPause(len(blocks)*PAUSE_TIME_PER_BLOCK)
+        self.hourglass.halt()
 
         delay = 0.7 / float(len(blocks))
 
@@ -372,6 +373,7 @@ class Scene_MainGame(Scene):
                 for block in blocks:
                     self.board.clear(block.boardx, block.boardy)
                 self.score_level = self.level
+                self.hourglass.unhalt()
                     
         def block_wait_done(block):
             block.scaleTo((1.0, 1.0), self.currentTime, 0.5, block_scale_done)

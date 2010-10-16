@@ -8,6 +8,7 @@ class Sprite(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.subSprites = []
         self.currentTime = 0.0
+        self.lastTime = 0.0
         self.currentImage = 0
         self.center = (0.0, 0.0)
         self.pos = (0.0, 0.0)
@@ -119,7 +120,8 @@ class Sprite(pygame.sprite.Sprite):
         self.rot = self.calcRot(currentTime)
         self._rot_lasttime = currentTime
 
-    def update(self, currentTime): 
+    def update(self, currentTime):
+        self.lastTime = self.currentTime
         self.currentTime = currentTime
 
         self.updatePos(currentTime)
