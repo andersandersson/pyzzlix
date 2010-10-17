@@ -26,7 +26,7 @@ class Mixer(Singleton):
         if not self.enableSound:
             return
 
-        swmixer.init(self.samplerate, chunksize=2048, stereo=True)
+        swmixer.init(self.samplerate, chunksize=512, stereo=True)
         swmixer.start()
       
     def loadAudioFile(self, filename):

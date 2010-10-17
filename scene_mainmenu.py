@@ -227,6 +227,7 @@ class Scene_MainMenu(Scene):
 
     def menu_start(self):
         Mixer().playSound(self.startsound)
+        Mixer().stopSound(self.music)
         SceneHandler().pushScene(scene_maingame.Scene_MainGame())
         pass
     

@@ -85,7 +85,7 @@ class Scene_MainGame(Scene):
     def preload(self):
         lock = thread.allocate_lock()
 
-        load_list = ["music1_chord.ogg", "music1_hh.ogg", "music1_bass.ogg","music1_kick.ogg","music1_lead2.ogg", "music1_lead.ogg"]
+        load_list = ["music1_chord.ogg", "music1_hh.ogg", "music1_bass.ogg", "music1_bass2.ogg", "music1_kick.ogg","music1_lead.ogg", "music1_lead3.ogg", "music1_lead2.ogg"]
         
         self.allMusic = range(0, len(load_list))
         self.music_states = [0]*len(load_list)
@@ -95,7 +95,9 @@ class Scene_MainGame(Scene):
         self.levelMusic[6] = [0,1,2,3]
         self.levelMusic[9] = [1,2,3,5]
         self.levelMusic[12] = [1,2,3,4,5]
-        self.levelMusic[15] = [0,1,2,3,4,5]     
+        self.levelMusic[15] = [0,1,2,3,4,5]   
+        self.levelMusic[17] = [0,1,2,3,4,5,6]   
+        self.levelMusic[19] = [0,1,2,3,4,5,7]   
         
         music = {}
         count = [0]
@@ -154,7 +156,7 @@ class Scene_MainGame(Scene):
         print self, "is hiding"
         self.pauseGame()
         for mus in self.music:
-            Mixer().stopSound()
+            Mixer().stopSound(mus)
         
     def resetGame(self):
         self.level = 0
@@ -502,6 +504,29 @@ class Scene_MainGame(Scene):
 
             if key == K_h:
                 self.showEnterHighscore()
+                
+                
+            if key == K_0:
+                for mus in self.music:
+                    Mixer().setVolume(mus, 0.0, 2.0)
+                
+            if key == K_1:    
+                Mixer().setVolume(self.music[0], 1.0, 3.1)
+            if key == K_2:    
+                Mixer().setVolume(self.music[1], 1.0, 3.1)     
+            if key == K_3:    
+                Mixer().setVolume(self.music[2], 1.0, 3.1)      
+            if key == K_4:    
+                Mixer().setVolume(self.music[3], 1.0, 3.1)   
+            if key == K_5:    
+                Mixer().setVolume(self.music[4], 1.0, 3.1)    
+            if key == K_6:    
+                Mixer().setVolume(self.music[5], 1.0, 3.1)   
+            if key == K_7:    
+                Mixer().setVolume(self.music[6], 1.0, 3.1)
+            if key == K_8:    
+                Mixer().setVolume(self.music[7], 1.0, 3.1)
+  
 
         return True
         
