@@ -318,9 +318,9 @@ class Scene_MainGame(Scene):
         text_y = text_y/text_count + self.board.pos[1] - self.font.height/2
         
         if factor >= 2.0:
-            text = Text(text_x, text_y, self.font, str(score/factor) + "X%d" % int(factor))
+            text = Text(text_x + 8, text_y + 8, self.font, str(score/factor) + "X%d" % int(factor))
         else:
-            text = Text(text_x, text_y, self.font, str(score))
+            text = Text(text_x + 8, text_y + 8, self.font, str(score))
 
         text.setAnchor("center")
         text._layer = LAYER_EFFECTS
@@ -331,8 +331,9 @@ class Scene_MainGame(Scene):
         def text_scale_done(sprite):
             #text.scaleTo([20.0, 20.0], self.currentTime, 0.3)
             text.fadeTo([0.0, 0.0, 0.0, 0.0], self.currentTime, 0.3, text_fade_done)
-                
-        text.scaleTo([5.0,5.0], self.currentTime, 0.7, text_scale_done)
+
+        text.center = (0, 4)    
+        text.scaleTo([2.0,2.0], self.currentTime, 0.7, text_scale_done)
         #text.moveTo([320, -100], self.currentTime, 1.0)
         self.sprites.add(text)
 
@@ -389,17 +390,6 @@ class Scene_MainGame(Scene):
 
         blocks[-1].fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, block_wait_done)
         blocks[-1].doBlink()
-
-    def showLevelSplash(self):
-        self.sprites.add(self.levelsplash)
-        self.levelsplash.display(self.level, self.currentTime, self.tutorials)
-            
-    def removeLevelSplash(self):
-        
-        def killSplash(sprite):
-            self.sprites.remove(self.levelsplash)
-            
-        self.levelsplash.hide(self.currentTime, callfunc=killSplash)   
         
     def newLevel(self):
         self.level += 1
@@ -411,22 +401,25 @@ class Scene_MainGame(Scene):
         self.usable_blocks = self.all_blocks[0:maxblocks]
 
         self.hourglass.scaleValue(0.8)
-
-        self.showLevelSplash()
         
-        #text = Text(160, 90, self.font, "LEVEL: "+str(self.level))
+        text = Text(160, 90, self.font, "LEVEL: "+str(self.level))
+        text.setAnchor("center")
+        text.center = (0, 4)
+        text._layer = LAYER_EFFECTS
+        
+        def text_fade_done(sprite):
+            self.sprites.remove(text)
 
-        #def text_fade_done(sprite):
-        #    self.sprites.remove(text)
-
-        #def text_scale_done(sprite):
-        #    text.scaleTo((4.0, 4.0), self.currentTime, 0.5)
-        #    text.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.5, text_fade_done)
+        def text_scale_down_done(sprite):
+            text.fadeTo((1.0, 1.0, 1.0, 0.0), self.currentTime, 1.0) 
             
-        #text.setAnchor("center")
-        #text._layer = LAYER_EFFECTS
-        #text.scaleTo((2.0, 2.0), self.currentTime, 0.5, text_scale_done)
-        #self.sprites.add(text)
+        def text_scale_up_done(sprite):
+            text.scaleTo((4.0, 4.0), self.currentTime, 0.2, text_scale_down_done)
+            
+        text.setCol((1.0,1.0,1.0,0.0))
+        text.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.05)
+        text.scaleTo((5.0, 5.0), self.currentTime, 0.05, text_scale_up_done)
+        self.sprites.add(text)
         
 
         self.playMusicForLevel()        
