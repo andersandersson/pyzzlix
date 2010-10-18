@@ -24,7 +24,7 @@ class Scene_GameOver(Scene):
 
         self.font = Font("font_fat.png", 8, 8);
 
-        self.gameovertext = Text(160, 90, self.font, "GAME OVER!")
+        self.gameovertext = Text(160, 90, self.font, "GAME OVER")
         self.gameovertext._layer = 2
         self.gameovertext.setAnchor("center")
         self.gameovertext.setScale((3.0,2.0))
@@ -37,8 +37,8 @@ class Scene_GameOver(Scene):
 
         self.menu = Menu()
         self.menu.setPos((160, 120))
-        self.menu.add(MenuItem(-70, 0, self.font, "Play again", self.menu_playAgain))
-        self.menu.add(MenuItem(70, 0, self.font, "Exit to menu", self.menu_quit))
+        self.menu.add(MenuItem(0, 0, self.font, "Play again", self.menu_playAgain))
+        self.menu.add(MenuItem(0, 24, self.font, "Exit to menu", self.menu_quit))
 
         self.sprites.add(self.background)
         self.sprites.add(self.gameovertext)
@@ -56,15 +56,19 @@ class Scene_GameOver(Scene):
         pass
     
     def show(self):
+        def fade_done(s):
+            self.updateBlocker = True
+            self.state = self.statelist["showing"]
+            
         self.menu.focusItem(0)
         self.background.setCol((0.0, 0.0, 0.0, 0.0))
-        self.background.fadeTo((0.0, 0.0, 0.0, 0.8), self.currentTime, 0.3)
+        self.background.fadeTo((0.0, 0.0, 0.0, 0.8), self.currentTime, 0.5, fade_done)
         self.menu.setCol((1.0, 1.0, 1.0, 0.0))
-        self.menu.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.2)
+        self.menu.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.5)
         self.gameovertext.setCol((1.0, 1.0, 1.0, 0.0))
-        self.gameovertext.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.2)
-        self.state = self.statelist["showing"]
-        self.updateBlocker = True
+        self.gameovertext.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.5)
+        self.state = self.statelist["fading"]
+        self.updateBlocker = False
         print self, "is showing"
         
     def hide(self):
@@ -103,10 +107,10 @@ class Scene_GameOver(Scene):
         if event.type == KEYDOWN:
             key = event.key
 
-            if (key == K_LEFT):
+            if (key == K_UP):
                 self.menu.prevItem()
                                            
-            if (key == K_RIGHT):
+            if (key == K_DOWN):
                 self.menu.nextItem()
             
             if (key == K_RETURN):
