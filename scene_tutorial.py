@@ -62,6 +62,8 @@ class Page_1(Page):
 
         self.subSprites.append(self.welcometext)
 
+    def show(self):
+        pass
         
 class Page_2(Page):
     def __init__(self, x, y, page, pageCount):
@@ -88,9 +90,9 @@ class Page_2(Page):
 
         self.blocks = []
         self.blocks.append(Block(0, 0, 0, (mposx + 8, mposy + 8)))
-        self.blocks.append(Block(1, 0, 1, (mposx + 8, mposy + 8)))
-        self.blocks.append(Block(0, 1, 2, (mposx + 8, mposy + 8)))
-        self.blocks.append(Block(1, 1, 3, (mposx + 8, mposy + 8)))
+        self.blocks.append(Block(0, 1, 1, (mposx + 8, mposy + 8)))
+        self.blocks.append(Block(1, 1, 2, (mposx + 8, mposy + 8)))
+        self.blocks.append(Block(1, 0, 3, (mposx + 8, mposy + 8)))
 
 
         for b in self.blocks:
@@ -107,7 +109,43 @@ class Page_2(Page):
         for t in self.infotext:
             t.setAnchor("center")
             self.subSprites.append(t)
-        
+
+    def show(self):
+        def turnLeft(sprite):
+            self.blocks[0].moveToBoardCoord(self.blocks[0].boardx,
+                                            self.blocks[0].boardy + 1,
+                                            self.currentTime)
+            self.blocks[1].moveToBoardCoord(self.blocks[1].boardx + 1,
+                                            self.blocks[1].boardy,
+                                            self.currentTime)
+            self.blocks[2].moveToBoardCoord(self.blocks[2].boardx,
+                                            self.blocks[2].boardy - 1,
+                                            self.currentTime)
+            self.blocks[3].moveToBoardCoord(self.blocks[3].boardx - 1,
+                                            self.blocks[3].boardy,
+                                            self.currentTime)
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnRight)
+                    
+        def turnRight(sprite):
+            self.blocks[0].moveToBoardCoord(self.blocks[0].boardx,
+                                            self.blocks[0].boardy - 1,
+                                            self.currentTime)
+            self.blocks[1].moveToBoardCoord(self.blocks[1].boardx - 1,
+                                            self.blocks[1].boardy,
+                                            self.currentTime)
+            self.blocks[2].moveToBoardCoord(self.blocks[2].boardx,
+                                            self.blocks[2].boardy + 1,
+                                            self.currentTime)
+            self.blocks[3].moveToBoardCoord(self.blocks[3].boardx + 1,
+                                            self.blocks[3].boardy,
+                                            self.currentTime)
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnLeft) 
+
+        self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnLeft)    
+
+    def hide():
+        self.marker2.clearColCallbacks()
+            
 
 class Scene_Tutorial(Scene):
     def _runOnce(self):
@@ -144,7 +182,9 @@ class Scene_Tutorial(Scene):
 
         if (self.newPage != self.currentPage):
             self.sprites.add(self.pages[self.newPage])
-            self.sprites.remove(self.pages[self.currentPage])            
+            self.pages[self.newPage].show()
+            self.sprites.remove(self.pages[self.currentPage])
+            
 
         self.currentPage = self.newPage    
         
