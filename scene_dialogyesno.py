@@ -51,7 +51,7 @@ class Scene_DialogYesNo(Scene):
         self.sprites.add(self.background)
         
         self.movesound =  Mixer().loadAudioFile("menumove.ogg") 
-        self.selectsound =  Mixer().loadAudioFile("menuselect.ogg") 
+        self.selectsound =  Mixer().loadAudioFile("menuselect.ogg")
    
     def setQuery(self, query, yescall, nocall):
         self.query = query
@@ -66,7 +66,6 @@ class Scene_DialogYesNo(Scene):
         self.sprites.update(self.currentTime)
 
     def show(self):
-        print self, "is showing"
         for item in self.menuitems:
             item.reset()
             
@@ -75,13 +74,13 @@ class Scene_DialogYesNo(Scene):
         self.background.setCol((0.0, 0.0, 0.0, 0.0))
         self.background.fadeTo((0.0, 0.0, 0.0, 1.0), self.currentTime, 0.3)
         self.menu.setCol((1.0, 1.0, 1.0, 0.0))
-        self.menu.fadeTo((1.0, 0.0, 0.0, 1.0), self.currentTime, 0.3)
+        self.menu.fadeTo((0.0, 0.0, 1.0, 0.0), self.currentTime, 0.2)
 
         
     def remove(self, callfunc=None):
-        print self, "is hiding"
+        self.menu.fadeTo((1.0, 0.0, 0.0, 0.0), self.currentTime, 0.2)
         self.background.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.5, callfunc)
-        self.menu.fadeTo((1.0, 1.0, 1.0, 0.0), self.currentTime, 0.5)
+
         
     def handleEvent(self, event):
         if event.type == KEYDOWN:
@@ -111,5 +110,4 @@ class Scene_DialogYesNo(Scene):
                 self.menuitems[self.menufocus].unfocus(self.currentTime)
                 self.menuitems[self.newmenufocus].focus(self.currentTime)
                 self.menufocus = self.newmenufocus
-        return True        
-       
+        return True

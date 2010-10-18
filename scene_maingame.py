@@ -432,10 +432,10 @@ class Scene_MainGame(Scene):
 
             if key == K_ESCAPE:
                 def killGame(sprite):
-                    SceneHandler().removeScene(Scene_DialogYesNo)
+                    SceneHandler().removeScene(Scene_DialogYesNo())
                     SceneHandler().removeScene(self)
                 def killDialog(sprite):
-                    SceneHandler().removeScene(Scene_DialogYesNo)
+                    SceneHandler().removeScene(Scene_DialogYesNo())
                 def quit_game():
                     Scene_DialogYesNo().remove(killGame)
                 def do_nothing():
