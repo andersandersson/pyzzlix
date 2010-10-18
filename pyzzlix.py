@@ -39,7 +39,7 @@ def init():
     sceneHandler = SceneHandler()
 
 
-    #sceneHandler.pushScene(Scene_MainMenu())
+    #sceneHandler.pushScene(Scene_GameOver())
     #sceneHandler.pushScene(Scene_Tutorial())
     #sceneHandler.pushScene(Scene_Preload())    
     sceneHandler.pushScene(Scene_MainMenu())    

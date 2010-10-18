@@ -28,8 +28,6 @@ class Hourglass(Sprite):
         self._pause = 0        
         self._halted = 0
         
-        self.reset(1000)
-
         self.background = Sprite()
         self.background.setImage(loadImage("pixel.png", 1, 1))
         self.background.setScale((72.0, 96.0))
@@ -74,8 +72,11 @@ class Hourglass(Sprite):
         self._glow_col = (0.0, 0.0, 0.0, 0.0)
         self._glow_duration = 0.0
 
-        self.state = "high"
+        self.statelist = {"low": 0, "normal": 1, "high": 2, "gameover": 3}
+        self.state = self.statelist["high"]
     
+        self.reset(1000)
+
     def pulseBorder(self, col1, col2, duration):
         self._glow_duration = duration
 
@@ -112,6 +113,7 @@ class Hourglass(Sprite):
         self.value = maxValue
         self._halted = 0
         self._pause = 0
+        self.state = self.statelist["high"]
 
     def scaleValue(self, perc):
         self.value *= perc
@@ -164,8 +166,12 @@ class Hourglass(Sprite):
     def update(self, currentTime):
         Sprite.update(self, currentTime)
 
+        if self.state == self.statelist["gameover"]:
+            return
+
         if self.value <= 0:
             pygame.event.post(pygame.event.Event(EVENT_GAME_OVER))
+            self.state = self.statelist["gameover"]
             return
 
         if self._pause <= 0 and self._halted <= 0:
@@ -182,14 +188,14 @@ class Hourglass(Sprite):
             
         p = (exp(2.0*p) - 1.0)/(exp(2.0) - 1.0)
 
-        if p < 0.2 and not self.state == "low":
-            self.state = "low"
+        if p < 0.2 and not self.state == self.statelist["low"]:
+            self.state = self.statelist["low"]
             pygame.event.post(pygame.event.Event(EVENT_TIMER_STATE_CHANGED, state="low"))
-        elif p >= 0.2 and p < 0.8 and not self.state == "normal":
-            self.state = "normal"
+        elif p >= 0.2 and p < 0.8 and not self.state == self.statelist["normal"]:
+            self.state = self.statelist["normal"]
             pygame.event.post(pygame.event.Event(EVENT_TIMER_STATE_CHANGED, state="normal"))
-        elif p >= 0.8 and not self.state == "high":
-            self.state = "high"
+        elif p >= 0.8 and not self.state == self.statelist["high"]:
+            self.state = self.statelist["high"]
             pygame.event.post(pygame.event.Event(EVENT_TIMER_STATE_CHANGED, state="high"))
 
         self.bar.scaleTo((72, -p*96), currentTime, 0.1)

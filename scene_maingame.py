@@ -68,7 +68,7 @@ class Scene_MainGame(Scene):
         self.init_x_dir = 0
         self.init_y = 0
         self.init_y_dir = 0
-        self.level = 0
+        self.level = 1
         self.block_count = 0
        
         self.usable_blocks = []
@@ -164,7 +164,7 @@ class Scene_MainGame(Scene):
             Mixer().stopSound(mus)
         
     def resetGame(self):
-        self.level = 0
+        self.level = 1
         self.score = 0
         self.block_count = 0
         self.board.reset()
@@ -178,12 +178,35 @@ class Scene_MainGame(Scene):
         self.sprites.remove_sprites_of_layer(LAYER_BLOCKS)
         self.blocks.empty()
 
+        self.board.stopPulseBorder()
+        self.hourglass.stopPulseBorder()
+        self.scoreboard.stopPulseBorder()
+
         self.state = self.statelist["idle"]
         self.playMusicForLevel()
 
     def showGameOver(self):
-        game_over = Scene_GameOver()
-        SceneHandler().pushScene(game_over)
+        def game_over_replay():
+            self.resetGame()
+            self.startGame()
+            self.board.fadeTo( (1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1)
+    
+        def game_over_exit():
+            SceneHandler().removeScene(self)
+            self.board.setCol( (1.0, 1.0, 1.0, 1.0) )
+
+        def sleep_done(s):
+            game_over = Scene_GameOver()
+            game_over.replay_callback = game_over_replay
+            game_over.exit_callback = game_over_exit
+
+            SceneHandler().pushScene(game_over)
+
+        def fade_done(s):
+            self.board.fadeTo( (0.8, 0.0, 0.0, 1.0), self.currentTime, 0.2, sleep_done)
+
+        self.state = self.statelist["gameover"]
+        self.board.fadeTo( (0.8, 0.0, 0.0, 1.0), self.currentTime, 0.2, fade_done)
 
     def showEnterHighscore(self):
         enter_highscore = Scene_EnterHighscore()
@@ -254,9 +277,9 @@ class Scene_MainGame(Scene):
         self.createBlock(x, y, type)
         
     def createBlock(self, x, y, type):
-        block = Block(x, y, type, )
+        block = Block(x, y, type, (8, -BOARD_HEIGHT*16 + 8))
         block._layer = LAYER_BLOCKS
-        self.board.add(x, y, block, 8, -BOARD_HEIGHT*16 + 8)
+        self.board.add(x, y, block)
         block.animatePopup(self.currentTime)
 
     def addBlockScore(self, block):
@@ -409,7 +432,7 @@ class Scene_MainGame(Scene):
         #self.sprites.add(text)
         
 
-        self.playMusicForLevel()
+        self.playMusicForLevel()        
 
     def handleEvent(self, event):
         if event.type == EVENT_CIRCLE_FOUND:
@@ -422,10 +445,11 @@ class Scene_MainGame(Scene):
                 self.removeBlocks(event.rotation_blocks)
 
         if event.type == EVENT_GAME_OVER:
-            if Scene_Highscore().isNewHighscore(self.score):
-                self.showEnterHighscore()
-            else:
-                self.showGameOver()
+            self.showGameOver()
+            #if Scene_Highscore().isNewHighscore(self.score):
+            #    self.showEnterHighscore()
+            #else:
+            #    self.showGameOver()
 
         if event.type == EVENT_LEVEL_UP:
             self.newLevel()
@@ -494,6 +518,7 @@ class Scene_MainGame(Scene):
 
             if key == K_r:
                 self.resetGame()
+                self.startGame()
                 
             if key == K_g:
                 self.showGameOver()

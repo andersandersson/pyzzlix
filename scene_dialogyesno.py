@@ -8,6 +8,7 @@ from sprite import *
 from image import *
 import random
 
+from menu import *
 from menuitem import *
 
 class Scene_DialogYesNo(Scene):
@@ -23,32 +24,25 @@ class Scene_DialogYesNo(Scene):
         
         self.font = Font("font_fat.png", 8, 8);
 
-        self.menu = Sprite()
-        self.menu.setPos((160, 100))
-        self.menu._layer = 1
-
         self.querytext = Text(0, -10, self.font, self.query)
         self.querytext.setAnchor("center")
-        self.querytext._layer = 1
 
-        self.menu.subSprites.append(self.querytext)    
-        
-        self.menuitems = [ MenuItem(-20, 0, "Yes", self.yesCallback), 
-                             MenuItem(20, 0, "No", self.noCallback)]                             
-        self.menucount = len(self.menuitems)
-        self.menufocus = 1
-        
-        for item in self.menuitems:
-            self.menu.subSprites.append(item)
-            item._layer = 1
+        self.menu = Menu()
+        self.menu.add(MenuItem(-20, 0, self.font, "Yes", self.yesCallback))
+        self.menu.add(MenuItem(20, 0, self.font, "No", self.noCallback))
             
-        self.sprites.add(self.menu)
+        self.menuSprite = Sprite()        
+        self.menuSprite.subSprites.append(self.querytext)
+        self.menuSprite.subSprites.append(self.menu)
+        self.menuSprite._layer = 1
+        self.menuSprite.setPos((160, 100))
             
         self.background = Sprite()
         self.background.setImage(loadImage("pixel.png"))
         self.background.scaleTo((320,240), 0, 0)
         self.background._layer = 0        
         self.sprites.add(self.background)
+        self.sprites.add(self.menuSprite)
         
         self.movesound =  Mixer().loadAudioFile("menumove.ogg") 
         self.selectsound =  Mixer().loadAudioFile("menuselect.ogg")
@@ -61,29 +55,28 @@ class Scene_DialogYesNo(Scene):
         self.yesCallback = yescall
         self.noCallback = nocall
         self.querytext.setText(query)
-        self.menuitems[0].callfunc = self.yesCallback
-        self.menuitems[1].callfunc = self.noCallback
+        self.menu.items[0].callfunc = self.yesCallback
+        self.menu.items[1].callfunc = self.noCallback
         
           
     def tick(self):
         pass
 
     def show(self):
-        for item in self.menuitems:
+        for item in self.menu.items:
             item.reset()
             
-        self.menufocus = 1
-        self.menuitems[self.menufocus].focus(self.currentTime)
+        self.menu.focusItem(1)
         self.background.setCol((0.0, 0.0, 0.0, 0.0))
         self.background.fadeTo((0.0, 0.0, 0.0, 1.0), self.currentTime, 0.3)
-        self.menu.setCol((1.0, 1.0, 1.0, 0.0))
-        self.menu.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.2)
+        self.menuSprite.setCol((1.0, 1.0, 1.0, 0.0))
+        self.menuSprite.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.2)
         self.state = self.statelist["showing"]
         self.updateBlocker = True
 
         
     def remove(self, callfunc=None):
-        self.menu.fadeTo((1.0, 0.0, 0.0, 0.0), self.currentTime, 0.2)
+        self.menuSprite.fadeTo((1.0, 0.0, 0.0, 0.0), self.currentTime, 0.2)
         self.background.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.5, callfunc)
         self.state = self.statelist["fading"]
         self.updateBlocker = False
@@ -95,28 +88,18 @@ class Scene_DialogYesNo(Scene):
         if event.type == KEYDOWN:
             key = event.key
 
-            self.newmenufocus = self.menufocus
             if (key == K_LEFT):
-                self.newmenufocus -= 1
-                if (self.newmenufocus < 0):
-                    self.newmenufocus = 0
+                self.menu.prevItem()
                                            
             if (key == K_RIGHT):
-                self.newmenufocus += 1
-                if (self.newmenufocus >= self.menucount):
-                    self.newmenufocus = self.menucount - 1
+                self.menu.nextItem()
             
             if (key == K_RETURN):
                 Mixer().playSound(self.selectsound)
-                self.menuitems[self.menufocus].select()
+                self.menu.selectItem()
                 
             if (key == K_ESCAPE):
                 Mixer().playSound(self.selectsound)
-                self.menuitems[1].select()
-                
-            if (self.newmenufocus != self.menufocus):
-                Mixer().playSound(self.movesound)
-                self.menuitems[self.menufocus].unfocus(self.currentTime)
-                self.menuitems[self.newmenufocus].focus(self.currentTime)
-                self.menufocus = self.newmenufocus
+                self.menu.items[1].select()
+
         return True
