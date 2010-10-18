@@ -58,7 +58,9 @@ class Page(Sprite):
             self.entertext.fadeTo((0.0,0.0,0.0,0.0), self.currentTime, 0.5, fadeInEnterText)    
 
         self.entertext.fadeTo((0.0,0.0,0.0,0.0), 0, 0.5, fadeInEnterText)    
-            
+        self.setCol((1.0,1.0,1.0,0.0))
+
+        
 class Page_1(Page):
     def __init__(self, x, y, page, pageCount):
         Page.__init__(self, x, y, page, pageCount)
@@ -82,8 +84,6 @@ class Page_1(Page):
         for t in self.infotext:
             t.setAnchor("center")
             self.subSprites.append(t)
-
-        self.setCol((1.0,1.0,1.0,0.0))
         
     def show(self, currentTime):
         pass
@@ -234,17 +234,19 @@ class Scene_Tutorial(Scene):
             self.sprites.add(self.pages[self.newPage])
             self.pages[self.newPage].show(self.currentTime)
 
-            self.pages[self.newPage].clearPosCallbacks()
+            self.pages[self.newPage].clearColCallbacks()
             
             def removeCurrent(sprite):
-                self.sprites.remove(self.pages[self.currentPage])
-                self.pages[self.currentPage].hide()
-
-            self.pages[self.newPage].fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.2)    
+                self.sprites.remove(sprite)
+                sprite.clearColCallbacks()
+                sprite.hide()
+    
+            self.pages[self.newPage].fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.2)
+            self.pages[self.newPage].setPos((160 + (100 * (self.newPage - self.currentPage)), 120))
             self.pages[self.newPage].moveTo((160, 120), self.currentTime, 0.2)
             
-            self.pages[self.currentPage].fadeTo((1.0, 1.0, 1.0, 0.0), self.currentTime, 0.2)    
-            self.pages[self.currentPage].moveTo((160 + (100 * -(self.newPage - self.currentPage)), 120), self.currentTime, 0.2, removeCurrent)
+            self.pages[self.currentPage].fadeTo((1.0, 1.0, 1.0, 0.0), self.currentTime, 0.2, removeCurrent)
+            self.pages[self.currentPage].moveTo((160 + (100 * -(self.newPage - self.currentPage)), 120), self.currentTime, 0.2)
             
         self.currentPage = self.newPage    
         
