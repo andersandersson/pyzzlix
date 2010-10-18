@@ -38,6 +38,7 @@ def init():
     # Initialize and populate scene stack
     sceneHandler = SceneHandler()
 
+
     #sceneHandler.pushScene(Scene_MainMenu())
     sceneHandler.pushScene(Scene_Tutorial())
     #sceneHandler.pushScene(Scene_Preload())    

@@ -7,7 +7,7 @@ from text import *
 class Scoreboard(Sprite):
     def __init__(self):
         Sprite.__init__(self)
-
+    
         self.font = Font("font_fat.png", 8, 8)
         
         self.scorelabeltext = Text(12.0, 20, self.font, "SCORE:")
@@ -72,4 +72,4 @@ class Scoreboard(Sprite):
         from_col = (self._glow_col[0], self._glow_col[1], self._glow_col[2], 0.0)
         
         self.glow.clearColCallbacks()
-        self.glow.fadeTo(from_col, self.currentTime, self._glow_duration)        
+        self.glow.fadeTo(from_col, self.currentTime, self._glow_duration)
