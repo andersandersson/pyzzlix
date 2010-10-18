@@ -427,6 +427,14 @@ class Scene_MainGame(Scene):
 
         if event.type == EVENT_LEVEL_UP:
             self.newLevel()
+
+        if event.type == EVENT_TIMER_STATE_CHANGED:
+            if event.state == "low":
+                self.board.pulseBorder((1.0, 0.0, 0.0, 0.0), (1.0, 0.0, 0.0, 1.0), 0.5)
+                self.hourglass.pulseBorder((1.0, 0.0, 0.0, 0.0), (1.0, 0.0, 0.0, 1.0), 0.5)
+            if event.state == "normal" or event.state == "high":
+                self.board.stopPulseBorder()
+                self.hourglass.stopPulseBorder()
         
         if event.type == KEYDOWN:
             state = event.type

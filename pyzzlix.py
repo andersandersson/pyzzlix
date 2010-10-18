@@ -37,8 +37,8 @@ def init():
     # Initialize and populate scene stack
     sceneHandler = SceneHandler()
 
-    sceneHandler.pushScene(Scene_Preload())    
-    #sceneHandler.pushScene(Scene_MainMenu())    
+    #sceneHandler.pushScene(Scene_Preload())    
+    sceneHandler.pushScene(Scene_MainMenu())    
 
 def cleanup():
     global renderer

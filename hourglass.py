@@ -6,6 +6,8 @@ from image import *
 from font import *
 from text import *
 
+import scene_maingame
+
 class Hourglass(Sprite):
     def __init__(self):
         Sprite.__init__(self)
@@ -15,7 +17,7 @@ class Hourglass(Sprite):
         self.bar = Sprite()
         self.bar.setImage(loadImage("pixel.png", 1, 1))        
         self.bar.setScale((72, -96))
-        self.bar.setPos((8.0, 112.0))
+        self.bar.setPos((8.0, 104.0))
 
         self.max = 0
         
@@ -65,18 +67,20 @@ class Hourglass(Sprite):
 
         self._glow_col = (0.0, 0.0, 0.0, 0.0)
         self._glow_duration = 0.0
+
+        self.state = "high"
     
-    def pulseBorder(self, col, duration):
-        self._glow_col = col
+    def pulseBorder(self, col1, col2, duration):
         self._glow_duration = duration
-        from_col = (self._glow_col[0], self._glow_col[1], self._glow_col[2], 0.0)
-        
+
         def fade_to_done(s):
-            self.glow.fadeTo(from_col, self.currentTime, duration, fade_from_done)
-            
+            self._glow_col = col1
+            self.glow.fadeTo(col1, self.currentTime, duration, fade_from_done)
+
         def fade_from_done(s):
-            self.glow.fadeTo(col, self.currentTime, duration, fade_to_done)
-            
+            self._glow_col = col2
+            self.glow.fadeTo(col2, self.currentTime, duration, fade_to_done)
+
         self.glow.clearColCallbacks()
         fade_from_done(None)
 
@@ -161,6 +165,16 @@ class Hourglass(Sprite):
             p = 1.0
             
         p = (exp(2.0*p) - 1.0)/(exp(2.0) - 1.0)
+
+        if p < 0.2 and not self.state == "low":
+            self.state = "low"
+            pygame.event.post(pygame.event.Event(EVENT_TIMER_STATE_CHANGED, state="low"))
+        elif p >= 0.2 and p < 0.8 and not self.state == "normal":
+            self.state = "normal"
+            pygame.event.post(pygame.event.Event(EVENT_TIMER_STATE_CHANGED, state="normal"))
+        elif p >= 0.8 and not self.state == "high":
+            self.state = "high"
+            pygame.event.post(pygame.event.Event(EVENT_TIMER_STATE_CHANGED, state="high"))
 
         self.bar.scaleTo((72, -p*96), currentTime, 0.1)
         self.bar.fadeTo((1 - p, p, 0.0, 1.0), currentTime, 0.1)
