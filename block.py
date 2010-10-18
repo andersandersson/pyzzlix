@@ -57,9 +57,7 @@ class Block(Sprite):
         self.boardx = boardx
         self.boardy = boardy
         self.setPos((self.boardx * self.size[0] + self.offset_x, self.boardy * self.size[1] + self.offset_y))
-
-        
-        
+            
     def animatePopup(self, currentTime):
         self.setCol((0.1, 0.1, 0.1, 1.0))
         self.fadeTo((1.0, 1.0, 1.0, 1.0), currentTime, 1.0)
@@ -71,7 +69,3 @@ class Block(Sprite):
     def kill(self):
         self.images = loadImageSheet("block" + str(9) + ".bmp", 16, 16)
         self.image = self.images[0]
-
-    def update(self, deltaTime):
-        Sprite.update(self, deltaTime)
-     
