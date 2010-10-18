@@ -13,7 +13,7 @@ class Scene_EnterHighscore(Scene):
     def _runOnce(self):
         Scene._runOnce(self)
 
-        self.font = Font("font_normal.png", 8, 8);
+        self.font = Font("font_fat.png", 8, 8);
 
         self.scoretext = Text(160, 80, self.font, "NEW HIGH SCORE: ")
         self.nametext = Text(160, 100, self.font, "ENTER YOUR INITIALS")
@@ -43,7 +43,6 @@ class Scene_EnterHighscore(Scene):
         self.highscore = 0
         self.level = 0
 
-    ## TODO: Hmm, shouold scenes really have callable functions like this, handle with events?
     def setHighscore(self, highscore, level):
         self.highscore = highscore
         self.level = level

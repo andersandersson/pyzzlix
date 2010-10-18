@@ -58,7 +58,7 @@ class Renderer(Singleton):
         glDisable(GL_DEPTH_TEST)        
         glShadeModel(GL_FLAT)
         glEnable(GL_BLEND)
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         
         #glEnableClientState(GL_VERTEX_ARRAY)
         #glEnableClientState(GL_TEXTURE_COORD_ARRAY)

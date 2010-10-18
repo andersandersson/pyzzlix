@@ -15,7 +15,7 @@ class Scene_DialogYesNo(Scene):
         Scene._runOnce(self)
         
         self.renderBlocker = False
-        self.updateBlocker = True
+        self.updateBlocker = False
     
         self.query = "This should be a question?"
         self.yesCallback = None
@@ -52,6 +52,9 @@ class Scene_DialogYesNo(Scene):
         
         self.movesound =  Mixer().loadAudioFile("menumove.ogg") 
         self.selectsound =  Mixer().loadAudioFile("menuselect.ogg")
+
+        self.statelist = {"showing" : 0, "fading" : 1}
+        self.state = self.statelist["showing"]
    
     def setQuery(self, query, yescall, nocall):
         self.query = query
@@ -74,15 +77,21 @@ class Scene_DialogYesNo(Scene):
         self.background.setCol((0.0, 0.0, 0.0, 0.0))
         self.background.fadeTo((0.0, 0.0, 0.0, 1.0), self.currentTime, 0.3)
         self.menu.setCol((1.0, 1.0, 1.0, 0.0))
-        self.menu.fadeTo((0.0, 0.0, 1.0, 0.0), self.currentTime, 0.2)
+        self.menu.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.2)
+        self.state = self.statelist["showing"]
+        self.updateBlocker = True
 
         
     def remove(self, callfunc=None):
         self.menu.fadeTo((1.0, 0.0, 0.0, 0.0), self.currentTime, 0.2)
         self.background.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.5, callfunc)
-
+        self.state = self.statelist["fading"]
+        self.updateBlocker = False
         
     def handleEvent(self, event):
+        if (self.state == self.statelist["fading"]):
+            return False
+            
         if event.type == KEYDOWN:
             key = event.key
 

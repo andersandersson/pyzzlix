@@ -20,6 +20,7 @@ from scene_highscore import *
 from background import *
 from scene_dialogyesno import *
 from scene_mainmenu import *
+from scene_tutorial import *
 from scenehandler import *
 
 from levelsplash import *
@@ -79,7 +80,7 @@ class Scene_MainGame(Scene):
 
         self.tutorials = True
 
-        self.statelist = {"idle":0, "running":1, "gameover":2, "levelsplash":3, "welcomesplash":4}
+        self.statelist = {"idle":0, "running":1, "gameover":2}
         self.state = self.statelist["idle"]
     
     def preload(self):
@@ -148,7 +149,11 @@ class Scene_MainGame(Scene):
         for mus in self.music:
             Mixer().playSound(mus, volume=0.0, loops=-1)
         self.resetGame()
-        self.newLevel()
+        self.showSplash()
+
+    def showSplash(self):
+        SceneHandler().pushScene(Scene_Tutorial())
+        
             
     def hide(self):
         print self, "is hiding"
@@ -248,9 +253,9 @@ class Scene_MainGame(Scene):
         self.createBlock(x, y, type)
         
     def createBlock(self, x, y, type):
-        block = Block(x, y, type)
+        block = Block(x, y, type, )
         block._layer = LAYER_BLOCKS
-        self.board.add(x, y, block)
+        self.board.add(x, y, block, 8, -BOARD_HEIGHT*16 + 8)
         block.animatePopup(self.currentTime)
 
     def addBlockScore(self, block):
@@ -367,8 +372,6 @@ class Scene_MainGame(Scene):
     def showLevelSplash(self):
         self.sprites.add(self.levelsplash)
         self.levelsplash.display(self.level, self.currentTime, self.tutorials)
-        if (self.tutorials):
-            self.state = self.statelist["levelsplash"]
             
     def removeLevelSplash(self):
         
@@ -431,13 +434,11 @@ class Scene_MainGame(Scene):
             key = event.key
 
             if key == K_ESCAPE:
-                def killGame(sprite):
-                    SceneHandler().removeScene(Scene_DialogYesNo())
-                    SceneHandler().removeScene(self)
                 def killDialog(sprite):
                     SceneHandler().removeScene(Scene_DialogYesNo())
                 def quit_game():
-                    Scene_DialogYesNo().remove(killGame)
+                    SceneHandler().removeScene(Scene_DialogYesNo())
+                    SceneHandler().removeScene(self)
                 def do_nothing():
                     Scene_DialogYesNo().remove(killDialog)
                     
@@ -468,15 +469,6 @@ class Scene_MainGame(Scene):
                         self.board.marker.turn()
                     else:
                         self.board.marker.fail()
-                    
-            elif (self.state == self.statelist["levelsplash"]):
-                if (key == K_RETURN):
-                    self.removeLevelSplash()
-                    self.startGame()
-            elif (self.state == self.statelist["welcomesplash"]):
-                if (key == K_RETURN):
-                    self.welcomesplash.hide()
-                    self.newLevel()
 
             if key == K_q:
                 self.board.pulseBorder((1.0, 0.0, 0.0, 0.7), 0.1)

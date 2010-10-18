@@ -13,7 +13,7 @@ STATUS_OFFSCREEN = 8
 DEFAULT_GRAVITY_DELAY = 5
 
 class Block(Sprite):
-    def __init__(self, boardx, boardy, type):
+    def __init__(self, boardx, boardy, type, offset = (0, 0)):
         Sprite.__init__(self)
         self.type = type
 
@@ -31,8 +31,9 @@ class Block(Sprite):
         
         self.size = (16, 16)
         self.center = (self.size[0] / 2, self.size[1] / 2)
-        self.offset_x = self.center[0]
-        self.offset_y = -BOARD_HEIGHT*16 + self.center[1]
+        (self.offset_x, self.offset_y) = offset
+        #self.offset_x = self.center[0]
+        #self.offset_y = -BOARD_HEIGHT*16 + self.center[1]
 
         self.comboCounter = 0
 

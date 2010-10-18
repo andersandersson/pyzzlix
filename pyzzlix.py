@@ -14,6 +14,7 @@ from mixer import *
 
 from scene_preload import *
 from scene_mainmenu import *
+from scene_tutorial import *
 
 sceneHandler = None
 renderer = None
@@ -38,7 +39,8 @@ def init():
     sceneHandler = SceneHandler()
 
     #sceneHandler.pushScene(Scene_Preload())    
-    sceneHandler.pushScene(Scene_MainMenu())    
+    #sceneHandler.pushScene(Scene_MainMenu())
+    sceneHandler.pushScene(Scene_Tutorial())
 
 def cleanup():
     global renderer

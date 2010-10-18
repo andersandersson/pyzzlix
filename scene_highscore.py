@@ -21,9 +21,10 @@ class Scene_Highscore(Scene):
     def _runOnce(self):
         Scene._runOnce(self)
 
-        self.font = Font("font_normal.png", 8, 8);
+        self.font = Font("font_fat.png", 8, 8);
 
-        self.titletext = Text(80, 40, self.font, "HIGHSCORES")
+        self.titletext = Text(160, 40, self.font, "HIGHSCORES")
+        self.titletext.setAnchor("center")
 
         self.background = Sprite()
         self.background.setImage(loadImage("pixel.png"))
@@ -38,14 +39,13 @@ class Scene_Highscore(Scene):
         self.highscores = []
 
         for i in range(0,10):
-            self.highscores.append(["AAA", 0, 0, Text(80, 60+i*10, self.font, "---"), i])
+            self.highscores.append(["AAA", 0, 0, Text(160, 60+i*10, self.font, "---"), i])
             self.sprites.add(self.highscores[i][3])
 
         self.loadHighscores()
 
     def loadHighscores(self):
         if not os.path.isfile("pyzzlix.dat"):
-            print "FUCKING HIGH SCORE NOT FOUND?!?!??????"
             return
 
         fp = open("pyzzlix.dat", "r")
@@ -80,7 +80,9 @@ class Scene_Highscore(Scene):
         score[0] = name
         score[1] = highscore
         score[2] = level
-        score[3].setText("%2d. %3s: %5d LVL:%2d" % (score[4]+1, name, highscore, score[2]))
+        score[3].setAnchor("center")
+        score[3].setText("%2d. %3s: %10d LVL:%2d" % (score[4]+1, name, highscore, score[2]))
+
 
     def addNewHighscore(self, name, highscore, level):
         next_score = None
