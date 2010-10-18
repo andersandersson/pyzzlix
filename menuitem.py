@@ -37,7 +37,7 @@ class MenuItem(Text):
             
     def focus(self, currentTime):
         self.fadeTo((1.0, 1.0, 1.0, 1.0), currentTime, 0.1)
-        self.scaleTo((1.5, 1.5), currentTime, 0.1)
+        self.scaleTo((1.5, 1.5), currentTime, 0.05)
     
     def unfocus(self, currentTime):
         self.fadeTo((0.6, 0.6, 0.6, 1.0), currentTime, 0.3)

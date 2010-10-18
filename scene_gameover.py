@@ -27,6 +27,7 @@ class Scene_GameOver(Scene):
         self.gameovertext = Text(160, 90, self.font, "GAME OVER!")
         self.gameovertext._layer = 2
         self.gameovertext.setAnchor("center")
+        self.gameovertext.setScale((3.0,2.0))
 
         self.background = Sprite()
         self.background.setImage(loadImage("pixel.png"))
@@ -36,8 +37,8 @@ class Scene_GameOver(Scene):
 
         self.menu = Menu()
         self.menu.setPos((160, 120))
-        self.menu.add(MenuItem(-50, 0, self.font, "Play again", self.menu_playAgain))
-        self.menu.add(MenuItem(50, 0, self.font, "Quit", self.menu_quit))
+        self.menu.add(MenuItem(-70, 0, self.font, "Play again", self.menu_playAgain))
+        self.menu.add(MenuItem(70, 0, self.font, "Exit to menu", self.menu_quit))
 
         self.sprites.add(self.background)
         self.sprites.add(self.gameovertext)
@@ -45,26 +46,60 @@ class Scene_GameOver(Scene):
 
         self.updateBlocker = True
 
-        self.callback = None
+        self.replay_callback = None
+        self.exit_callback = None
+
+        self.statelist = {"showing" : 0, "fading" : 1}
+        self.state = self.statelist["showing"]
    
     def tick(self):
         pass
     
     def show(self):
+        self.menu.focusItem(0)
+        self.background.setCol((0.0, 0.0, 0.0, 0.0))
+        self.background.fadeTo((0.0, 0.0, 0.0, 0.8), self.currentTime, 0.3)
+        self.menu.setCol((1.0, 1.0, 1.0, 0.0))
+        self.menu.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.2)
+        self.gameovertext.setCol((1.0, 1.0, 1.0, 0.0))
+        self.gameovertext.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.2)
+        self.state = self.statelist["showing"]
+        self.updateBlocker = True
         print self, "is showing"
         
     def hide(self):
         print self, "is hiding"
-        if self.callback:
-            self.callback()
 
     def menu_playAgain(self):
-        SceneHandler().removeScene(self)
+        def fade_done(s):
+            SceneHandler().removeScene(self)
+            
+        self.menu.fadeTo((1.0, 0.0, 0.0, 0.0), self.currentTime, 0.2)
+        self.gameovertext.fadeTo((1.0, 0.0, 0.0, 0.0), self.currentTime, 0.2)
+        self.background.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.5, fade_done)
+        self.state = self.statelist["fading"]
+        self.updateBlocker = False
+
+        if self.replay_callback:
+            self.replay_callback()
 
     def menu_quit(self):
-        self
+        def fade_done(s):
+            SceneHandler().removeScene(self)
+            
+        self.menu.fadeTo((1.0, 0.0, 0.0, 0.0), self.currentTime, 0.2)
+        self.gameovertext.fadeTo((1.0, 0.0, 0.0, 0.0), self.currentTime, 0.2)
+        self.background.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.5, fade_done)
+        self.state = self.statelist["fading"]
+        self.updateBlocker = False
+
+        if self.exit_callback:
+            self.exit_callback()
 
     def handleEvent(self, event):
+        if self.state == self.statelist["fading"]:
+            return
+
         if event.type == KEYDOWN:
             key = event.key
 

@@ -68,7 +68,7 @@ class Scene_MainGame(Scene):
         self.init_x_dir = 0
         self.init_y = 0
         self.init_y_dir = 0
-        self.level = 0
+        self.level = 1
         self.block_count = 0
        
         self.usable_blocks = []
@@ -164,7 +164,7 @@ class Scene_MainGame(Scene):
             Mixer().stopSound(mus)
         
     def resetGame(self):
-        self.level = 0
+        self.level = 1
         self.score = 0
         self.block_count = 0
         self.board.reset()
@@ -186,19 +186,27 @@ class Scene_MainGame(Scene):
         self.playMusicForLevel()
 
     def showGameOver(self):
-        def game_over_close():
+        def game_over_replay():
             self.resetGame()
             self.startGame()
             self.board.fadeTo( (1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1)
     
-        def fade_done(s):
+        def game_over_exit():
+            SceneHandler().removeScene(self)
+            self.board.setCol( (1.0, 1.0, 1.0, 1.0) )
+
+        def sleep_done(s):
             game_over = Scene_GameOver()
-            game_over.callback = game_over_close
+            game_over.replay_callback = game_over_replay
+            game_over.exit_callback = game_over_exit
 
             SceneHandler().pushScene(game_over)
 
+        def fade_done(s):
+            self.board.fadeTo( (0.8, 0.0, 0.0, 1.0), self.currentTime, 0.2, sleep_done)
+
         self.state = self.statelist["gameover"]
-        self.board.fadeTo( (0.5, 0.4, 0.3, 1.0), self.currentTime, 0.2, fade_done)
+        self.board.fadeTo( (0.8, 0.0, 0.0, 1.0), self.currentTime, 0.2, fade_done)
 
     def showEnterHighscore(self):
         enter_highscore = Scene_EnterHighscore()
@@ -510,6 +518,7 @@ class Scene_MainGame(Scene):
 
             if key == K_r:
                 self.resetGame()
+                self.startGame()
                 
             if key == K_g:
                 self.showGameOver()
