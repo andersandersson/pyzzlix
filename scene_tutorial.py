@@ -34,7 +34,7 @@ class Page(Sprite):
         
         self.subSprites.append(self.background)
 
-        self.entertext = Text(self.width/2, self.height - 16, self.textfont, "Press Enter to start game") 
+        self.entertext = Text(self.width/2, self.height - 12, self.textfont, "Press Enter to start the game") 
         self.entertext.setAnchor("center")
         
         self.subSprites.append(self.entertext)
@@ -46,11 +46,19 @@ class Page(Sprite):
         self.subSprites.append(self.rightarrow)
 
 
-        self.pagetext = Text(self.width - 4, self.height - 16, self.titlefont, "%d/%d" % (page, pageCount))
+        self.pagetext = Text(self.width - 6, self.height - 12, self.titlefont, "%d/%d" % (page, pageCount))
         self.pagetext.setAnchor("right")
 
         self.subSprites.append(self.pagetext)
-        
+
+        def fadeInEnterText(sprite):
+            self.entertext.fadeTo((1.0,1.0,1.0,1.0), self.currentTime, 0.5, fadeOutEnterText)    
+
+        def fadeOutEnterText(sprite):    
+            self.entertext.fadeTo((0.0,0.0,0.0,0.0), self.currentTime, 0.5, fadeInEnterText)    
+
+        self.entertext.fadeTo((0.0,0.0,0.0,0.0), 0, 0.5, fadeInEnterText)    
+            
 class Page_1(Page):
     def __init__(self, x, y, page, pageCount):
         Page.__init__(self, x, y, page, pageCount)
@@ -59,9 +67,24 @@ class Page_1(Page):
         self.welcometext.setAnchor("center")
         self.welcometext.setScale((2.5, 2.5))
 
-
         self.subSprites.append(self.welcometext)
 
+        self.infotext = []
+        self.infotext.append(Text(self.width/2, 90, self.textfont,
+                                  "This tutorial will explain how to play\n" +
+                                  "Pyzzlix! If this is your first time\n" +
+                                  "playing, skip this at your own peril..."))
+
+        self.infotext.append(Text(self.width/2, 125, self.textfont,
+                                  "Use the ARROW keys to navigate the\n" +
+                                  "pages of this tutorial."))
+
+        for t in self.infotext:
+            t.setAnchor("center")
+            self.subSprites.append(t)
+
+        self.setCol((1.0,1.0,1.0,0.0))
+        
     def show(self, currentTime):
         pass
 
@@ -72,25 +95,36 @@ class Page_2(Page):
     def __init__(self, x, y, page, pageCount):
         Page.__init__(self, x, y, page, pageCount)
 
-        self.titletext = Text(self.width/2, 10, self.titlefont, "BASIC CONTROLS")
+        dposx = self.width/2
+        dposy = 10
+
+        
+        self.titletext = Text(dposx, dposy, self.titlefont, "BASIC CONTROLS")
         self.titletext.setAnchor("center")
         self.titletext.setScale((1.5, 1.5))
         self.subSprites.append(self.titletext)
+
+        dposy += 15
         
         self.infotext = []
-        self.infotext.append(Text(self.width/2, 25, self.textfont,
-                             "Use the ARROW keys to move the marker"))
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                             "Use the ARROW keys to move the marker."))
 
-        self.marker = Marker()
-        self.marker.setPos((self.width/2 - 16, 52 - 16))
-        self.subSprites.append(self.marker)
+        dposy += 27
         
-        self.infotext.append(Text(self.width/2, 70, self.textfont,
-                             "The Z and X keys rotates the blocks\n" +
-                                  "beneath the marker"))
-        mposx = self.width/2 - 16
-        mposy = 108 - 16
+        self.marker = Marker()
+        self.marker.setPos((dposx - 16, dposy - 16))
+        self.subSprites.append(self.marker)
 
+
+        dposy += 18
+        
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                             "The Z and X keys rotates the blocks\n" +
+                                  "beneath the marker."))
+
+        dposy += 36
+        
         self.blocks = []
         self.blocks.append(Block(0, 0, 0))
         self.blocks.append(Block(0, 1, 1))
@@ -99,15 +133,21 @@ class Page_2(Page):
 
 
         for b in self.blocks:
-            b.offset_x = mposx + 8
-            b.offset_y = mposy + 8
+            b.offset_x = dposx - 8
+            b.offset_y = dposy - 8
             self.subSprites.append(b)
 
         
         self.marker2 = Marker()
-        self.marker2.setPos((mposx, mposy))
+        self.marker2.setPos((dposx - 16, dposy -16))
         self.subSprites.append(self.marker2)
 
+        dposy += 16
+        
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                                  "Z rotates counter-clockwise\n" +
+                                  "and X rotates clockwise."))
+ 
                                          
         for t in self.infotext:
             t.setAnchor("center")
@@ -178,6 +218,7 @@ class Scene_Tutorial(Scene):
                       ]
         self.currentPage = 0
         self.sprites.add(self.pages[self.currentPage])
+        self.pages[self.currentPage].fadeTo((1.0,1.0,1.0,1.0), 0, 0.2)
 
     def tick(self):
         pass
@@ -192,10 +233,19 @@ class Scene_Tutorial(Scene):
         if (self.newPage != self.currentPage):
             self.sprites.add(self.pages[self.newPage])
             self.pages[self.newPage].show(self.currentTime)
-            self.sprites.remove(self.pages[self.currentPage])
-            self.pages[self.currentPage].hide()
-            
 
+            self.pages[self.newPage].clearPosCallbacks()
+            
+            def removeCurrent(sprite):
+                self.sprites.remove(self.pages[self.currentPage])
+                self.pages[self.currentPage].hide()
+
+            self.pages[self.newPage].fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.2)    
+            self.pages[self.newPage].moveTo((160, 120), self.currentTime, 0.2)
+            
+            self.pages[self.currentPage].fadeTo((1.0, 1.0, 1.0, 0.0), self.currentTime, 0.2)    
+            self.pages[self.currentPage].moveTo((160 + (100 * -(self.newPage - self.currentPage)), 120), self.currentTime, 0.2, removeCurrent)
+            
         self.currentPage = self.newPage    
         
     def show(self):
