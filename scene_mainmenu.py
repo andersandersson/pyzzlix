@@ -117,8 +117,7 @@ class Scene_MainMenu(Scene):
         pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
         
     def tick(self):
-        self.ticker += 1
-        self.sprites.update(self.currentTime)
+        pass
 
     def show(self):
         print self, "is showing"

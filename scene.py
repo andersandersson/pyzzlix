@@ -19,7 +19,8 @@ class Scene(Singleton):
     def updateTimer(self, deltaTime):    
         self.currentTime += deltaTime
         self.renderTime = self.currentTime
-
+        self.sprites.update(self.currentTime)
+        
     def handleEvent(self, event):
         return False
 

@@ -87,7 +87,7 @@ class Scene_Preload(Scene):
                 
             self.gameovertext.fadeTo([1.0, 1.0, 1.0, 0.0], self.currentTime, 2.0, text_fade_done)
         
-        self.sprites.update(self.currentTime)
+
 
     def show(self):
         print self, "is showing"

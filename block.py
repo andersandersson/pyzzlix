@@ -52,6 +52,14 @@ class Block(Sprite):
         self.boardy = boardy
         self.moveTo((self.boardx * self.size[0] + self.offset_x, self.boardy * self.size[1] + self.offset_y), currentTime, 0.15)
 
+
+    def setToBoardCoord(self, boardx, boardy):
+        self.boardx = boardx
+        self.boardy = boardy
+        self.setPos((self.boardx * self.size[0] + self.offset_x, self.boardy * self.size[1] + self.offset_y))
+
+        
+        
     def animatePopup(self, currentTime):
         self.setCol((0.1, 0.1, 0.1, 1.0))
         self.fadeTo((1.0, 1.0, 1.0, 1.0), currentTime, 1.0)
