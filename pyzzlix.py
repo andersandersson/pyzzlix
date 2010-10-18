@@ -40,9 +40,9 @@ def init():
 
 
     #sceneHandler.pushScene(Scene_MainMenu())
-    sceneHandler.pushScene(Scene_Tutorial())
+    #sceneHandler.pushScene(Scene_Tutorial())
     #sceneHandler.pushScene(Scene_Preload())    
-    #sceneHandler.pushScene(Scene_MainMenu())    
+    sceneHandler.pushScene(Scene_MainMenu())    
 
 
 def cleanup():
@@ -75,7 +75,7 @@ def main():
         time = pygame.time.get_ticks() * 0.001 - pausedTime
         
         if (time - lastfpsupdate >= 1.0):
-            #print "FPS:", str(fpscounter)
+            print "FPS:", str(fpscounter)
             fpscounter = 0
             lastfpsupdate = time
         
@@ -111,7 +111,7 @@ def main():
             fpscounter += 1
             
         sys.stdout.flush()
-        mainClock.tick(60) #sleeping
+        #mainClock.tick(60) #sleeping
 
     #Game Over
     cleanup()
