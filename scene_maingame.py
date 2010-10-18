@@ -195,18 +195,15 @@ class Scene_MainGame(Scene):
             SceneHandler().removeScene(self)
             self.board.setCol( (1.0, 1.0, 1.0, 1.0) )
 
-        def sleep_done(s):
+        def fade_done(s):
             game_over = Scene_GameOver()
             game_over.replay_callback = game_over_replay
             game_over.exit_callback = game_over_exit
-
+        
             SceneHandler().pushScene(game_over)
-
-        def fade_done(s):
-            self.board.fadeTo( (0.8, 0.0, 0.0, 1.0), self.currentTime, 0.2, sleep_done)
-
+            
         self.state = self.statelist["gameover"]
-        self.board.fadeTo( (0.8, 0.0, 0.0, 1.0), self.currentTime, 0.2, fade_done)
+        self.board.fadeTo( (0.8, 0.0, 0.0, 1.0), self.currentTime, 0.2, fade_done)        
 
     def showEnterHighscore(self):
         enter_highscore = Scene_EnterHighscore()
