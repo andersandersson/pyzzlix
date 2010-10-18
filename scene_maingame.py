@@ -241,7 +241,6 @@ class Scene_MainGame(Scene):
             self.scoreboard.updateScoreboard(self.level, self.score)
                                 
         self.board.updateBoard()
-        self.sprites.update(self.currentTime)
                                 
     def addRandom(self, x, y):
         if y < self.board.height - 1:

@@ -66,7 +66,7 @@ class Scene_DialogYesNo(Scene):
         
           
     def tick(self):
-        self.sprites.update(self.currentTime)
+        pass
 
     def show(self):
         for item in self.menuitems:
