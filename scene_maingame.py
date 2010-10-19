@@ -302,7 +302,9 @@ class Scene_MainGame(Scene):
         perc = (float(num_blocks)*PERCENTAGE_TIME_GIVEN_PER_BLOCK)
         
         self.hourglass.value += perc*self.hourglass.max;
-              
+
+        self.background.boost(floor(num_blocks/4))
+        
         if not score:
             return
 
@@ -332,6 +334,7 @@ class Scene_MainGame(Scene):
         text.scaleTo([2.0,2.0], self.currentTime, 0.7, text_scale_done)
         #text.moveTo([320, -100], self.currentTime, 1.0)
         self.sprites.add(text)
+
 
 
     def sortBlocksZigZag(self, blocks):
@@ -418,6 +421,7 @@ class Scene_MainGame(Scene):
         self.sprites.add(text)
         
 
+        self.background.setTheme(self.level)
         self.playMusicForLevel()        
 
     def handleEvent(self, event):
@@ -515,6 +519,12 @@ class Scene_MainGame(Scene):
             if key == K_h:
                 self.showEnterHighscore()
                 
+            if key == K_b:
+                self.background.boost()
+
+            if key == K_v:
+                self.background.setTheme(self.level)
+            
                 
             if key == K_0:
                 for mus in self.music:

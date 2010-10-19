@@ -82,7 +82,15 @@ class Renderer(Singleton):
 
 
     def drawWithSubSprites(self, sprite, currentTime):
-       
+        if (sprite.softblend != self.softblend):
+            if (sprite.softblend == True):
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE)
+                pass
+            else:
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+                pass
+            self.softblend = sprite.softblend    
+        
         last_color = self.currentColor
         
         x, y = sprite.calcPos(currentTime)
@@ -116,7 +124,8 @@ class Renderer(Singleton):
             if (self.currentTexture != i.texture.texID):
                 glBindTexture(GL_TEXTURE_2D, i.texture.texID)
                 self.currentTexture = i.texture.texID
-            
+            cx = 0
+            cy = 0
             glBegin(GL_QUADS)
             glTexCoord2f(i.tCoords[0], i.tCoords[1])
             glVertex2f(i.vCoords[0], i.vCoords[1])
@@ -139,6 +148,14 @@ class Renderer(Singleton):
             glColor4f(r, g, b, a)        
                 
     def drawSprite(self, sprite, currentTime):
+        
+        #if len(sprite.subSprites):
+        self.drawWithSubSprites(sprite, currentTime)
+        return
+
+        if (sprite.currentImage == 0):
+            return
+        
         if (sprite.softblend != self.softblend):
             if (sprite.softblend == True):
                 glBlendFunc(GL_ONE, GL_ONE)
@@ -147,10 +164,6 @@ class Renderer(Singleton):
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
                 pass
             self.softblend = sprite.softblend    
-
-        if len(sprite.subSprites):
-            self.drawWithSubSprites(sprite, currentTime)
-            return
 
         last_color = self.currentColor
         x, y = sprite.calcPos(currentTime)
@@ -199,22 +212,21 @@ class Renderer(Singleton):
                 glTranslatef(-cx, -cy, 0.0)
 
 
-            if (sprite.currentImage != 0):
-                i = sprite.currentImage
-                if (self.currentTexture != i.texture.texID):
-                    glBindTexture(GL_TEXTURE_2D, i.texture.texID)
-                    self.currentTexture = i.texture.texID
+            i = sprite.currentImage
+            if (self.currentTexture != i.texture.texID):
+                glBindTexture(GL_TEXTURE_2D, i.texture.texID)
+                self.currentTexture = i.texture.texID
                     
-                glBegin(GL_QUADS)
-                glTexCoord2f(i.tCoords[0], i.tCoords[1])
-                glVertex2f(i.vCoords[0], i.vCoords[1])
-                glTexCoord2f(i.tCoords[2], i.tCoords[3])
-                glVertex2f(i.vCoords[2], i.vCoords[3])
-                glTexCoord2f(i.tCoords[4], i.tCoords[5])
-                glVertex2f(i.vCoords[4], i.vCoords[5])
-                glTexCoord2f(i.tCoords[6], i.tCoords[7])
-                glVertex2f(i.vCoords[6], i.vCoords[7])
-                glEnd()
+            glBegin(GL_QUADS)
+            glTexCoord2f(i.tCoords[0], i.tCoords[1])
+            glVertex2f(i.vCoords[0], i.vCoords[1])
+            glTexCoord2f(i.tCoords[2], i.tCoords[3])
+            glVertex2f(i.vCoords[2], i.vCoords[3])
+            glTexCoord2f(i.tCoords[4], i.tCoords[5])
+            glVertex2f(i.vCoords[4], i.vCoords[5])
+            glTexCoord2f(i.tCoords[6], i.tCoords[7])
+            glVertex2f(i.vCoords[6], i.vCoords[7])
+            glEnd()
                     
             glPopMatrix()
                 
