@@ -114,6 +114,7 @@ class Hourglass(Sprite):
         self._halted = 0
         self._pause = 0
         self.state = self.statelist["high"]
+        self.hidePause()
 
     def scaleValue(self, perc):
         self.value *= perc
