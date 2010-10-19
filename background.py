@@ -89,11 +89,11 @@ class BG_Square(BGSprite):
         for i in xrange(9):
             self.shapes[i].subSprites.append(self.shapes[i+1])
             self.shapes[i+1].setPos((64, 64))
-            self.shapes[i+1].setScale((0.95, 0.95))
+            self.shapes[i+1].setScale((0.90, 0.90))
             self.shapes[i+1].velx = 10 + (i % 2) * -20
             self.shapes[i+1].vely = 6 + (i % 2) * -12    
             
-        self.shapes[0].setScale((2.5, 2.5))
+        self.shapes[0].setScale((3.0, 3.0))
         self.shapes[0].setPos((160, 120))
         
         self.subSprites.append(self.shapes[0])
@@ -321,13 +321,8 @@ class Background(Sprite):
         Sprite.__init__(self)
         self.setPos((0, 0))
 
-        self.shapes = [BG_Diamond(),
-                       BG_Cross(),
-                       BG_Square(),
-                       BG_Triangle(),
-                       BG_Heart(),
-                       BG_Circle(),
-                       BG_Plus()]
+        self.shapes = [BG_Square(), BG_Triangle(), BG_Heart(), BG_Cross(), BG_Diamond(), BG_Circle(), BG_Plus()]
+        
         self.shapeCount = len(self.shapes)
         
         self.currentShape = self.shapes[0]

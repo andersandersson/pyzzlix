@@ -149,16 +149,16 @@ class Renderer(Singleton):
                 
     def drawSprite(self, sprite, currentTime):
         
-        #if len(sprite.subSprites):
-        self.drawWithSubSprites(sprite, currentTime)
-        return
+        if len(sprite.subSprites):
+            self.drawWithSubSprites(sprite, currentTime)
+            return
 
         if (sprite.currentImage == 0):
             return
         
         if (sprite.softblend != self.softblend):
             if (sprite.softblend == True):
-                glBlendFunc(GL_ONE, GL_ONE)
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE)
                 pass
             else:
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
