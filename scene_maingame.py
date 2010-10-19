@@ -15,7 +15,6 @@ from marker import *
 from hourglass import *
 from scoreboard import *
 from scene_gameover import *
-from scene_enter_highscore import *
 from scene_highscore import *
 from background import *
 from scene_dialogyesno import *
@@ -197,10 +196,7 @@ class Scene_MainGame(Scene):
 
         def fade_done(s):
             game_over = Scene_GameOver()
-            game_over.replay_callback = game_over_replay
-            game_over.exit_callback = game_over_exit
-        
-            SceneHandler().pushScene(game_over)
+            game_over.display(level=self.level, score=self.score, replay_callback=game_over_replay, exit_callback=game_over_exit)
             
         self.state = self.statelist["gameover"]
         self.board.fadeTo( (0.8, 0.0, 0.0, 1.0), self.currentTime, 0.2, fade_done)        
