@@ -38,7 +38,7 @@ class Scene_Highscore(Scene):
         self.highscores = []
 
         self.menu = Menu()
-        self.menu.setPos((160, 160))
+        self.menu.setPos((160, 180))
         self.menu.add(MenuItem(0, 0, self.font, "Play again", self.menu_playAgain))
         self.menu.add(MenuItem(0, 24, self.font, "Exit to menu", self.menu_quit))
         self.menu.setCol((1.0, 1.0, 1.0, 0.0))

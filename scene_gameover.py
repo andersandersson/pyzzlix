@@ -29,7 +29,8 @@ class Scene_GameOver(Scene):
         self.gameovertext = Text(160, 90, self.font, "GAME OVER")
         self.gameovertext._layer = 2
         self.gameovertext.setAnchor("center")
-        self.gameovertext.setScale((3.0,2.0))
+        self.gameovertext.center = (0,4)
+        self.gameovertext.setScale((4.0,2.75))
 
         self.background = Sprite()
         self.background.setImage(loadImage("pixel.png"))
@@ -43,11 +44,13 @@ class Scene_GameOver(Scene):
         self.menu.add(MenuItem(0, 24, self.font, "Exit to menu", self.menu_quit))
         self.menu.setCol((1.0, 1.0, 1.0, 0.0))
 
-        self.highscore_caption = Text(104, 120, self.font, "New highscore!")
+        self.highscore_caption = Text(160, 120, self.font, "New highscore!")
+        self.highscore_caption.setAnchor("center")
         self.highscore_caption.setCol((1.0, 1.0, 1.0, 0.0))
 
-        self.highscore_name = Text(104, 136, self.font, "Initials:")
+        self.highscore_name = Text(160, 130, self.font, "Please enter your initials")
         self.highscore_name.setCol((1.0, 1.0, 1.0, 0.0))
+        self.highscore_name.setAnchor("center")
 
         self.sprites.add(self.background)
         self.sprites.add(self.gameovertext)
@@ -93,7 +96,7 @@ class Scene_GameOver(Scene):
             SceneHandler().removeScene(self)
 
         enter_text = scene_input_text.Scene_InputText()
-        enter_text.display(x=180, y=136, length=3, callback=text_entered)
+        enter_text.display(x=160, y=146, length=3, callback=text_entered)
 
     def showGameOverMenu(self):
         self.menu.setCol((1.0, 1.0, 1.0, 0.0))

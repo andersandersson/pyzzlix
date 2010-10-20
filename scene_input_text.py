@@ -16,6 +16,8 @@ class Scene_InputText(Scene):
         self.font = Font("font_fat.png", 8, 8);
 
         self.text = Text(160, 120, self.font, "")
+        self.text.setAnchor("center")
+        self.text.setScale((2.0, 2.0))
 
         self.sprites.add(self.text)
 
@@ -23,7 +25,7 @@ class Scene_InputText(Scene):
 
         self.text_buffer = ""
         self.text_buffer_counter = 0
-        self.current_char = "A"
+        self.current_char = "A##"
         
         self.ticker = 0
 

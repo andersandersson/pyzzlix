@@ -277,6 +277,7 @@ class Scene_MainGame(Scene):
 
     def addBlockScore(self, block):
         self.score += self.level * POINTS_PER_LEVEL_FOR_BLOCK_SCORE
+        print block.type
 
     def addCircleScore(self, blocks, falling=False):
         num_blocks = len(blocks)

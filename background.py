@@ -28,8 +28,8 @@ class BGSprite(Sprite):
         
         self.lowestSpeed = 5
         self.speed = 0
-        self.spin = 40
-        self.decline = 15
+        self.spin = 20
+        self.decline = 10
         self.boosts = 0
 
         self.setPos((160, 120))
