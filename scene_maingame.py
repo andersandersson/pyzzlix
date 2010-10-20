@@ -410,7 +410,7 @@ class Scene_MainGame(Scene):
         self.setLevel(self.level + 1)
         self.blockCount = 0
 
-        self.hourglass.scaleValue(0.9)
+        self.hourglass.scaleValue(0.8)
         self.refillUpperHalfBoard()
         
         text = Text(160, 90, self.font, "LEVEL: "+str(self.level))

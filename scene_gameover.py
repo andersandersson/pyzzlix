@@ -65,6 +65,9 @@ class Scene_GameOver(Scene):
 
         self.statelist = {"showing" : 0, "fading" : 1}
         self.state = self.statelist["showing"]
+        
+        self.menumove = Resources().getSound("menumove")
+        self.selectsound = Resources().getSound("menuselect")
 
         self.level = 0
         self.score = 0
@@ -141,6 +144,7 @@ class Scene_GameOver(Scene):
         self.updateBlocker = False
 
     def menu_playAgain(self):
+        Mixer().playSound(self.selectsound)
         self.fadeOutAndRemove()
 
         if self.replay_callback:
@@ -160,13 +164,14 @@ class Scene_GameOver(Scene):
             key = event.key
 
             if (key == K_UP):
+                Mixer().playSound(self.movesound)
                 self.menu.prevItem()
                                            
             if (key == K_DOWN):
+                Mixer().playSound(self.movesound)
                 self.menu.nextItem()
             
             if (key == K_RETURN):
-                Mixer().playSound(self.selectsound)
                 self.menu.selectItem()
             
         return True

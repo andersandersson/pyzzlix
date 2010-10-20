@@ -78,7 +78,7 @@ class Scene_MainMenu(Scene):
         self.menu = Menu()
         self.menu.setPos((160, 100))
         self.menu.add(MenuItem(0, 0, self.menufont, "Start Game", self.menu_start))
-	self.menu.add(MenuItem(0, 16, self.menufont, "Options", self.menu_options))
+        self.menu.add(MenuItem(0, 16, self.menufont, "Options", self.menu_options))
         self.menu.add(MenuItem(0, 32, self.menufont, "High Scores", self.menu_highscores))
         self.menu.add(MenuItem(0, 48, self.menufont, "Help", self.menu_help))
         self.menu.add(MenuItem(0, 64, self.menufont, "Quit", self.menu_quit))
@@ -108,8 +108,9 @@ class Scene_MainMenu(Scene):
         self.state = "entrance"
                 
         self.music = Resources().getMusic("menumusic")
-        self.movesound = Resources().getSound("menumove")
+        self.menumove = Resources().getSound("menumove")
         self.selectsound = Resources().getSound("menuselect")
+        print self.selectsound
         self.startsound = Resources().getSound("menustart")
         
     def tick(self):
@@ -134,25 +135,29 @@ class Scene_MainMenu(Scene):
 
             if key == K_ESCAPE:
                 self.menu_quit()
-
-	    if (self.state == "menu"):
-                if (key == K_UP):
-                    self.menu.prevItem()
-                                               
-                if (key == K_DOWN):
-                    self.menu.nextItem()
                 
+            if (self.state == "menu"):
+                if (key == K_UP):
+                    Mixer().playSound(self.menumove)
+                    self.menu.prevItem()
+                                 
+                if (key == K_DOWN):
+                    Mixer().playSound(self.menumove)
+                    self.menu.nextItem()
+                    
+                    
                 if (key == K_RETURN):
                     self.menu.selectItem()
+                    
                 
             elif (self.state == "entrance"):   
                 if (key == K_RETURN):
                     self.startmenu.select()
+                    
             
 
     def menu_enter(self):
         self.state = "transition"
-        Mixer().playSound(self.startsound)
         self.startmenu.moveTo((160, 260), self.currentTime, 0.4, self.menu_enter2)
         self.logo.moveTo((170, 50), self.currentTime, 0.4)
         pass
@@ -173,6 +178,7 @@ class Scene_MainMenu(Scene):
         pass
     
     def menu_options(self):
+        Mixer().playSound(self.selectsound)
         pass
 
     def menu_highscores(self):
