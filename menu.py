@@ -14,6 +14,30 @@ class Menu(Sprite):
         self.subSprites.append(item)
         self.items.append(item)
         self.count = len(self.items)
+
+    def setFocusCol(self, col):
+        for item in self.items:
+            item.focusColor = col
+            if item.inFocus:
+                item.focus(self.currentTime)
+        
+    def setUnfocusCol(self, col):
+        for item in self.items:
+            item.unfocusColor = col
+            if not item.inFocus:
+                item.unfocus(self.currentTime)
+        
+    def setFocusScale(self, scale):
+        for item in self.items:
+            item.focusScale = scale
+            if item.inFocus:
+                item.focus(self.currentTime)
+        
+    def setUnfocusScale(self, scale):
+        for item in self.items:
+            item.unfocusScale = scale
+            if not item.inFocus:
+                item.unfocus(self.currentTime)
         
     def focusItem(self, newfocus):
         if (newfocus < 0):

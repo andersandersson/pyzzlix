@@ -15,6 +15,7 @@ from scene_maingame import *
 from scene_highscore import *
 from scene_help import *
 from scene_dialogyesno import *
+from scene_options import *
 
 from menu import *
 from menuitem import *
@@ -173,6 +174,8 @@ class Scene_MainMenu(Scene):
         pass
     
     def menu_options(self):
+        Mixer().playSound(self.selectsound)
+        SceneHandler().pushScene(Scene_Options())
         pass
 
     def menu_highscores(self):

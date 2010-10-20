@@ -6,6 +6,8 @@ from sprite import *
 from animation import *
 from singleton import *
 
+import json
+
 class Resources(Singleton):
     sounds = {
         "menumove":  {"file": "menumove.ogg"},
@@ -29,6 +31,8 @@ class Resources(Singleton):
         "music1_lead2":  {"file": "music1_lead2.ogg"},
         }
 
+    data = None
+    
     numResources = 0
     
     def _runOnce(self):
@@ -66,13 +70,46 @@ class Resources(Singleton):
         print "LOADING: " + filename
         sound = Mixer().loadAudioStream(filename)
         return sound
-    
+
+    def loadData(self, filename="pyzzlix.dat"):
+        if not os.path.isfile(filename):
+            return None
+
+        fp = open(filename, "r")
+
+        string = fp.read()
+        
+        if string:
+            self.data = json.loads(string)
+
+        fp.close()
+
+    def saveData(self, filename="pyzzlix.dat"):
+        fp = open(filename, "w")
+        fp.write(json.dumps(self.data))
+        fp.close()
+        
     def getSound(self, name):
         return self._getResource(name, self.sounds, self.loadSound)
 
     def getMusic(self, name):
         return self._getResource(name, self.music, self.loadMusic)
-    
+
+    def setData(self, name, value):
+        if not self.data:
+            self.data = {}
+
+        self.data[name] = value
+        
+    def getData(self, name):
+        if not self.data:
+            self.loadData()
+
+        if self.data and name in self.data:
+            return self.data[name]
+
+        return None
+        
     def preload(self):
         weight = 0.0
         

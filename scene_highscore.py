@@ -79,19 +79,14 @@ class Scene_Highscore(Scene):
         self.fadeIn(0.5)
 
     def loadHighscores(self):
-        if not os.path.isfile("pyzzlix.dat"):
+        hs = Resources().getData("highscores")
+
+        if not hs:
             return
 
-        fp = open("pyzzlix.dat", "r")
-
-        string = fp.read()
-
-        if string:
-            hs = json.loads(string)
-            for obj in zip(hs, self.highscores):
-                self.updateHighscore(obj[1], obj[0][0].encode(), obj[0][1], obj[0][2])
-
-        fp.close()
+        print hs
+        for obj in zip(hs, self.highscores):
+            self.updateHighscore(obj[1], obj[0][0].encode(), obj[0][1], obj[0][2])
 
     def saveHighscores(self):
         data = []
@@ -99,9 +94,8 @@ class Scene_Highscore(Scene):
         for score in self.highscores:
             data.append([score[0], score[1], score[2]])
 
-        fp = open("pyzzlix.dat", "w")
-        fp.write(json.dumps(data))
-        fp.close()
+        Resources().setData("highscores", data)
+        Resources().saveData()
             
     def isNewHighscore(self, highscore):
         for score in self.highscores:
