@@ -173,7 +173,7 @@ class Scene_MainGame(Scene):
             Mixer().stopSound(mus)
         
     def resetGame(self):
-        self.level = 1
+        self.setLevel(1)
         self.blocksToLevel = self.getBlocksToLevel()
         self.activeBlock = self.getActiveBlock()
         self.background.setTheme(self.activeBlock)
@@ -272,7 +272,7 @@ class Scene_MainGame(Scene):
                             if not self.board.grid[x][y]:
                                 self.addRandom(x, y)
                                 
-            self.scoreboard.updateScoreboard(self.level, self.score)
+            self.scoreboard.updateScoreboard(self.score)
                                 
         self.board.updateBoard()
                                 
@@ -302,7 +302,8 @@ class Scene_MainGame(Scene):
             if self.blockCount >= self.blocksToLevel:
                 self.newLevel()
 
-        print "LEVEL %d: %d / %d" % (self.level, self.blockCount, self.blocksToLevel)
+        self.levelboard.updateLevelboard(self.blockCount)
+        #print "LEVEL %d: %d / %d" % (self.level, self.blockCount, self.blocksToLevel)
 
 
     def addCircleScore(self, blocks, falling=False):
@@ -432,10 +433,17 @@ class Scene_MainGame(Scene):
         idx = (self.level-1) % len(self.activeBlocks)
         return self.activeBlocks[idx]
         
-    def newLevel(self):
-        self.level += 1
+        
+    def setLevel(self, level):
+        self.level = level
         self.blocksToLevel = self.getBlocksToLevel()
         self.activeBlock = self.getActiveBlock()
+        
+        self.background.setTheme(self.activeBlock)
+        self.levelboard.setNewLevel(self.level, self.activeBlock, self.blocksToLevel)
+        
+    def newLevel(self):
+        self.setLevel(self.level + 1)
         self.blockCount = 0
 
         self.hourglass.scaleValue(0.9)
@@ -460,8 +468,7 @@ class Scene_MainGame(Scene):
         text.scaleTo((5.0, 5.0), self.currentTime, 0.05, text_scale_up_done)
         self.sprites.add(text)
         
-        self.background.setTheme(self.activeBlock)
-        self.playMusicForLevel()        
+        self.playMusicForLevel()   
 
     def handleEvent(self, event):
         if event.type == EVENT_CIRCLE_FOUND:
