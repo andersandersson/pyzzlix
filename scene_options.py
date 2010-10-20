@@ -38,10 +38,18 @@ class Scene_Options(Scene):
             menu = Menu()
 
             def menu_callback_on():
-                update_callback(name, "on")
+                if update_callback:
+                    update_callback(name, "on")
+                
+                if callback:
+                    callback()
                 
             def menu_callback_off():
-                update_callback(name, "off")
+                if update_callback:
+                    update_callback(name, "off")
+
+                if callback:
+                    callback()
                 
             item = MenuItem(0, 0, font, "On", menu_callback_on, "left")
             item.focusScale = (scale_x, scale_y)
@@ -216,7 +224,7 @@ class Scene_Options(Scene):
 
                 if (key == K_ESCAPE):
                     Mixer().playSound(self.selectsound)
-                    SceneHandler().remove(self)
+                    SceneHandler().removeScene(self)
                     
             else:
                 if (key == K_RIGHT):
@@ -230,7 +238,6 @@ class Scene_Options(Scene):
                     self.submenu.selectItem()
 
                 if (key == K_UP):
-                    self.menu.prevItem()
                     Mixer().playSound(self.selectsound)
                     self.submenu.selectItem()
                                            
