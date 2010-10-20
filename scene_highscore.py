@@ -57,6 +57,9 @@ class Scene_Highscore(Scene):
 
         self.sprites.add(self.titletext)
         self.sprites.add(self.menu)
+        
+        self.menumove = Resources().getSound("menumove")
+        self.selectsound = Resources().getSound("menuselect")
 
         self.loadHighscores()
 
@@ -193,10 +196,12 @@ class Scene_Highscore(Scene):
             if event.type == KEYDOWN:
                 if (event.key == K_UP):
                     self.menu.prevItem()
+                    Mixer().playSound(self.menumove)
                     
                 if (event.key == K_DOWN):
                     self.menu.nextItem()
-            
+                    Mixer().playSound(self.menumove)
+                    
                 if (event.key == K_RETURN):
                     Mixer().playSound(self.selectsound)
                     self.menu.selectItem()

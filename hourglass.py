@@ -16,8 +16,8 @@ class Hourglass(Sprite):
 
         self.bar = Sprite()
         self.bar.setImage(loadImage("pixel.png", 1, 1))        
-        self.bar.setScale((72, -96))
-        self.bar.setPos((8.0, 104.0))
+        self.bar.setScale((72, -80))
+        self.bar.setPos((8.0, 88.0))
 
         self.max = 0
         
@@ -30,17 +30,17 @@ class Hourglass(Sprite):
         
         self.background = Sprite()
         self.background.setImage(loadImage("pixel.png", 1, 1))
-        self.background.setScale((72.0, 96.0))
+        self.background.setScale((72.0, 80.0))
         self.background.setPos((8.0, 8.0))
         self.background.setCol((0.0, 0.0, 0.0, 0.3))
         
         self.border = Sprite()
-        self.border.setImage(loadImage("hourglass_border.png"))
+        self.border.setImage(loadImage("windowframes.png", 208, 136, 88, 96))
         self.border.setPos((0.0,0.0))
         
         self.pausebg = Sprite()
         self.pausebg.setImage(loadImage("pixel.png", 1, 1))
-        self.pausebg.setScale((72.0, 96.0))
+        self.pausebg.setScale((72.0, 80.0))
         self.pausebg.setPos((8.0, 8.0))
         self.pausebg.setCol((0.0, 0.0, 0.0, 0.0))
 
@@ -55,7 +55,7 @@ class Hourglass(Sprite):
         self.pausetext.setCol((0.0, 0.0, 0.0, 0.0))
 
         self.glow = Sprite()
-        self.glow.setImage(loadImage("hourglass_glow.png"))
+        self.glow.setImage(loadImage("windowglows.png", 208, 136, 88, 96))
         self.glow.setPos((0.0,0.0))
         self.glow.setCol((0.0, 0.0, 0.0, 0.0))
 
@@ -199,7 +199,7 @@ class Hourglass(Sprite):
             self.state = self.statelist["high"]
             pygame.event.post(pygame.event.Event(EVENT_TIMER_STATE_CHANGED, state="high"))
 
-        self.bar.scaleTo((72, -p*96), currentTime, 0.1)
+        self.bar.scaleTo((72, -p*80), currentTime, 0.1)
         self.bar.fadeTo((1 - p, p, 0.0, 1.0), currentTime, 0.1)
         #pygame.draw.rect(self.image, [(1-p)*255,p*255,0], [0,(1-p)*150,90,150])
         

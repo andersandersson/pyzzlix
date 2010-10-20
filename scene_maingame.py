@@ -13,6 +13,7 @@ from image import *
 from marker import *
 from hourglass import *
 from scoreboard import *
+from levelboard import *
 from scene_gameover import *
 from scene_highscore import *
 from background import *
@@ -21,7 +22,6 @@ from scene_mainmenu import *
 from scene_tutorial import *
 from scenehandler import *
 
-from levelsplash import *
 
 LAYER_EFFECTS = 4
 LAYER_GUI = 3
@@ -35,30 +35,31 @@ class Scene_MainGame(Scene):
         self.updateBlocker = True
         
         self.board = Board(self, BOARD_WIDTH, BOARD_HEIGHT)
-        self.board.setPos((8.0, 0.0))
+        self.board.setPos((24.0, 0.0))
         
         self.scoreboard = Scoreboard()
-        self.scoreboard.setPos((200.0, 0.0))
+        self.scoreboard.setPos((208.0, 8.0))
+        
+        self.levelboard = Levelboard()
+        self.levelboard.setPos((208.0, 80.0))
+        
+        self.hourglass = Hourglass()
+        self.hourglass.setPos((208, 136))
+        self.background = Background() 
+
+        self.sprites.add(self.background)
+        self.sprites.add(self.hourglass)
+        self.sprites.add(self.board)
+        self.sprites.add(self.scoreboard)
+        self.sprites.add(self.levelboard)
+        
         
         self.blocks = pygame.sprite.Group()
         self.blockcount = 0
         self.font = Font("font_fat.png", 8, 8)
                 
         self.music =  []
-
-
-        self.levelsplash = LevelSplash()
-        self.background = Background() 
-
-        self.sprites.add(self.background)
-
-        self.hourglass = Hourglass()
-        self.hourglass.setPos((224, 119))
-        
-        self.sprites.add(self.hourglass)
-        self.sprites.add(self.board)
-        self.sprites.add(self.scoreboard)
-        
+       
         self.score = 0
         self.ticker = 20
         self.init_counter = 0
@@ -88,7 +89,7 @@ class Scene_MainGame(Scene):
 
         self.statelist = {"idle":0, "running":1, "gameover":2}
         self.state = self.statelist["idle"]
-                    
+
         self.levelMusic[1] = [1,2]
         self.levelMusic[3] = [0,1,2]
         self.levelMusic[6] = [0,1,2,3]
@@ -136,7 +137,7 @@ class Scene_MainGame(Scene):
             Mixer().stopSound(mus)
         
     def resetGame(self):
-        self.level = 1
+        self.setLevel(1)
         self.blocksToLevel = self.getBlocksToLevel()
         self.activeBlock = self.getActiveBlock()
         self.background.setTheme(self.activeBlock)
@@ -235,7 +236,7 @@ class Scene_MainGame(Scene):
                             if not self.board.grid[x][y]:
                                 self.addRandom(x, y)
                                 
-            self.scoreboard.updateScoreboard(self.level, self.score)
+            self.scoreboard.updateScoreboard(self.score)
                                 
         self.board.updateBoard()
                                 
@@ -265,7 +266,8 @@ class Scene_MainGame(Scene):
             if self.blockCount >= self.blocksToLevel:
                 self.newLevel()
 
-        print "LEVEL %d: %d / %d" % (self.level, self.blockCount, self.blocksToLevel)
+        self.levelboard.updateLevelboard(self.blockCount)
+        #print "LEVEL %d: %d / %d" % (self.level, self.blockCount, self.blocksToLevel)
 
 
     def addCircleScore(self, blocks, falling=False):
@@ -395,13 +397,20 @@ class Scene_MainGame(Scene):
         idx = (self.level-1) % len(self.activeBlocks)
         return self.activeBlocks[idx]
         
-    def newLevel(self):
-        self.level += 1
+        
+    def setLevel(self, level):
+        self.level = level
         self.blocksToLevel = self.getBlocksToLevel()
         self.activeBlock = self.getActiveBlock()
+        
+        self.background.setTheme(self.activeBlock)
+        self.levelboard.setNewLevel(self.level, self.activeBlock, self.blocksToLevel)
+        
+    def newLevel(self):
+        self.setLevel(self.level + 1)
         self.blockCount = 0
 
-        self.hourglass.scaleValue(0.9)
+        self.hourglass.scaleValue(0.8)
         self.refillUpperHalfBoard()
         
         text = Text(160, 90, self.font, "LEVEL: "+str(self.level))
@@ -423,8 +432,7 @@ class Scene_MainGame(Scene):
         text.scaleTo((5.0, 5.0), self.currentTime, 0.05, text_scale_up_done)
         self.sprites.add(text)
         
-        self.background.setTheme(self.activeBlock)
-        self.playMusicForLevel()        
+        self.playMusicForLevel()   
 
     def handleEvent(self, event):
         if event.type == EVENT_CIRCLE_FOUND:
