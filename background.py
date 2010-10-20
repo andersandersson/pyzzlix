@@ -56,10 +56,10 @@ class BGSprite(Sprite):
         self.clearColCallbacks()
         
         def fadeOut(sprite):
-            self.fadeTo((1.0, 1.0, 1.0, 0.2), self.currentTime, 1.0, fadeIn)
+            self.fadeTo((1.0, 1.0, 1.0, 0.3), self.currentTime, 1.0, fadeIn)
             
         def fadeIn(sprite):    
-            self.fadeTo((1.0, 1.0, 1.0, 0.5), self.currentTime, 1.0, fadeOut)
+            self.fadeTo((1.0, 1.0, 1.0, 0.45), self.currentTime, 1.0, fadeOut)
                 
         fadeIn(None)
 
@@ -70,7 +70,7 @@ class BGSprite(Sprite):
             self.pulsate()
             
         def fadeOut(sprite):
-            self.fadeTo((1.0, 1.0, 1.0, 0.2), self.currentTime, 1.0 * count, done)
+            self.fadeTo((1.0, 1.0, 1.0, 0.3), self.currentTime, 1.0 * count, done)
 
         def fadeIn(sprite):    
             self.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, fadeOut)
@@ -84,7 +84,7 @@ class BGSprite(Sprite):
                 
 class BG_Square(BGSprite):
     def __init__(self):
-        BGSprite.__init__(self, (0.5, 1.0, 0.1), "bg_square.png", 10)
+        BGSprite.__init__(self, (0.6, 1.0, 0.3), "bg_square.png", 10)
             
         for i in xrange(9):
             self.shapes[i].subSprites.append(self.shapes[i+1])
@@ -93,7 +93,7 @@ class BG_Square(BGSprite):
             self.shapes[i+1].velx = 10 + (i % 2) * -20
             self.shapes[i+1].vely = 6 + (i % 2) * -12    
             
-        self.shapes[0].setScale((3.0, 3.0))
+        self.shapes[0].setScale((4.0, 4.0))
         self.shapes[0].setPos((160, 120))
         
         self.subSprites.append(self.shapes[0])
@@ -123,7 +123,7 @@ class BG_Square(BGSprite):
                 
 class BG_Triangle(BGSprite):
     def __init__(self):
-        BGSprite.__init__(self, (0.1, 0.1, 1.0), "bg_triangle.png", 10)
+        BGSprite.__init__(self, (0.3, 0.3, 1.0), "bg_triangle.png", 10)
          
         for i in xrange(10):
             #self.shapes[i].subSprites.append(self.shapes[i+1])
@@ -135,7 +135,7 @@ class BG_Triangle(BGSprite):
             
     def animate(self, speed):
         self.rotateTo(self.rot + speed, self.currentTime, 1.0)
-        nspeed = speed / 100.0
+        nspeed = speed / 30.0
 
         for i in xrange(10):
             shape = self.shapes[i]
@@ -156,7 +156,7 @@ class BG_Triangle(BGSprite):
                 
 class BG_Heart(BGSprite):
     def __init__(self):
-        BGSprite.__init__(self, (1.0, 0.1, 0.1), "bg_heart.png", 10)
+        BGSprite.__init__(self, (1.0, 0.3, 0.3), "bg_heart.png", 10)
          
         for i in xrange(10):
             self.shapes[i].setScale((1.0 * exp(i/3.5), 1.0 * exp(i/3.5)))
@@ -201,7 +201,7 @@ class BG_Plus(BGSprite):
         
             
     def animate(self, speed):
-        nspeed = speed / 500.0
+        nspeed = speed / 300.0
         self.counter += nspeed      
         self.rotateTo(self.rot - 30 * nspeed, self.currentTime, 0.05)
         sx = sin(self.counter) * 0.5 + 1.0
@@ -221,7 +221,7 @@ class BG_Plus(BGSprite):
                 
 class BG_Circle(BGSprite):
     def __init__(self):
-        BGSprite.__init__(self, (0.1, 0.9, 1.0), "bg_circle.png", 10)
+        BGSprite.__init__(self, (0.3, 0.9, 1.0), "bg_circle.png", 10)
          
         for i in xrange(10):
             self.shapes[i].setScale((8.0 - (i * 0.75), 8.0 - (i * 0.75)))
@@ -253,7 +253,7 @@ class BG_Circle(BGSprite):
             
 class BG_Cross(BGSprite):
     def __init__(self):
-        BGSprite.__init__(self, (1.0, 0.9, 0.2), "bg_cross.png", 10)
+        BGSprite.__init__(self, (1.0, 0.9, 0.3), "bg_cross.png", 10)
 
         self.shapes[0].setPos((160, 120))
         self.shapes[0].setScale((2.0, 2.0))
@@ -287,7 +287,7 @@ class BG_Cross(BGSprite):
                 
 class BG_Diamond(BGSprite):
     def __init__(self):
-        BGSprite.__init__(self, (0.8, 0.1, 1.0), "bg_diamond.png", 10)
+        BGSprite.__init__(self, (0.8, 0.3, 1.0), "bg_diamond.png", 10)
          
         for i in xrange(10):
             self.shapes[i].setScale((4.0, 4.0))

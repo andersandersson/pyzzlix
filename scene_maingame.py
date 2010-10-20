@@ -185,10 +185,12 @@ class Scene_MainGame(Scene):
     def playMusicForLevel(self):
         close = self.allMusic[:]
         to_play = []
+        max_level = 0
         for i in self.levelMusic:
-            if self.level >= i:
+            if self.level >= i and i >= max_level:
+                max_level = i
                 to_play = self.levelMusic[i]
-
+                
         for key in to_play:
             if key in close:
                 close.remove(key)
@@ -379,8 +381,10 @@ class Scene_MainGame(Scene):
 
     def getUsableBlocks(self):
         blocks = []
+        max_level = 0
         for i in self.levelBlocks:
-            if self.level >= i:
+            if self.level >= i and i >= max_level:
+                max_level = i
                 blocks = self.levelBlocks[i]
 
         return blocks
@@ -520,7 +524,7 @@ class Scene_MainGame(Scene):
                 self.showEnterHighscore()
                 
             if key == K_b:
-                self.background.boost()
+                self.background.boost(1)
 
             if key == K_v:
                 self.background.setTheme(self.activeBlock)

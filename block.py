@@ -17,8 +17,9 @@ class Block(Sprite):
         Sprite.__init__(self)
         self.type = type
 
-        self.blinkAnimation = Animation("blocks.png", 16, 16, type * 16, 0, 16, 6 * 16, 0.0, 0.016, "pingpong")
-        self.normalAnimation = Animation("blocks.png", 16, 16, type * 16, 0, 16, 16, 0.0, 0.2, "pingpong")
+        self.blinkAnimation = Animation("blocks.png", 16, 16, type * 16, 0, 16, 6 * 16, 0.0, 0.016, "pingpongloop")
+        self.pulseAnimation = Animation("blocks.png", 16, 16, type * 16, 0, 16, 6 * 16, 0.0, 0.016, "pingpong")
+        self.normalAnimation = Animation("blocks.png", 16, 16, type * 16, 0, 16, 16, 0.0, 0.2, "normal")
         
         self.setAnimation(self.normalAnimation)
     
@@ -40,6 +41,10 @@ class Block(Sprite):
         self.layer = type
 
         Sprite.setPos(self, (self.boardx * self.size[0] + self.offset_x, self.boardy * self.size[1] + self.offset_y))
+    
+    
+    def doPulse(self):
+        self.setAnimation(self.pulseAnimation)
     
     def doBlink(self):
         self.setAnimation(self.blinkAnimation)

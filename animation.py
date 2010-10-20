@@ -3,7 +3,7 @@ from globals import *
 class Animation():
     def __init__(self, name, width, height, srcx = 0, srcy = 0, srcw = None, srch = None, currentTime = 0.0, frameLength = 0.1, mode = "loop", reverse = False):
         self.images = loadImageSheet(name, width, height, srcx, srcy, srcw, srch)
-        if (mode == "loop" or mode == "pingpong" or mode == "normal"):
+        if (mode == "loop" or mode == "pingpong" or mode == "pingpongloop" or mode == "normal"):
             self.mode = mode
         else:
             self.mode = "normal"
@@ -32,6 +32,14 @@ class Animation():
                     if (self.mode == "loop"):
                         self.frame = 0
                     elif (self.mode == "pingpong"):
+                        #print "LOOOOOKO"
+                        if (not self.reverse):
+                            self.frame = self.frameCount - 1
+                            self.direction = -1
+                        else:
+                            self.frameCount = 0
+                            self.frame = self.frameCount - 1
+                    elif (self.mode == "pingpongloop"):
                         self.frame = self.frameCount - 1
                         self.direction = -1
                     else:
@@ -41,6 +49,14 @@ class Animation():
                     if (self.mode == "loop"):
                         self.frame = self.frameCount - 1
                     elif (self.mode == "pingpong"):
+                        print "ASOASFOJASFJO"
+                        if (not self.reverse):
+                            self.frameCount = 0
+                            self.frame = 0
+                        else:
+                            self.frame = 0
+                            self.direction = 1
+                    elif (self.mode == "pingpongloop"):
                         self.frame = 0
                         self.direction = 1
                     else:
