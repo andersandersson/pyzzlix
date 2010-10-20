@@ -14,6 +14,7 @@ from image import *
 from marker import *
 from hourglass import *
 from scoreboard import *
+from levelboard import *
 from scene_gameover import *
 from scene_highscore import *
 from background import *
@@ -22,7 +23,6 @@ from scene_mainmenu import *
 from scene_tutorial import *
 from scenehandler import *
 
-from levelsplash import *
 
 LAYER_EFFECTS = 4
 LAYER_GUI = 3
@@ -36,30 +36,31 @@ class Scene_MainGame(Scene):
         self.updateBlocker = True
         
         self.board = Board(self, BOARD_WIDTH, BOARD_HEIGHT)
-        self.board.setPos((8.0, 0.0))
+        self.board.setPos((24.0, 0.0))
         
         self.scoreboard = Scoreboard()
-        self.scoreboard.setPos((200.0, 0.0))
+        self.scoreboard.setPos((208.0, 8.0))
+        
+        self.levelboard = Levelboard()
+        self.levelboard.setPos((208.0, 80.0))
+        
+        self.hourglass = Hourglass()
+        self.hourglass.setPos((208, 136))
+        self.background = Background() 
+
+        self.sprites.add(self.background)
+        self.sprites.add(self.hourglass)
+        self.sprites.add(self.board)
+        self.sprites.add(self.scoreboard)
+        self.sprites.add(self.levelboard)
+        
         
         self.blocks = pygame.sprite.Group()
         self.blockcount = 0
         self.font = Font("font_fat.png", 8, 8)
                 
         self.music =  []
-
-
-        self.levelsplash = LevelSplash()
-        self.background = Background() 
-
-        self.sprites.add(self.background)
-
-        self.hourglass = Hourglass()
-        self.hourglass.setPos((224, 119))
-        
-        self.sprites.add(self.hourglass)
-        self.sprites.add(self.board)
-        self.sprites.add(self.scoreboard)
-        
+       
         self.score = 0
         self.ticker = 20
         self.init_counter = 0
@@ -87,6 +88,7 @@ class Scene_MainGame(Scene):
 
         self.statelist = {"idle":0, "running":1, "gameover":2}
         self.state = self.statelist["idle"]
+        
     
     def preload(self):
         lock = thread.allocate_lock()
