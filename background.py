@@ -321,7 +321,7 @@ class Background(Sprite):
         Sprite.__init__(self)
         self.setPos((0, 0))
 
-        self.shapes = [BG_Square(), BG_Triangle(), BG_Heart(), BG_Cross(), BG_Diamond(), BG_Circle(), BG_Plus()]
+        self.shapes = {0: BG_Heart(), 1: BG_Square(), 2: BG_Triangle(), 3: BG_Cross(), 4: BG_Diamond(), 5: BG_Circle(), 6: BG_Plus()}
         
         self.shapeCount = len(self.shapes)
         
@@ -336,7 +336,7 @@ class Background(Sprite):
         self.currentShape.boost(count)
 
     def setTheme(self, shape):
-        shape = shape % self.shapeCount    
+        #shape = shape % self.shapeCount    
             
         self.subSprites.remove(self.currentShape)
         self.currentShape = self.shapes[shape]    

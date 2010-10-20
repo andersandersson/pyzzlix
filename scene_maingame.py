@@ -69,15 +69,17 @@ class Scene_MainGame(Scene):
         self.init_y = 0
         self.init_y_dir = 0
         self.level = 1
-        self.block_count = 0
        
-        self.usableBlocks = []
         self.levelBlocks = {}
         self.levelBlocks[1] = [0, 1, 2]
-        self.levelBlocks[1] = [0, 1, 2]
-        self.levelBlocks[1] = [0, 1, 2]
-        self.levelBlocks[1] = [0, 1, 2]
-        self.activeBlocks = [0, 1, 2, 3, 4, 5, 6]
+        self.levelBlocks[4] = [0, 1, 2, 3]
+        self.levelBlocks[9] = [0, 1, 2, 3, 4]
+        self.levelBlocks[15] = [0, 1, 2, 3, 4, 5]
+        self.levelBlocks[22] = [0, 1, 2, 3, 4, 5, 6]
+        self.activeBlocks = [0, 1, 2, 3, 0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 6]
+        self.blocksToLevel = 0
+        self.activeBlock = 0
+        self.blockCount = 0
         
         self.levelMusic = {}
         self.allMusic = []
@@ -172,8 +174,11 @@ class Scene_MainGame(Scene):
         
     def resetGame(self):
         self.level = 1
+        self.blocksToLevel = self.getBlocksToLevel()
+        self.activeBlock = self.getActiveBlock()
+        self.background.setTheme(self.activeBlock)
+        self.blockCount = 0
         self.score = 0
-        self.block_count = 0
         self.board.reset()
         self.hourglass.reset(HOURGLASS_DEFAULT)
         self.init_x = 0
@@ -248,7 +253,13 @@ class Scene_MainGame(Scene):
                     self.init_x_dir = 1
                     self.init_x += 1                   
                     self.init_y -= 1
-                            
+
+    def refillUpperHalfBoard(self):
+        for x in range(0, BOARD_WIDTH):
+            for y in range(0, BOARD_HEIGHT):
+                self.board.clear(x, y)
+                self.addRandom(x, y)
+        
     def tick(self):
         if (self.state == self.statelist["running"]):
             if not self.board.full():
@@ -256,8 +267,8 @@ class Scene_MainGame(Scene):
                     self.fillZigZag()
                     
                 else:
-                    for x in range(0, BOARD_WIDTH):
-                        for y in range(0, BOARD_HEIGHT):
+                    for x in range(BOARD_WIDTH-1, -1, -1):
+                        for y in range(BOARD_HEIGHT-1, -1, -1):
                             if not self.board.grid[x][y]:
                                 self.addRandom(x, y)
                                 
@@ -284,7 +295,15 @@ class Scene_MainGame(Scene):
 
     def addBlockScore(self, block):
         self.score += self.level * POINTS_PER_LEVEL_FOR_BLOCK_SCORE
-        print block.type
+
+        if block.type == self.activeBlock:
+            self.blockCount += 1
+
+            if self.blockCount >= self.blocksToLevel:
+                self.newLevel()
+
+        print "LEVEL %d: %d / %d" % (self.level, self.blockCount, self.blocksToLevel)
+
 
     def addCircleScore(self, blocks, falling=False):
         num_blocks = len(blocks)
@@ -293,11 +312,6 @@ class Scene_MainGame(Scene):
         text_x = 0
         text_y = 0
         text_count = len(blocks)
-
-        self.block_count += num_blocks
-
-        while self.block_count >= self.level * NUM_BLOCKS_FOR_LEVEL:
-            self.newLevel()
 
         if num_blocks >= MIN_BLOCKS_FOR_CIRCLE_SCORE or falling:
             score = num_blocks*POINTS_PER_LEVEL_FOR_CIRCLE_SCORE*self.level
@@ -390,7 +404,7 @@ class Scene_MainGame(Scene):
                     
         def block_wait_done(block):
             block.scaleTo((1.0, 1.0), self.currentTime, 0.5, block_scale_done)
-
+            
         for block in blocks[:-1]:
             block.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1)
             block.doBlink()
@@ -399,20 +413,33 @@ class Scene_MainGame(Scene):
         blocks[-1].doBlink()
 
     def getUsableBlocks(self):
-        return [0,1]
+        blocks = []
+        for i in self.levelBlocks:
+            if self.level >= i:
+                blocks = self.levelBlocks[i]
+
+        return blocks
 
     def getRandomBlockType(self):
         usable_blocks = self.getUsableBlocks()
         type = usable_blocks[random.randint(0,len(usable_blocks)-1)]
         return type
-        
-    def getLevelBlock(self):
-        pass
+
+    def getBlocksToLevel(self):
+        return 20
+    
+    def getActiveBlock(self):
+        idx = (self.level-1) % len(self.activeBlocks)
+        return self.activeBlocks[idx]
         
     def newLevel(self):
         self.level += 1
+        self.blocksToLevel = self.getBlocksToLevel()
+        self.activeBlock = self.getActiveBlock()
+        self.blockCount = 0
 
-        self.hourglass.scaleValue(0.8)
+        self.hourglass.scaleValue(0.9)
+        self.refillUpperHalfBoard()
         
         text = Text(160, 90, self.font, "LEVEL: "+str(self.level))
         text.setAnchor("center")
@@ -433,8 +460,7 @@ class Scene_MainGame(Scene):
         text.scaleTo((5.0, 5.0), self.currentTime, 0.05, text_scale_up_done)
         self.sprites.add(text)
         
-
-        self.background.setTheme(self.level)
+        self.background.setTheme(self.activeBlock)
         self.playMusicForLevel()        
 
     def handleEvent(self, event):
@@ -506,16 +532,6 @@ class Scene_MainGame(Scene):
                     else:
                         self.board.marker.fail()
 
-            if key == K_q:
-                self.board.pulseBorder((1.0, 0.0, 0.0, 0.7), 0.1)
-                self.scoreboard.pulseBorder((0.0, 0.0, 1.0, 1.0), 0.1)
-                self.hourglass.pulseBorder((1.0, 0.0, 0.0, 0.7), 0.1)
-
-            if key == K_w:
-                self.board.stopPulseBorder()
-                self.scoreboard.stopPulseBorder()
-                self.hourglass.stopPulseBorder()
-
             if key == K_p:
                 print self.board
 
@@ -536,7 +552,7 @@ class Scene_MainGame(Scene):
                 self.background.boost()
 
             if key == K_v:
-                self.background.setTheme(self.level)
+                self.background.setTheme(self.activeBlock)
             
                 
             if key == K_0:
