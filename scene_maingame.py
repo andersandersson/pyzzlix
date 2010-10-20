@@ -70,8 +70,14 @@ class Scene_MainGame(Scene):
         self.level = 1
         self.block_count = 0
        
-        self.usable_blocks = []
-        self.all_blocks = [0, 1, 2, 3, 4, 5, 6]
+        self.usableBlocks = []
+        self.levelBlocks = {}
+        self.levelBlocks[1] = [0, 1, 2]
+        self.levelBlocks[1] = [0, 1, 2]
+        self.levelBlocks[1] = [0, 1, 2]
+        self.levelBlocks[1] = [0, 1, 2]
+        self.activeBlocks = [0, 1, 2, 3, 4, 5, 6]
+        
         self.levelMusic = {}
         self.allMusic = []
         self.music_states = []
@@ -172,7 +178,6 @@ class Scene_MainGame(Scene):
         self.init_y = BOARD_HEIGHT*2-1
         self.init_x_dir = 1
         self.init_y_dir = -1
-        self.usable_blocks = self.all_blocks[0:3]
         self.init_counter = BOARD_WIDTH*BOARD_HEIGHT
         self.sprites.remove_sprites_of_layer(LAYER_BLOCKS)
         self.blocks.empty()
@@ -260,12 +265,12 @@ class Scene_MainGame(Scene):
                                 
     def addRandom(self, x, y):
         if y < self.board.height - 1:
-            type = self.usable_blocks[random.randint(0,len(self.usable_blocks)-1)]
+            type = self.getRandomBlockType()
                     
             while(self.board.grid[x][y+1] and self.board.grid[x][y+1].type == type):
-                type = self.usable_blocks[random.randint(0,len(self.usable_blocks)-1)]
+                type = self.getRandomBlockType()
         else:
-            type = self.usable_blocks[random.randint(0,len(self.usable_blocks)-1)]
+            type = self.getRandomBlockType()
 
         self.createBlock(x, y, type)
         
@@ -390,15 +395,20 @@ class Scene_MainGame(Scene):
 
         blocks[-1].fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, block_wait_done)
         blocks[-1].doBlink()
+
+    def getUsableBlocks(self):
+        return [0,1]
+
+    def getRandomBlockType(self):
+        usable_blocks = self.getUsableBlocks()
+        type = usable_blocks[random.randint(0,len(usable_blocks)-1)]
+        return type
+        
+    def getLevelBlock(self):
+        pass
         
     def newLevel(self):
         self.level += 1
-
-        maxblocks = int(4 + self.level/2)
-        if maxblocks > len(self.all_blocks):
-            maxblocks = len(self.all_blocks)
-
-        self.usable_blocks = self.all_blocks[0:maxblocks]
 
         self.hourglass.scaleValue(0.8)
         
