@@ -213,6 +213,11 @@ class Scene_Options(Scene):
                     self.submenu.prevItem()
                     Mixer().playSound(self.selectsound)
                     self.menu.selectItem()
+
+                if (key == K_ESCAPE):
+                    Mixer().playSound(self.selectsound)
+                    SceneHandler().remove(self)
+                    
             else:
                 if (key == K_RIGHT):
                     self.submenu.nextItem()
@@ -231,6 +236,10 @@ class Scene_Options(Scene):
                                            
                 if (key == K_DOWN):
                     self.menu.nextItem()
+                    Mixer().playSound(self.selectsound)
+                    self.submenu.selectItem()
+
+                if (key == K_ESCAPE):
                     Mixer().playSound(self.selectsound)
                     self.submenu.selectItem()
 
