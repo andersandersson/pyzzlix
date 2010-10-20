@@ -1,5 +1,6 @@
 from math import *
 
+from resources import *
 from scene import *
 from scenehandler import *
 from board import *
@@ -106,15 +107,10 @@ class Scene_MainMenu(Scene):
         self.state = "transition"
         self.state = "entrance"
                 
-    def preload(self):        
-        self.music =  Mixer().loadAudioStream("menumusic.ogg")
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        self.movesound =  Mixer().loadAudioFile("menumove.ogg") 
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        self.selectsound =  Mixer().loadAudioFile("menuselect.ogg") 
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        self.startsound =  Mixer().loadAudioFile("menustart.ogg") 
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
+        self.music = Resources().getMusic("menumusic")
+        self.movesound = Resources().getSound("menumove")
+        self.selectsound = Resources().getSound("menuselect")
+        self.startsound = Resources().getSound("menustart")
         
     def tick(self):
         pass

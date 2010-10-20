@@ -1,4 +1,5 @@
 from math import *
+from resources import *
 
 from scene import *
 from scenehandler import *
@@ -44,8 +45,8 @@ class Scene_DialogYesNo(Scene):
         self.sprites.add(self.background)
         self.sprites.add(self.menuSprite)
         
-        self.movesound =  Mixer().loadAudioFile("menumove.ogg") 
-        self.selectsound =  Mixer().loadAudioFile("menuselect.ogg")
+        self.movesound = Resources().getSound("menumove") 
+        self.selectsound = Resources().getSound("menuselect")
 
         self.statelist = {"showing" : 0, "fading" : 1}
         self.state = self.statelist["showing"]

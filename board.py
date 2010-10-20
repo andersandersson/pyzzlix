@@ -1,3 +1,4 @@
+from resources import *
 from globals import *
 from block import *
 from sprite import *
@@ -61,6 +62,10 @@ class Board(Sprite):
         self._glow_col = (0.0, 0.0, 0.0, 0.0)
         self._glow_duration = 0.0
 
+        self.marker.movesound = Resources().getSound("markermove")  
+        self.marker.turnsound = Resources().getSound("markerturn")  
+        self.marker.failsound = Resources().getSound("markerfail")  
+
     def __str__(self):
         val = ""
         for x in range(self.width):
@@ -77,14 +82,6 @@ class Board(Sprite):
 
     def __iter__(self):
         return iter(self.sprites)
-
-    def preload(self):
-        self.marker.movesound = Mixer().loadAudioFile("markermove.ogg")  
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        self.marker.turnsound = Mixer().loadAudioFile("markerturn.ogg")  
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        self.marker.failsound = Mixer().loadAudioFile("markerfail.ogg")  
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))        
 
     def pulseBorder(self, col1, col2, duration):
         self._glow_duration = duration

@@ -1,9 +1,8 @@
 import random
-import thread
-from time import sleep
 import sys
 
 from mixer import *
+from resources import *
 
 from scene import *
 from board import *
@@ -89,15 +88,7 @@ class Scene_MainGame(Scene):
 
         self.statelist = {"idle":0, "running":1, "gameover":2}
         self.state = self.statelist["idle"]
-    
-    def preload(self):
-        lock = thread.allocate_lock()
-
-        load_list = ["music1_chord.ogg", "music1_hh.ogg", "music1_bass.ogg", "music1_bass2.ogg", "music1_kick.ogg","music1_lead.ogg", "music1_lead3.ogg", "music1_lead2.ogg"]
-        
-        self.allMusic = range(0, len(load_list))
-        self.music_states = [0]*len(load_list)
-        
+                    
         self.levelMusic[1] = [1,2]
         self.levelMusic[3] = [0,1,2]
         self.levelMusic[6] = [0,1,2,3]
@@ -107,45 +98,19 @@ class Scene_MainGame(Scene):
         self.levelMusic[17] = [0,1,2,3,4,5,6]   
         self.levelMusic[19] = [0,1,2,3,4,5,7]   
         
-        music = {}
-        count = [0]
-        max_count = 0
-        
-        def load(index, list, count):
-            for filename in list:
-                file = Mixer().loadAudioStream(filename)
-                lock.acquire()
-                music[index] = file
-                index += 1
-                lock.release()
-                pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=10))
-                sleep(0.1)
-            
-            lock.acquire()
-            count[0] += 1
-            lock.release()
-        
-        num_threads = 2
-        part_size = len(load_list)/num_threads
-        for i in range(0,num_threads):
-            if i < num_threads-1:
-                part_list = load_list[i*part_size:(i+1)*part_size]
-            else:
-                part_list = load_list[i*part_size:]
-            
-            thread.start_new_thread(load, (i*part_size, part_list, count))        
-            max_count += 1
-        
-        while count[0] < max_count:
-            sleep(0.1)
-            
-        for m in music:
-            self.music.append(music[m])
+        self.music.append(Resources().getMusic("music1_chord"))
+        self.music.append(Resources().getMusic("music1_hh"))
+        self.music.append(Resources().getMusic("music1_bass"))
+        self.music.append(Resources().getMusic("music1_bass2"))
+        self.music.append(Resources().getMusic("music1_kick"))
+        self.music.append(Resources().getMusic("music1_lead"))
+        self.music.append(Resources().getMusic("music1_lead3"))
+        self.music.append(Resources().getMusic("music1_lead2"))
 
-        self.removeblocksound = Mixer().loadAudioFile("removeblock.ogg")  
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-            
-        self.board.preload()
+        self.allMusic = range(0, len(self.music))
+        self.music_states = [0]*len(self.music)
+
+        self.removeblocksound = Resources().getSound("removeblock")
                                
     def startGame(self):
         self.state = self.statelist["running"]
