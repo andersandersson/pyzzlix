@@ -9,6 +9,8 @@ from OpenGL.GL import *
 
 from texture import *
 
+VOLUME_STEPS = 5
+
 BOARD_WIDTH = 10
 BOARD_HEIGHT = 13
 

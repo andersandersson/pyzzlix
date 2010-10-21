@@ -120,7 +120,7 @@ class Scene_MainMenu(Scene):
     def show(self):
         print self, "is showing"
         self.state = "entrance"
-        Mixer().playSound(self.music, loops=-1)
+        Mixer().playMusic(self.music, loops=-1)
         self.startmenu.setPos((160, 160))
         self.startmenu.setCol((1.0,1.0,1.0,0.0))
         self.startmenu.fadeTo((1.0,1.0,1.0,1.0), self.currentTime, 0.3)
@@ -128,7 +128,7 @@ class Scene_MainMenu(Scene):
         
     def hide(self):
         print self, "is hiding"
-        Mixer().stopSound(self.music) 
+        Mixer().stopMusic(self.music) 
         
     def handleEvent(self, event):
         if event.type == KEYDOWN:
@@ -174,7 +174,7 @@ class Scene_MainMenu(Scene):
 
     def menu_start(self):
         Mixer().playSound(self.startsound)
-        Mixer().stopSound(self.music)
+        Mixer().stopMusic(self.music)
         SceneHandler().pushScene(scene_maingame.Scene_MainGame())
         pass
     
@@ -192,7 +192,7 @@ class Scene_MainMenu(Scene):
         
     def menu_quit(self):
         Mixer().playSound(self.selectsound)
-        Mixer().setVolume(self.music, 0.5, 0.5)
+        Mixer().setMusicVolume(self.music, 0.5, 0.5)
         Scene_DialogYesNo().setQuery("Do you want to quit?", self.quitGame, self.doNothing)
         SceneHandler().pushScene(Scene_DialogYesNo())
         pass
@@ -208,5 +208,5 @@ class Scene_MainMenu(Scene):
             SceneHandler().removeScene(Scene_DialogYesNo())
         
         Scene_DialogYesNo().remove(killDialog)
-        Mixer().setVolume(self.music, 1.0, 0.5)
+        Mixer().setMusicVolume(self.music, 1.0, 0.5)
         pass

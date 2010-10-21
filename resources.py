@@ -1,9 +1,4 @@
 from globals import *
-
-from mixer import *
-
-from sprite import *
-from animation import *
 from singleton import *
 
 import json
@@ -62,11 +57,13 @@ class Resources(Singleton):
             print "RESOURCE %s NOT FOUND" % name
         
     def loadSound(self, filename):
+        from mixer import Mixer
         print "LOADING: " + filename
         sound = Mixer().loadAudioFile(filename)
         return sound
     
     def loadMusic(self, filename):
+        from mixer import Mixer
         print "LOADING: " + filename
         sound = Mixer().loadAudioStream(filename)
         return sound

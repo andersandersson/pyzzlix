@@ -2,6 +2,7 @@ import swmixer_pymedia as swmixer
 
 from globals import *
 from singleton import *
+from options import *
 
 # Dictionary with all sounds
 sounds = dict()
@@ -58,7 +59,7 @@ class Mixer(Singleton):
         return sound   
                  
 
-    def playSound(self, sound, volume=1.0, fadein=0.01, loops=0):
+    def _play(self, sound, volume, fadein, loops):
         if not self.enableSound:
             return
         
@@ -74,8 +75,18 @@ class Mixer(Singleton):
         else:
             sound.channel = sound.sound.play(volume=volume, fadein=self._timeToSamples(fadein), loops=loops)
         pass
-            
-    def setVolume(self, sound, volume, fadein=0.0):  
+
+    def _stop(self, sound):
+        if not self.enableSound:
+            return
+
+        if (sound == None):
+            return
+        if (sound.channel != None):
+            sound.channel.stop()
+            sound.channel = None
+        
+    def _setVolume(self, sound, volume, fadein=0.0):  
         if not self.enableSound:
             return
 
@@ -86,15 +97,36 @@ class Mixer(Singleton):
         if (sound.channel != None):
             sound.channel.set_volume(volume, fadetime=self._timeToSamples(fadein))
 
-    def stopSound(self, sound):
-        if not self.enableSound:
-            return
+    def playMusic(self, sound, volume=1.0, fadein=0.01, loops=0):
+        master_volume = Options().get("music_volume")
+        master_volume = float(master_volume) / float(VOLUME_STEPS)        
+        
+        self._play(sound, volume*master_volume, fadein, loops)
+        
+    def playSound(self, sound, volume=1.0, fadein=0.01, loops=0):
+        master_volume = Options().get("sound_volume")
+        master_volume = float(master_volume) / float(VOLUME_STEPS)        
+        
+        self._play(sound, volume*master_volume, fadein, loops)
+            
 
-        if (sound == None):
-            return
-        if (sound.channel != None):
-            sound.channel.stop()
-            sound.channel = None
+    def setMusicVolume(self, sound, volume, fadein=0.0):  
+        master_volume = Options().get("music_volume")
+        master_volume = float(master_volume) / float(VOLUME_STEPS)        
+
+        self._setVolume(sound, volume*master_volume, fadein)
+        
+    def setSoundVolume(self, sound, volume, fadein=0.0):  
+        master_volume = Options().get("sound_volume")
+        master_volume = float(master_volume) / float(VOLUME_STEPS)        
+
+        self._setVolume(sound, volume*master_volume, fadein)
+
+    def stopMusic(self, sound):
+        self._stop(sound)
+        
+    def stopSound(self, sound):
+        self._stop(sound)
         
     def cleanup(self):
         if not self.enableSound:

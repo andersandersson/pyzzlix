@@ -91,6 +91,12 @@ class Scene_Highscore(Scene):
         for obj in zip(hs, self.highscores):
             self.updateHighscore(obj[1], obj[0][0].encode(), obj[0][1], obj[0][2])
 
+    def resetHighscores(self):
+        for score in self.highscores:
+            self.updateHighscore(score, "AAA", 0, 0)
+
+        self.saveHighscores()
+        
     def saveHighscores(self):
         data = []
 
