@@ -73,7 +73,7 @@ class Scene_Options(Scene):
         self.font = Font("font_fat.png", 8, 8);
 
         self.menuSprite = Sprite()
-        self.menuSprite.setPos((80, 50))
+        self.menuSprite.setPos((100, 70))
         
         self.menu = Menu()
         self.menu.add(MenuItem(0, 0, self.font, "Music volume", self.focusVolumeMusic, "left"))
@@ -99,12 +99,17 @@ class Scene_Options(Scene):
         self.background.setCol((0.0, 0.0, 0.0, 0.9))
         self.background._layer = 0
 
+        self.title = Text(160, 30, self.font, "Options")
+        self.title.setScale((3.0, 3.0))
+        self.title.setAnchor("center")
+        
         self.menuSprite.subSprites.append(self.menu)
         self.menuSprite.subSprites.append(self.menuVolumeMusic)
         self.menuSprite.subSprites.append(self.menuVolumeSound)
         self.menuSprite.subSprites.append(self.menuTutorials)
         self.sprites.add(self.background)
         self.sprites.add(self.menuSprite)
+        self.sprites.add(self.title)
 
         self.movesound = Resources().getSound("menumove") 
         self.selectsound = Resources().getSound("menuselect")
@@ -113,9 +118,9 @@ class Scene_Options(Scene):
         self.state = self.statelist["top"]
 
         self.focusColors = {"submenu_focus": self.menu.items[0].focusColor,
-                            "submenu_unfocus": (1.0, 0.8, 0.8, 1.0),
+                            "submenu_unfocus": self.menu.items[0].focusColor,
                             "topmenu_focus": self.menu.items[0].focusColor,
-                            "topmenu_unfocus": (0.8, 0.8, 0.8, 1.0)
+                            "topmenu_unfocus": self.menu.items[0].unfocusColor
                             }
 
         self.focusScales = {"submenu_focus": (1.2, 1.2),

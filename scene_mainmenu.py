@@ -13,7 +13,6 @@ import random
 import scene_maingame
 from scene_maingame import *
 from scene_highscore import *
-from scene_help import *
 from scene_dialogyesno import *
 from scene_options import *
 
@@ -79,10 +78,10 @@ class Scene_MainMenu(Scene):
         self.menu = Menu()
         self.menu.setPos((160, 100))
         self.menu.add(MenuItem(0, 0, self.menufont, "Start Game", self.menu_start))
-        self.menu.add(MenuItem(0, 16, self.menufont, "Options", self.menu_options))
-        self.menu.add(MenuItem(0, 32, self.menufont, "High Scores", self.menu_highscores))
-        self.menu.add(MenuItem(0, 48, self.menufont, "Help", self.menu_help))
-        self.menu.add(MenuItem(0, 64, self.menufont, "Quit", self.menu_quit))
+        self.menu.add(MenuItem(0, 16, self.menufont, "High Scores", self.menu_highscores))
+        self.menu.add(MenuItem(0, 32, self.menufont, "Options", self.menu_options))
+        #self.menu.add(MenuItem(0, 48, self.menufont, "Help", self.menu_help))
+        self.menu.add(MenuItem(0, 48, self.menufont, "Quit", self.menu_quit))
 
         self.sprites.add(self.menu)    
         self.menu.setPos((160, 260))
