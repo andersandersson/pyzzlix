@@ -16,6 +16,7 @@ import block
 
 from scene_dialogyesno import *
 import scene_maingame
+import scene_mainmenu
 import marker
 
 def createBlockGroup(posx, posy, types, size):
@@ -110,19 +111,24 @@ class Page_Welcome(Page):
     def __init__(self, x, y, page, pageCount):
         Page.__init__(self, x, y, page, pageCount)
 
-        self.welcometext = Text(self.width/2, 20, self.titlefont, "WELCOME\nTO\nPYZZLIX!")
+        self.welcometext = Text(self.width/2, 10, self.titlefont, "WELCOME\nTO\n")
         self.welcometext.setAnchor("center")
-        self.welcometext.setScale((2.5, 2.5))
+        self.welcometext.setScale((2.0, 2.0))
 
+        self.logo = scene_mainmenu.Logo(self.width/2, 56)
+        self.logo.setScale((0.5, 0.5))
+        self.logo.cycling = False
+        
         self.subSprites.append(self.welcometext)
+        self.subSprites.append(self.logo)
 
         self.infotext = []
-        self.infotext.append(Text(self.width/2, 90, self.textfont,
+        self.infotext.append(Text(self.width/2, 80, self.textfont,
                                   "This tutorial will explain how to play\n" +
                                   "Pyzzlix! If this is your first time\n" +
                                   "playing, skip this at your own peril..."))
 
-        self.infotext.append(Text(self.width/2, 125, self.textfont,
+        self.infotext.append(Text(self.width/2, 120, self.textfont,
                                   "Use the ARROW keys to navigate the\n" +
                                   "pages of this tutorial."))
 

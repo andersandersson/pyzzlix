@@ -73,13 +73,15 @@ class Scene_Options(Scene):
         self.font = Font("font_fat.png", 8, 8);
 
         self.menuSprite = Sprite()
-        self.menuSprite.setPos((100, 70))
+        self.menuSprite.setPos((76, 70))
         
         self.menu = Menu()
         self.menu.add(MenuItem(0, 0, self.font, "Music volume", self.focusVolumeMusic, "left"))
         self.menu.add(MenuItem(0, 30, self.font, "Effects volume", self.focusVolumeSound, "left"))
-        self.menu.add(MenuItem(0, 60, self.font, "Tutorials", self.focusTutorials, "left"))
+        self.menu.add(MenuItem(0, 60, self.font, "Tutorial", self.focusTutorials, "left"))
         self.menu.add(MenuItem(0, 90, self.font, "Reset highscores", self.resetHighscores, "left"))
+        self.menu.add(MenuItem(84, 140, self.font, "Exit", self.closeOptions, "center"))
+
         
         self.menuVolumeMusic = create_scale_menu(self.font, callback=self.focusTop, name="music_volume", update_callback=self.updateOptions)
         self.menuVolumeMusic.setPos((20, 13))
@@ -99,8 +101,8 @@ class Scene_Options(Scene):
         self.background.setCol((0.0, 0.0, 0.0, 0.9))
         self.background._layer = 0
 
-        self.title = Text(160, 30, self.font, "Options")
-        self.title.setScale((3.0, 3.0))
+        self.title = Text(160, 30, self.font, "OPTIONS")
+        self.title.setScale((2.0, 2.0))
         self.title.setAnchor("center")
         
         self.menuSprite.subSprites.append(self.menu)
@@ -211,6 +213,9 @@ class Scene_Options(Scene):
         dialog.setQuery("Really reset highscores?", reset_yes, reset_no)
         SceneHandler().pushScene(dialog)
         pass
+
+    def closeOptions(self):
+        SceneHandler().removeScene(self)
     
     def handleEvent(self, event):
         if event.type == KEYDOWN:
@@ -218,48 +223,52 @@ class Scene_Options(Scene):
 
             if self.state == self.statelist["top"]:
                 if (key == K_UP):
+                    Mixer().playSound(self.movesound)
                     self.menu.prevItem()
                                            
                 if (key == K_DOWN):
+                    Mixer().playSound(self.movesound)
                     self.menu.nextItem()
             
                 if (key == K_RETURN):
                     Mixer().playSound(self.selectsound)
                     self.menu.selectItem()
 
-                if (key == K_RIGHT):
-                    self.submenu.nextItem()
-                    Mixer().playSound(self.selectsound)
-                    self.menu.selectItem()
+                #if (key == K_RIGHT):
+                    #self.submenu.nextItem()
+                    #Mixer().playSound(self.selectsound)
+                    #self.menu.selectItem()
                                            
-                if (key == K_LEFT):
-                    self.submenu.prevItem()
-                    Mixer().playSound(self.selectsound)
-                    self.menu.selectItem()
+                #if (key == K_LEFT):
+                    #self.submenu.prevItem()
+                    #Mixer().playSound(self.selectsound)
+                    #self.menu.selectItem()
 
                 if (key == K_ESCAPE):
                     Mixer().playSound(self.selectsound)
-                    SceneHandler().removeScene(self)
+                    self.closeOptions()
                     
             else:
                 if (key == K_RIGHT):
+                    Mixer().playSound(self.movesound)
                     self.submenu.nextItem()
                                            
                 if (key == K_LEFT):
+                    Mixer().playSound(self.movesound)
                     self.submenu.prevItem()
                     
                 if (key == K_RETURN):
                     Mixer().playSound(self.selectsound)
                     self.submenu.selectItem()
 
-                if (key == K_UP):
-                    Mixer().playSound(self.selectsound)
-                    self.submenu.selectItem()
+                #if (key == K_UP):
+                    #Mixer().playSound(self.selectsound)
+                    #self.submenu.selectItem()
                                            
-                if (key == K_DOWN):
-                    self.menu.nextItem()
-                    Mixer().playSound(self.selectsound)
-                    self.submenu.selectItem()
+                #if (key == K_DOWN):
+                    #self.menu.nextItem()
+                    #Mixer().playSound(self.selectsound)
+                    #self.submenu.selectItem()
 
                 if (key == K_ESCAPE):
                     Mixer().playSound(self.selectsound)

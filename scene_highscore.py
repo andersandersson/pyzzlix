@@ -196,7 +196,7 @@ class Scene_Highscore(Scene):
 
         if not self.hasMenu:
             if event.type == KEYDOWN:
-                if (event.key == K_RETURN):
+                if (event.key == K_RETURN or event.key == K_ESCAPE):
                     SceneHandler().removeScene(self)
 
         if self.hasMenu:
@@ -213,5 +213,7 @@ class Scene_Highscore(Scene):
                     Mixer().playSound(self.selectsound)
                     self.menu.selectItem()
 
+
+                    
         return True
         

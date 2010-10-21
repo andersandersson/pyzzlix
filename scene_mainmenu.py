@@ -43,6 +43,7 @@ class Logo(Sprite):
         
         self.lastColorChange = 0
         self.colorOrder = 0
+        self.cycling = True
       
     def cycleTextColor(self, order, currentTime, length):
         i = order % 25
@@ -58,9 +59,10 @@ class Logo(Sprite):
             s.fadeTo(color, currentTime, length)
  
     def update(self, currentTime):
-        if (currentTime - self.lastColorChange > 3.0):
-            self.colorOrder += 1
-            self.cycleTextColor(self.colorOrder, currentTime, 3.0)
+        if (self.cycling == True):
+            if (currentTime - self.lastColorChange > 3.0):
+                self.colorOrder += 1
+                self.cycleTextColor(self.colorOrder, currentTime, 3.0)
 
 class Scene_MainMenu(Scene):
     def _runOnce(self):
