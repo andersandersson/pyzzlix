@@ -597,56 +597,5 @@ class Scene_MainGame(Scene):
                     else:
                         self.board.marker.fail()
 
-            if key == K_p:
-                print self.board
-
-            if key == K_u:
-                self.board.updateBoard()
-                                                
-            if key == K_r:
-                self.resetGame()
-                self.startGame()
-                
-            if key == K_g:
-                self.showGameOver()
-                
-            if key == K_n:
-                self.newLevel()
-
-            if key == K_h:
-                self.showEnterHighscore()
-                
-            if key == K_b:
-                self.background.boost(1)
-
-            if key == K_f:
-                self.background.flash(0.3)
-
-            if key == K_v:
-                self.background.setTheme(self.activeBlock)
-            
-                
-            if key == K_0:
-                for mus in self.music:
-                    Mixer().setMusicVolume(mus, 0.0, 2.0)
-                
-            if key == K_1:    
-                Mixer().setMusicVolume(self.music[0], 1.0, 3.1)
-            if key == K_2:    
-                Mixer().setMusicVolume(self.music[1], 1.0, 3.1)     
-            if key == K_3:    
-                Mixer().setMusicVolume(self.music[2], 1.0, 3.1)      
-            if key == K_4:    
-                Mixer().setMusicVolume(self.music[3], 1.0, 3.1)   
-            if key == K_5:    
-                Mixer().setMusicVolume(self.music[4], 1.0, 3.1)    
-            if key == K_6:    
-                Mixer().setMusicVolume(self.music[5], 1.0, 3.1)   
-            if key == K_7:    
-                Mixer().setMusicVolume(self.music[6], 1.0, 3.1)
-            if key == K_8:    
-                Mixer().setMusicVolume(self.music[7], 1.0, 3.1)
-  
-
         return True
         
