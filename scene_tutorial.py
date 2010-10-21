@@ -18,6 +18,51 @@ from scene_dialogyesno import *
 import scene_maingame
 import marker
 
+def createBlockGroup(posx, posy, types, size):
+    blocks = []
+    for i in range(size):
+        for j in range(size):
+            b = Block(j, i, types[i*size + j], (posx, posy))
+            blocks.append(b)
+    return blocks
+                 
+def getBlock(blocks, x, y, size):
+    return blocks[y * size + x]
+
+def setBlock(blocks, x, y, size, block):
+    blocks[y * size + x] = block
+   
+def rotateBlocksInGroup(blocks, blockx, blocky, size, currentTime, left=True):
+    block1 = getBlock(blocks, blockx - 1, blocky - 1, size) 
+    block2 = getBlock(blocks, blockx, blocky - 1, size)
+    block3 = getBlock(blocks, blockx - 1, blocky, size)
+    block4 = getBlock(blocks, blockx, blocky, size)
+             
+    if (left == True):
+        block1.moveToBoardCoord(block1.boardx,
+                                block1.boardy + 1, currentTime)
+        block2.moveToBoardCoord(block2.boardx - 1,
+                                block2.boardy, currentTime)
+        block3.moveToBoardCoord(block3.boardx + 1,
+                                block3.boardy, currentTime)
+        block4.moveToBoardCoord(block4.boardx,
+                                block4.boardy - 1, currentTime)
+    else:
+        block1.moveToBoardCoord(block1.boardx + 1,
+                                block1.boardy, currentTime)
+        block2.moveToBoardCoord(block2.boardx,
+                                block2.boardy + 1, currentTime)
+        block3.moveToBoardCoord(block3.boardx,
+                                block3.boardy - 1, currentTime)
+        block4.moveToBoardCoord(block4.boardx - 1,
+                                block4.boardy, currentTime)
+        
+    setBlock(blocks, block1.boardx, block1.boardy, size, block1)
+    setBlock(blocks, block2.boardx, block2.boardy, size, block2)
+    setBlock(blocks, block3.boardx, block3.boardy, size, block3)
+    setBlock(blocks, block4.boardx, block4.boardy, size, block4)
+
+    
 class Page(Sprite):
     def __init__(self, x, y, page, pageCount):
         Sprite.__init__(self)
@@ -124,19 +169,14 @@ class Page_Controls(Page):
                                   "beneath the marker."))
 
         dposy += 36
-        
-        self.blocks = []
-        self.blocks.append(Block(0, 0, 0))
-        self.blocks.append(Block(0, 1, 1))
-        self.blocks.append(Block(1, 1, 2))
-        self.blocks.append(Block(1, 0, 3))
 
+
+        blocktypes = [0, 1,
+                      2, 0]
+        self.blocks = createBlockGroup(dposx - 8, dposy - 8, blocktypes, 2)
 
         for b in self.blocks:
-            b.offset_x = dposx - 8
-            b.offset_y = dposy - 8
             self.subSprites.append(b)
-
         
         self.marker2 = Marker()
         self.marker2.setPos((dposx - 16, dposy -16))
@@ -154,40 +194,17 @@ class Page_Controls(Page):
             self.subSprites.append(t)
 
     def show(self, currentTime):
-        self.blocks[0].setToBoardCoord(0, 0)
-        self.blocks[1].setToBoardCoord(0, 1)
-        self.blocks[2].setToBoardCoord(1, 1)
-        self.blocks[3].setToBoardCoord(1, 0)
+        for i in range(2):
+            for j in range(2):
+                self.blocks[i * 2 + j].setToBoardCoord(j, i)
         
         def turnLeft(sprite):
-            self.blocks[0].moveToBoardCoord(self.blocks[0].boardx,
-                                            self.blocks[0].boardy + 1,
-                                            self.currentTime)
-            self.blocks[1].moveToBoardCoord(self.blocks[1].boardx + 1,
-                                            self.blocks[1].boardy,
-                                            self.currentTime)
-            self.blocks[2].moveToBoardCoord(self.blocks[2].boardx,
-                                            self.blocks[2].boardy - 1,
-                                            self.currentTime)
-            self.blocks[3].moveToBoardCoord(self.blocks[3].boardx - 1,
-                                            self.blocks[3].boardy,
-                                            self.currentTime)
+            rotateBlocksInGroup(self.blocks, 1, 1, 2, self.currentTime, True)
             self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnRight)
 
             
         def turnRight(sprite):
-            self.blocks[0].moveToBoardCoord(self.blocks[0].boardx,
-                                            self.blocks[0].boardy - 1,
-                                            self.currentTime)
-            self.blocks[1].moveToBoardCoord(self.blocks[1].boardx - 1,
-                                            self.blocks[1].boardy,
-                                            self.currentTime)
-            self.blocks[2].moveToBoardCoord(self.blocks[2].boardx,
-                                            self.blocks[2].boardy + 1,
-                                            self.currentTime)
-            self.blocks[3].moveToBoardCoord(self.blocks[3].boardx + 1,
-                                            self.blocks[3].boardy,
-                                            self.currentTime)
+            rotateBlocksInGroup(self.blocks, 1, 1, 2, self.currentTime, False)
             self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnLeft) 
 
         self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), currentTime, 1.0, turnLeft)    
@@ -229,12 +246,10 @@ class Page_Goal(Page):
         blocktypes = [0, 0, 1,
                       0, 2, 0,
                       2, 1, 2]
-        self.blocks = []
-        for i in range(3):
-            for j in range(3):
-                b = Block(j, i, blocktypes[i*3 + j], (dposx - 16, dposy - 16))
-                self.blocks.append(b)
-                self.subSprites.append(b)
+        self.blocks = createBlockGroup(dposx - 16, dposy - 16, blocktypes, 3)
+
+        for b in self.blocks:
+            self.subSprites.append(b)
         
         self.marker2 = Marker()
         self.marker2.setPos((dposx - 8, dposy - 8))
@@ -254,51 +269,29 @@ class Page_Goal(Page):
         for i in range(3):
             for j in range(3):
                 self.blocks[i * 3 + j].setToBoardCoord(j, i)
+                self.blocks[i * 3 + j].doNormal()
 
         
         def turnLeft(sprite):
-            self.blocks[4].moveToBoardCoord(self.blocks[4].boardx,
-                                            self.blocks[4].boardy + 1,
-                                            self.currentTime)
-            self.blocks[5].moveToBoardCoord(self.blocks[5].boardx - 1,
-                                            self.blocks[5].boardy,
-                                            self.currentTime)
-            self.blocks[7].moveToBoardCoord(self.blocks[7].boardx + 1,
-                                            self.blocks[7].boardy,
-                                            self.currentTime)
-            self.blocks[8].moveToBoardCoord(self.blocks[8].boardx,
-                                            self.blocks[8].boardy - 1,
-                                            self.currentTime)
-            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, doBlink)
+            rotateBlocksInGroup(self.blocks, 2, 2, 3, self.currentTime, True)
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.5, doBlink)
 
             
         def turnRight(sprite):
-            self.blocks[0].doNormal()
-            self.blocks[1].doNormal()
-            self.blocks[3].doNormal()
-            self.blocks[5].doNormal()
-
-            self.blocks[4].moveToBoardCoord(self.blocks[4].boardx,
-                                            self.blocks[4].boardy - 1,
-                                            self.currentTime)
-            self.blocks[5].moveToBoardCoord(self.blocks[5].boardx + 1,
-                                            self.blocks[5].boardy,
-                                            self.currentTime)
-            self.blocks[7].moveToBoardCoord(self.blocks[7].boardx - 1,
-                                            self.blocks[7].boardy,
-                                            self.currentTime)
-            self.blocks[8].moveToBoardCoord(self.blocks[8].boardx,
-                                            self.blocks[8].boardy + 1,
-                                            self.currentTime)
+            for i in range(3):
+                for j in range(3):
+                    self.blocks[i * 3 + j].doNormal()
+                    
+            rotateBlocksInGroup(self.blocks, 2, 2, 3, self.currentTime, False)
             self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnLeft)
 
         def doBlink(sprite):
-            self.blocks[0].doBlink()
-            self.blocks[1].doBlink()
-            self.blocks[3].doBlink()
-            self.blocks[5].doBlink()
-            
-            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnRight)
+            getBlock(self.blocks, 0, 0, 3).doBlink()
+            getBlock(self.blocks, 1, 0, 3).doBlink()
+            getBlock(self.blocks, 0, 1, 3).doBlink()            
+            getBlock(self.blocks, 1, 1, 3).doBlink()
+
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.5, turnRight)
             
             
         self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), currentTime, 1.0, turnLeft)    
@@ -342,6 +335,13 @@ class Page_Level(Page):
 
 
         #self.levelwindow = LevelBoard()
+
+
+        dposy += 20
+
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                             "You will score more points for each removed\n" +
+                             "block on higher levels!"))
         
         for t in self.infotext:
             t.setAnchor("center")
@@ -421,7 +421,101 @@ class Page_Timer(Page):
             
         if state == "normal" or state == "high":
             self.hourglass.stopPulseBorder()
+        
+class Page_Advanced(Page):
+    def __init__(self, x, y, page, pageCount):
+        Page.__init__(self, x, y, page, pageCount)
 
+        dposx = self.width/2
+        dposy = 10
+
+        
+        self.titletext = Text(dposx, dposy, self.titlefont, "ADVANCED")
+        self.titletext.setAnchor("center")
+        self.titletext.setScale((1.5, 1.5))
+        self.subSprites.append(self.titletext)
+
+        dposy += 15
+        
+        self.infotext = []
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                                  "The loops you create do not have to be\n" +
+                                  "symmetric, they can have any shape as long\n" +
+                                  "as all blocks in the loop are connected."))
+
+        dposy += 58
+                         
+        blocktypes = [1, 0, 0, 0,
+                      0, 0, 2, 0,
+                      0, 1, 0, 0,
+                      0, 0, 2, 0]
+        self.blocks = createBlockGroup(dposx - 24, dposy - 24, blocktypes, 4)
+        for b in self.blocks:
+            self.subSprites.append(b)
+                
+        self.marker2 = Marker()
+        self.marker2.setPos((dposx, dposy))
+        self.subSprites.append(self.marker2)
+
+        dposy += 36
+        
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                                  "When encircling other blocks in a loop,\n" +
+                                  "they will also be removed. Large loops\n" +
+                                  "gives more points than the blocks\n" +
+                                  "individually."))
+ 
+                                         
+        for t in self.infotext:
+            t.setAnchor("center")
+            self.subSprites.append(t)
+
+    def show(self, currentTime):
+        # TODO, DOES NOTHING AT ALL THIS, FIX!:
+        for i in range(4):
+            for j in range(4):
+                self.blocks[i * 4 + j].doNormal()
+                self.blocks[i * 4 + j].setToBoardCoord(j, i)
+
+        
+        def turnLeft(sprite):
+            rotateBlocksInGroup(self.blocks, 3, 3, 4, self.currentTime, True)
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, doBlink)
+            
+        def turnRight(sprite):
+            for i in range(4):
+                for j in range(4):
+                    self.blocks[i * 4 + j].doNormal()
+            
+            rotateBlocksInGroup(self.blocks, 3, 3, 4, self.currentTime, False)
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnLeft)
+
+        def doBlink(sprite):
+            for b in self.blocks:
+                b.doBlink()
+
+            getBlock(self.blocks, 0, 0, 4).doNormal()
+            getBlock(self.blocks, 2, 1, 4).doNormal()
+            getBlock(self.blocks, 1, 2, 4).doNormal()            
+            getBlock(self.blocks, 3, 3, 4).doNormal()
+
+            def doWholeBlink(sprite):
+                getBlock(self.blocks, 2, 1, 4).doBlink()
+                getBlock(self.blocks, 1, 2, 4).doBlink()            
+                
+                self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnRight)
+            
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, doWholeBlink)
+
+            
+            
+            
+        self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), currentTime, 1.0, turnLeft)    
+
+    def hide(self):
+        self.marker2.clearColCallbacks()
+        pass
+            
     
 class Scene_Tutorial(Scene):
     def _runOnce(self):
@@ -433,18 +527,20 @@ class Scene_Tutorial(Scene):
         self.titlefont = Font("font_fat.png", 8, 8);
         self.textfont = Font("font_clean.png", 8, 8);
 
-        self.pageCount = 5
+        self.pageCount = 6
         self.page_welcome = Page_Welcome(160, 120, 1, self.pageCount)
         self.page_controls = Page_Controls(160, 120, 2, self.pageCount)
         self.page_goal = Page_Goal(160, 120, 3, self.pageCount)
         self.page_level = Page_Level(160, 120, 4, self.pageCount)
         self.page_timer = Page_Timer(160, 120, 5, self.pageCount)
+        self.page_advanced = Page_Advanced(160, 120, 6, self.pageCount)
         
         self.pages = {0 : self.page_welcome,
                       1 : self.page_controls,
                       2 : self.page_goal,
                       3 : self.page_level,
-                      4 : self.page_timer}
+                      4 : self.page_timer,
+                      5 : self.page_advanced}
         
         self.currentPage = 0
         self.sprites.add(self.pages[self.currentPage])
