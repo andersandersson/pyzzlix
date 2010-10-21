@@ -3,8 +3,8 @@ from resources import *
 from singleton import *
 
 class Options(Singleton):
-    defaults = {"music_volume": 3,
-                "sound_volume": 3,
+    defaults = {"music_volume": VOLUME_STEPS,
+                "sound_volume": VOLUME_STEPS,
                 "show_tutorials": True,
                 }
     options = {}
