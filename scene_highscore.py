@@ -25,8 +25,9 @@ class Scene_Highscore(Scene):
 
         self.font = Font("font_fat.png", 8, 8);
 
-        self.titletext = Text(160, 40, self.font, "HIGHSCORES")
+        self.titletext = Text(160, 30, self.font, "HIGHSCORES")
         self.titletext.setAnchor("center")
+        self.titletext.setScale((2.0, 2.0))
 
         self.background = Sprite()
         self.background.setImage(loadImage("pixel.png"))

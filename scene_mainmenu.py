@@ -78,7 +78,7 @@ class Scene_MainMenu(Scene):
         self.menu = Menu()
         self.menu.setPos((160, 100))
         self.menu.add(MenuItem(0, 0, self.menufont, "Start Game", self.menu_start))
-        self.menu.add(MenuItem(0, 16, self.menufont, "High Scores", self.menu_highscores))
+        self.menu.add(MenuItem(0, 16, self.menufont, "Highscores", self.menu_highscores))
         self.menu.add(MenuItem(0, 32, self.menufont, "Options", self.menu_options))
         #self.menu.add(MenuItem(0, 48, self.menufont, "Help", self.menu_help))
         self.menu.add(MenuItem(0, 48, self.menufont, "Quit", self.menu_quit))
