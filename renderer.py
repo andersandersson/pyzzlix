@@ -237,7 +237,8 @@ class Renderer(Singleton):
 
                 
     def renderScene(self, scene):
-        scene.renderTime += self.deltaT
+        if not scene.blockedUpdate:
+            scene.renderTime += self.deltaT
 
         if (self.screen != 0):
             #for layer in scene.sprites.layers():

@@ -161,6 +161,7 @@ class BG_Heart(BGSprite):
         for i in xrange(10):
             self.shapes[i].setScale((1.0 * exp(i/3.5), 1.0 * exp(i/3.5)))
             self.shapes[i].setPos((160, 120))
+            self.shapes[i].setRot(90 * sin(0.0 - (i/5.0)))
             self.shapes[i].order = i
             self.subSprites.append(self.shapes[i])
 
@@ -171,11 +172,11 @@ class BG_Heart(BGSprite):
         nspeed = speed / 500.0
         self.counter += nspeed
         self.rotateTo(self.rot - 30 * nspeed, self.currentTime, 0.05)
-        
 
         for i in xrange(10):
             shape = self.shapes[i]
             shape.rotateTo(90 * sin(self.counter - (i/5.0)), self.currentTime, 0.05)
+            
             
 
     

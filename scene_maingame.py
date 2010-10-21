@@ -36,7 +36,7 @@ class Scene_MainGame(Scene):
         self.updateBlocker = True
         
         self.board = Board(self, BOARD_WIDTH, BOARD_HEIGHT)
-        self.board.setPos((24.0, 0.0))
+        self.board.setPos((24.0, -300.0))
         
         self.scoreboard = Scoreboard()
         self.scoreboard.setPos((208.0, 8.0))
@@ -117,9 +117,13 @@ class Scene_MainGame(Scene):
         self.comboResetCounter = 0
         
         self.removeblocksound = Resources().getSound("removeblock")
+        self.partsInPlace = False
                                
     def startGame(self):
         self.state = self.statelist["running"]
+
+        if not self.partsInPlace:
+            self.moveInParts()
 
     def pauseGame(self):
         self.state = self.statelist["idle"]
@@ -135,12 +139,22 @@ class Scene_MainGame(Scene):
         else:
             self.startGame()
 
+    def moveInParts(self):
+        self.partsInPlace = True
+        print "OJ: ", self.renderTime, self.currentTime
+        self.board.moveTo((24.0, 0.0), self.currentTime, 0.5)
+
+    def moveOutParts(self):
+        self.partsInPlace = False
+        self.board.setPos((24.0, -300.0))
+
     def showSplash(self):
         SceneHandler().pushScene(Scene_Tutorial())        
             
     def hide(self):
         print self, "is hiding"
         self.pauseGame()
+        self.moveOutParts()
         for mus in self.music:
             Mixer().stopMusic(mus)
         
