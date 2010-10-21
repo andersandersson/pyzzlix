@@ -385,14 +385,14 @@ class Page_Level(Page):
             t.setAnchor("center")
             self.subSprites.append(t)
             
-    def showInit(self):        
-        self.levelwindow.setNewLevel(self.level, 0, 20)
+    def showInit(self):   
+        self.level = 1
+        self.levelwindow.setNewLevel(1, 0, 20)
 
 
     def show(self, currentTime):
         self.showInit()
         
-        self.level = 0
         self.blocks = 0
         
         def nextLevel():

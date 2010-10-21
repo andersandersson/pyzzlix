@@ -77,7 +77,7 @@ class Scene_DialogYesNo(Scene):
 
         
     def remove(self, callfunc=None):
-        self.menuSprite.fadeTo((1.0, 0.0, 0.0, 0.0), self.currentTime, 0.2)
+        self.menuSprite.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.2)
         self.background.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.5, callfunc)
         self.state = self.statelist["fading"]
         self.updateBlocker = False

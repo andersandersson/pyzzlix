@@ -12,6 +12,8 @@ class Resources(Singleton):
         "markerturn": {"file": "markerturn.ogg"},
         "markerfail": {"file": "markerfail.ogg"},
         "removeblock": {"file": "removeblock.ogg"},
+        "combo": {"file": "circle.ogg"},
+        "circle": {"file": "combo.ogg"},
         }
 
     music = {

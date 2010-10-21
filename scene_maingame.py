@@ -118,11 +118,8 @@ class Scene_MainGame(Scene):
         
         self.removeblocksound = Resources().getSound("removeblock")
         
-        self.combosound = []
-        for i in range(11)
-        self.combosound.append(Resources().getSound("combo"+str(i + 1)))
-        
-        
+        self.combosound = Resources().getSound("combo")
+        self.circlesound = Resources().getSound("circle")
                                
     def startGame(self):
         self.state = self.statelist["running"]
@@ -325,8 +322,15 @@ class Scene_MainGame(Scene):
         score = 0
 
         if falling:
+            cs = self.comboCounter
+            if  (cs > 10):
+                cs = 10
+                
+            Mixer().playSound(self.combosound, volume=0.7)
             self.comboCounter += 1
-        
+     
+        Mixer().playSound(self.circlesound, volume=0.5)
+
         factor = self.comboCounter+1
         
         text_x = 0
@@ -346,7 +350,7 @@ class Scene_MainGame(Scene):
         self.hourglass.value += perc*self.hourglass.max;
 
         self.background.boost(floor(num_blocks/4))
-        
+          
         if not score:
             return
 
