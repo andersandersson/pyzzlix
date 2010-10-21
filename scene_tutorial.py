@@ -191,33 +191,35 @@ class Page_Controls(Page):
         dposy += 36
 
 
-        blocktypes = [0, 1,
+        self.blocktypes = [0, 1,
                       2, 0]
-        self.blocks = createBlockGroup(dposx - 8, dposy - 8, blocktypes, 2)
+        self.blockspos = (dposx - 8, dposy - 8)          
 
-        for b in self.blocks:
-            self.subSprites.append(b)
         
         self.marker2 = Marker()
         self.marker2.setPos((dposx - 16, dposy -16))
-        self.subSprites.append(self.marker2)
+
 
         dposy += 18
         
         self.infotext.append(Text(dposx, dposy, self.textfont,
                                   "Z rotates counter-clockwise\n" +
                                   "and X rotates clockwise."))
- 
-                                         
+        
         for t in self.infotext:
             t.setAnchor("center")
             self.subSprites.append(t)
+            
+    def showInit(self):        
+        self.blocks = createBlockGroup(self.blockspos[0], self.blockspos[1], self.blocktypes, 2)
+        for b in self.blocks:
+            self.subSprites.append(b)
+            
+        self.subSprites.append(self.marker2)
 
     def show(self, currentTime):
-        for i in range(2):
-            for j in range(2):
-                self.blocks[i * 2 + j].setToBoardCoord(j, i)
-        
+        self.showInit()
+     
         def turnLeft(sprite):
             rotateBlocksInGroup(self.blocks, 1, 1, 2, self.currentTime, True)
             self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnRight)
@@ -231,6 +233,10 @@ class Page_Controls(Page):
 
     def hide(self):
         self.marker2.clearColCallbacks()
+        for b in self.blocks:
+            self.subSprites.remove(b)
+        
+        self.subSprites.remove(self.marker2)
         pass
             
         
@@ -263,17 +269,15 @@ class Page_Goal(Page):
 
         dposy += 56
 
-        blocktypes = [0, 0, 1,
+        self.blocktypes = [0, 0, 1,
                       0, 2, 0,
                       2, 1, 2]
-        self.blocks = createBlockGroup(dposx - 16, dposy - 16, blocktypes, 3)
+        self.blockspos = (dposx - 16, dposy - 16)         
+                      
 
-        for b in self.blocks:
-            self.subSprites.append(b)
-        
         self.marker2 = Marker()
         self.marker2.setPos((dposx - 8, dposy - 8))
-        self.subSprites.append(self.marker2)
+
 
         dposy += 30
         
@@ -285,11 +289,19 @@ class Page_Goal(Page):
             t.setAnchor("center")
             self.subSprites.append(t)
 
+    def showInit(self):  
+        self.blocks = createBlockGroup(self.blockspos[0], self.blockspos[1], self.blocktypes, 3)
+
+        for b in self.blocks:
+            self.subSprites.append(b)
+        
+        self.subSprites.append(self.marker2)
+
     def show(self, currentTime):
-        for i in range(3):
-            for j in range(3):
-                self.blocks[i * 3 + j].setToBoardCoord(j, i)
-                self.blocks[i * 3 + j].doNormal()
+        self.showInit()
+ 
+        for b in self.blocks:
+                b.doNormal()
 
         
         def turnLeft(sprite):
@@ -318,6 +330,11 @@ class Page_Goal(Page):
 
     def hide(self):
         self.marker2.clearColCallbacks()
+        
+        for b in self.blocks:
+            self.subSprites.remove(b)
+        
+        self.subSprites.remove(self.marker2)
         pass
 
 
@@ -356,7 +373,6 @@ class Page_Level(Page):
         self.level = 1
         self.levelwindow = Levelboard()
         self.levelwindow.setPos((dposx - 44, dposy))
-        self.levelwindow.setNewLevel(self.level, 0, 20)
         self.subSprites.append(self.levelwindow)
 
         dposy += 50
@@ -368,8 +384,14 @@ class Page_Level(Page):
         for t in self.infotext:
             t.setAnchor("center")
             self.subSprites.append(t)
+            
+    def showInit(self):        
+        self.levelwindow.setNewLevel(self.level, 0, 20)
+
 
     def show(self, currentTime):
+        self.showInit()
+        
         self.level = 0
         self.blocks = 0
         
@@ -420,6 +442,7 @@ class Page_Level(Page):
         pass
         
     def hide(self):
+        self.levelwindow.clearColCallbacks()
         pass
 
 class Page_Timer(Page):
@@ -471,12 +494,14 @@ class Page_Timer(Page):
         for t in self.infotext:
             t.setAnchor("center")
             self.subSprites.append(t)
-
+            
     def show(self, currentTime):
+
         self.hourglass.reset(200)
         pass
         
     def hide(self):
+        self.hourglass.clearColCallbacks()
         pass
 
     def setTimerState(self, state):
@@ -514,18 +539,15 @@ class Page_Advanced(Page):
 
         dposy += 58
                          
-        blocktypes = [1, 0, 0, 0,
+        self.blocktypes = [1, 0, 0, 0,
                       0, 0, 2, 0,
                       0, 1, 0, 0,
                       0, 0, 2, 0]
-        self.blocks = createBlockGroup(dposx - 24, dposy - 24, blocktypes, 4)
-        for b in self.blocks:
-            self.subSprites.append(b)
-                
+        self.blockspos = (dposx - 24, dposy - 24)              
+
         self.marker2 = Marker()
         self.marker2.setPos((dposx, dposy))
-        self.subSprites.append(self.marker2)
-
+        
         dposy += 36
         
         self.infotext.append(Text(dposx, dposy, self.textfont,
@@ -538,8 +560,17 @@ class Page_Advanced(Page):
         for t in self.infotext:
             t.setAnchor("center")
             self.subSprites.append(t)
+            
+    def showInit(self):  
+        self.blocks = createBlockGroup(self.blockspos[0], self.blockspos[1], self.blocktypes, 4)
+        for b in self.blocks:
+            self.subSprites.append(b)
+                
+        self.subSprites.append(self.marker2)
 
     def show(self, currentTime):
+        self.showInit()
+        
         # TODO, DOES NOTHING AT ALL THIS, FIX!:
         for i in range(4):
             for j in range(4):
@@ -583,6 +614,12 @@ class Page_Advanced(Page):
 
     def hide(self):
         self.marker2.clearColCallbacks()
+        
+        for b in self.blocks:
+            self.subSprites.remove(b)
+                
+        self.subSprites.remove(self.marker2)
+        
         pass
  
 class Page_Combos(Page):
@@ -602,38 +639,45 @@ class Page_Combos(Page):
         
         self.infotext = []
         self.infotext.append(Text(dposx, dposy, self.textfont,
-                                  "The loops you create do not have to be\n" +
-                                  "symmetric, they can have any shape as long\n" +
-                                  "as all blocks in the loop are connected."))
+                                  "If a loop is created as a result of blocks\n" +
+                                  "landing on other blocks after a fall, \n" +
+                                  "a combo is performed."))
 
         dposy += 58
                          
-        blocktypes = [1, 2, 2, 0,
+        self.blocktypes = [1, 2, 2, 0,
                       0, 1, 1, 2,
                       2, 1, 2, 1,
-                      0, 2, 0, 1]
-        self.blocks = createBlockGroup(dposx - 24, dposy - 24, blocktypes, 4)
-        for b in self.blocks:
-            self.subSprites.append(b)
-                
+                      2, 2, 2, 2]
+        self.blockspos = (dposx - 24, dposy - 24)       
+
         self.marker2 = Marker()
         self.marker2.setPos((dposx, dposy))
-        self.subSprites.append(self.marker2)
+
 
         dposy += 36
         
         self.infotext.append(Text(dposx, dposy, self.textfont,
-                                  "When encircling other blocks in a loop,\n" +
-                                  "they will also be removed. Large loops\n" +
-                                  "gives more points than the blocks\n" +
-                                  "individually."))
+                                  "Combos give an extra big score bonus.\n" +
+                                  "Successive combos will give an increasingly\n" +
+                                  "large score bonus for each combo.\n" +
+                                  "Try to perform many combos!"))
  
                                          
         for t in self.infotext:
             t.setAnchor("center")
             self.subSprites.append(t)
-
+            
+    def showInit(self):        
+        self.blocks = createBlockGroup(self.blockspos[0], self.blockspos[1], self.blocktypes, 4)
+        for b in self.blocks:
+            self.subSprites.append(b)
+                
+        self.subSprites.append(self.marker2)   
+        
     def show(self, currentTime):
+        self.showInit()
+        
         # TODO, DOES NOTHING AT ALL THIS, FIX!:
         for i in range(4):
             for j in range(4):
@@ -643,7 +687,7 @@ class Page_Combos(Page):
         
         def turnLeft(sprite):
             rotateBlocksInGroup(self.blocks, 3, 3, 4, self.currentTime, True)
-            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, doBlink)
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.5, doBlink1)
             
         def turnRight(sprite):
             for i in range(4):
@@ -651,30 +695,138 @@ class Page_Combos(Page):
                     self.blocks[i * 4 + j].doNormal()
             
             rotateBlocksInGroup(self.blocks, 3, 3, 4, self.currentTime, False)
-            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnLeft)
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.5, turnLeft)
 
         def doBlink1(sprite):
-            for b in self.blocks:
-                b.doBlink()
-
+            getBlock(self.blocks, 1, 1, 4).doBlink()
+            getBlock(self.blocks, 1, 2, 4).doBlink()
+            getBlock(self.blocks, 2, 1, 4).doBlink()
+            getBlock(self.blocks, 2, 2, 4).doBlink()
+            
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, removeBlocks)
+            
+        def removeBlocks(sprite):
             getBlock(self.blocks, 1, 1, 4).doNormal()
             getBlock(self.blocks, 1, 2, 4).doNormal()
-            getBlock(self.blocks, 2, 1, 4).doNormal()            
+            getBlock(self.blocks, 2, 1, 4).doNormal()
             getBlock(self.blocks, 2, 2, 4).doNormal()
-
-        def doBlink2(sprite):
-            getBlock(self.blocks, 2, 1, 4).doBlink()
-            getBlock(self.blocks, 1, 2, 4).doBlink()            
+  
+            def remove1(sprite):
+                getBlock(self.blocks, 1, 1, 4).fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.1, remove2)
+            def remove2(sprite):
+                getBlock(self.blocks, 2, 1, 4).fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.1, remove3)
+            def remove3(sprite):
+                getBlock(self.blocks, 1, 2, 4).fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.1, remove4)
+            def remove4(sprite):
+                getBlock(self.blocks, 2, 2, 4).fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.1, done)
                 
-            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnRight)
-            
+            def done (sprite):
+                self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.5, fallDown)
+                
+            remove1(None)
+                
+   
+        def fallDown(sprite):
+
+            b = getBlock(self.blocks, 1, 0, 4)
+            b.moveToBoardCoord(b.boardx, b.boardy + 1, self.currentTime)
+            b = getBlock(self.blocks, 1, 1, 4)
+            b.moveToBoardCoord(b.boardx, b.boardy + 1, self.currentTime)   
+            b = getBlock(self.blocks, 2, 0, 4)
+            b.moveToBoardCoord(b.boardx, b.boardy + 1, self.currentTime)
+            b = getBlock(self.blocks, 2, 1, 4)
+            b.moveToBoardCoord(b.boardx, b.boardy + 1, self.currentTime)
+                
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, fallDown2)
       
+        def fallDown2(sprite):
+            b = getBlock(self.blocks, 1, 0, 4)
+            b.moveToBoardCoord(b.boardx, b.boardy + 1, self.currentTime)
+            b = getBlock(self.blocks, 1, 1, 4)
+            b.moveToBoardCoord(b.boardx, b.boardy + 1, self.currentTime)   
+            b = getBlock(self.blocks, 2, 0, 4)
+            b.moveToBoardCoord(b.boardx, b.boardy + 1, self.currentTime)
+            b = getBlock(self.blocks, 2, 1, 4)
+            b.moveToBoardCoord(b.boardx, b.boardy + 1, self.currentTime)
+                
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.2, doBlink2)
+                 
+        def doBlink2(sprite):
+            getBlock(self.blocks, 1, 0, 4).doBlink()
+            getBlock(self.blocks, 1, 3, 4).doBlink()
+            getBlock(self.blocks, 2, 0, 4).doBlink()
+            getBlock(self.blocks, 2, 3, 4).doBlink()
+            getBlock(self.blocks, 0, 2, 4).doBlink()
+            getBlock(self.blocks, 0, 3, 4).doBlink()
+            getBlock(self.blocks, 3, 2, 4).doBlink()
+            getBlock(self.blocks, 3, 3, 4).doBlink()
             
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.5, fallUp)
+            
+        def fallUp(sprite):
+            getBlock(self.blocks, 1, 0, 4).doNormal()
+            getBlock(self.blocks, 1, 3, 4).doNormal()
+            getBlock(self.blocks, 2, 0, 4).doNormal()
+            getBlock(self.blocks, 2, 3, 4).doNormal()
+            getBlock(self.blocks, 0, 2, 4).doNormal()
+            getBlock(self.blocks, 0, 3, 4).doNormal()
+            getBlock(self.blocks, 3, 2, 4).doNormal()
+            getBlock(self.blocks, 3, 3, 4).doNormal()
+        
+            b = getBlock(self.blocks, 1, 0, 4)
+            b.moveToBoardCoord(b.boardx, b.boardy - 1, self.currentTime)
+            b = getBlock(self.blocks, 1, 1, 4)
+            b.moveToBoardCoord(b.boardx, b.boardy - 1, self.currentTime)   
+            b = getBlock(self.blocks, 2, 0, 4)
+            b.moveToBoardCoord(b.boardx, b.boardy - 1, self.currentTime)
+            b = getBlock(self.blocks, 2, 1, 4)
+            b.moveToBoardCoord(b.boardx, b.boardy - 1, self.currentTime)
+            
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, fallUp2)
+            
+        def fallUp2(sprite):
+            b = getBlock(self.blocks, 1, 0, 4)
+            b.moveToBoardCoord(b.boardx, b.boardy - 1, self.currentTime)
+            b = getBlock(self.blocks, 1, 1, 4)
+            b.moveToBoardCoord(b.boardx, b.boardy - 1, self.currentTime)   
+            b = getBlock(self.blocks, 2, 0, 4)
+            b.moveToBoardCoord(b.boardx, b.boardy - 1, self.currentTime)
+            b = getBlock(self.blocks, 2, 1, 4)
+            b.moveToBoardCoord(b.boardx, b.boardy - 1, self.currentTime)
+            
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.5, addBlocks)
+                      
+        def addBlocks(sprite):
+        
+            def add1(sprite):
+                getBlock(self.blocks, 2, 2, 4).fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, doBlink3)
+            def add2(sprite):
+                getBlock(self.blocks, 1, 2, 4).fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, add1)
+            def add3(sprite):
+                getBlock(self.blocks, 2, 1, 4).fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, add2)
+            def add4(sprite):
+                getBlock(self.blocks, 1, 1, 4).fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, add3)
+                
+            add4(None)
+            
+        def doBlink3(sprite):
+            getBlock(self.blocks, 1, 1, 4).doBlink()
+            getBlock(self.blocks, 1, 2, 4).doBlink()
+            getBlock(self.blocks, 2, 1, 4).doBlink()            
+            getBlock(self.blocks, 2, 2, 4).doBlink()
+            
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnRight)   
+                   
             
         self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), currentTime, 1.0, turnLeft)    
 
     def hide(self):
         self.marker2.clearColCallbacks()
+        
+        for b in self.blocks:
+            self.subSprites.remove(b)
+                
+        self.subSprites.remove(self.marker2)   
         pass
             
 
@@ -697,7 +849,7 @@ class Scene_Tutorial(Scene):
         self.page_level = Page_Level(160, 120, 4, self.pageCount)
         self.page_timer = Page_Timer(160, 120, 5, self.pageCount)
         self.page_advanced = Page_Advanced(160, 120, 6, self.pageCount)
-        self.page_combos = Page_Combos(160, 120, 6, self.pageCount)   
+        self.page_combos = Page_Combos(160, 120, 7, self.pageCount)   
      
         self.pages = {0 : self.page_welcome,
                       1 : self.page_controls,
@@ -710,18 +862,27 @@ class Scene_Tutorial(Scene):
         self.currentPage = 0
         self.sprites.add(self.pages[self.currentPage])
         self.pages[self.currentPage].fadeTo((1.0,1.0,1.0,1.0), 0, 0.2)
+        
+        self.statelist = {"normal" : 0, "transition" : 1}
+        self.state = self.statelist["normal"]
 
     def tick(self):
         pass
 
     def turnToPage(self, page):
-        self.newPage = page
-        if (self.newPage >= self.pageCount):
-            self.newPage = self.pageCount -1
-        if (self.newPage < 0):
-            self.newPage = 0
 
-        if (self.newPage != self.currentPage):
+        if (page >= self.pageCount):
+            page = self.pageCount -1
+        if (page < 0):
+            page = 0
+
+        if (page != self.currentPage):
+            self.state = self.statelist["transition"]
+       
+            self.pages[self.newPage].clearColCallbacks()
+            self.pages[self.currentPage].clearColCallbacks()
+            
+            self.newPage = page
             
             def switchPage(sprite):
                 self.sprites.remove(sprite)
@@ -732,8 +893,9 @@ class Scene_Tutorial(Scene):
                 self.pages[self.newPage].show(self.currentTime)
                 self.pages[self.newPage].fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1)
                 self.pages[self.newPage].moveTo((160, 120), self.currentTime, 0.1)
+                self.state = self.statelist["normal"]
 
-            self.pages[self.newPage].clearColCallbacks()
+ 
             self.pages[self.newPage].setPos((160 + (100 * (self.newPage - self.currentPage)), 120))
             self.pages[self.currentPage].moveTo((160 + (100 * -(self.newPage - self.currentPage)), 120), self.currentTime, 0.1)
             self.pages[self.currentPage].fadeTo((1.0, 1.0, 1.0, 0.0), self.currentTime, 0.1, switchPage)
@@ -742,6 +904,7 @@ class Scene_Tutorial(Scene):
         
     def show(self):
         print self, "is showing"
+        self.state = self.statelist["normal"]
         
     def hide(self):
         print self, "is hiding"
@@ -766,12 +929,13 @@ class Scene_Tutorial(Scene):
             if (key == K_RETURN):
                 scene_maingame.Scene_MainGame().startGame()
                 SceneHandler().removeScene(self)
-
-            if (key == K_LEFT):
-                self.turnToPage(self.currentPage - 1)
-                
-            if (key == K_RIGHT):
-                self.turnToPage(self.currentPage + 1)
+            
+            if (self.state == self.statelist["normal"]):
+                if (key == K_LEFT):
+                    self.turnToPage(self.currentPage - 1)
+                    
+                if (key == K_RIGHT):
+                    self.turnToPage(self.currentPage + 1)
 
         if event.type == EVENT_TIMER_STATE_CHANGED:
             self.page_timer.setTimerState(event.state)
