@@ -11,6 +11,7 @@ from globals import *
 from scenehandler import *
 from renderer import *
 from mixer import *
+from options import *
 
 from scene_preload import *
 from scene_mainmenu import *
@@ -21,7 +22,7 @@ renderer = None
 mixer = None
 enableSound = True
 listener = None
-fullScreen = False
+fullScreen = Options().get("fullscreen")
 
 def init():
     global sceneHandler

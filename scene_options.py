@@ -9,6 +9,7 @@ from font import *
 from text import *
 from sprite import *
 from image import *
+from renderer import *
 import random
 
 from menu import *
@@ -76,14 +77,15 @@ class Scene_Options(Scene):
         self.menuInactiveCol = (0.5, 0.5, 0.5, 1.0)
         
         self.menuSprite = Sprite()
-        self.menuSprite.setPos((76, 70))
+        self.menuSprite.setPos((76, 60))
         
         self.menu = Menu()
         self.menu.add(MenuItem(0, 0, self.font, "Music volume", self.focusVolumeMusic, "left"))
         self.menu.add(MenuItem(0, 30, self.font, "Effects volume", self.focusVolumeSound, "left"))
         self.menu.add(MenuItem(0, 60, self.font, "Tutorial", self.focusTutorials, "left"))
-        self.menu.add(MenuItem(0, 90, self.font, "Reset highscores", self.resetHighscores, "left"))
-        self.menu.add(MenuItem(84, 140, self.font, "Exit", self.closeOptions, "center"))
+        self.menu.add(MenuItem(0, 90, self.font, "Fullscreen", self.focusFullscreen, "left"))
+        self.menu.add(MenuItem(0, 120, self.font, "Reset highscores", self.resetHighscores, "left"))
+        self.menu.add(MenuItem(84, 160, self.font, "Exit", self.closeOptions, "center"))
 
         self.menu.setCol(self.menuActiveCol)
         
@@ -102,13 +104,18 @@ class Scene_Options(Scene):
         self.menuTutorials.focusItem(0)
         self.menuTutorials.setCol(self.menuInactiveCol)
         
+        self.menuFullscreen = create_on_off_menu(self.font, callback=self.focusTop, name="fullscreen", update_callback=self.updateOptions)
+        self.menuFullscreen.setPos((20, 103))
+        self.menuFullscreen.focusItem(0)
+        self.menuFullscreen.setCol(self.menuInactiveCol)
+        
         self.background = Sprite()
         self.background.setImage(loadImage("pixel.png"))
         self.background.scaleTo((320,240), 0, 0)
         self.background.setCol((0.0, 0.0, 0.0, 0.9))
         self.background._layer = 0
 
-        self.title = Text(160, 30, self.font, "OPTIONS")
+        self.title = Text(160, 20, self.font, "OPTIONS")
         self.title.setScale((2.0, 2.0))
         self.title.setAnchor("center")
         
@@ -116,6 +123,7 @@ class Scene_Options(Scene):
         self.menuSprite.subSprites.append(self.menuVolumeMusic)
         self.menuSprite.subSprites.append(self.menuVolumeSound)
         self.menuSprite.subSprites.append(self.menuTutorials)
+        self.menuSprite.subSprites.append(self.menuFullscreen)
         self.sprites.add(self.background)
         self.sprites.add(self.menuSprite)
         self.sprites.add(self.title)
@@ -123,7 +131,7 @@ class Scene_Options(Scene):
         self.movesound = Resources().getSound("menumove") 
         self.selectsound = Resources().getSound("menuselect")
 
-        self.statelist = {"top": 1, "music": 2, "sound": 3, "tutorials": 4}
+        self.statelist = {"top": 1, "music": 2, "sound": 3, "tutorials": 4, "fullscreen": 5}
         self.state = self.statelist["top"]
 
         self.focusColors = {"submenu_focus": self.menu.items[0].focusColor,
@@ -157,8 +165,17 @@ class Scene_Options(Scene):
         else:
             self.menuTutorials.focusItem(1)
             
+        if Options().get("fullscreen"):
+            self.menuFullscreen.focusItem(0)
+        else:
+            self.menuFullscreen.focusItem(1)
+            
     def updateOptions(self, name, value):
         print name, value
+
+        if name == "fullscreen":
+            Renderer().setFullScreen(value)
+            
         Options().set(name, value)
         
     def tick(self):
@@ -190,10 +207,18 @@ class Scene_Options(Scene):
         self.menuTutorials.setFocusScale(self.focusScales["submenu_focus"])
         self.state = self.statelist["tutorials"]
 
+    def focusFullscreen(self):
+        self.menu.unfocusItem()
+        self.menuFullscreen.setCol(self.menuActiveCol)
+        self.menuFullscreen.setFocusScale(self.focusScales["submenu_focus"])
+        self.state = self.statelist["fullscreen"]
+
     def focusTop(self):
         self.menu.focusItem(self.menu.focus)
         self.menuTutorials.setCol(self.menuInactiveCol)
         self.menuTutorials.setFocusScale(self.focusScales["submenu_unfocus"])
+        self.menuFullscreen.setCol(self.menuInactiveCol)
+        self.menuFullscreen.setFocusScale(self.focusScales["submenu_unfocus"])
         self.menuVolumeMusic.setCol(self.menuInactiveCol)
         self.menuVolumeMusic.setFocusScale(self.focusScales["submenu_unfocus"])
         self.menuVolumeSound.setCol(self.menuInactiveCol)
@@ -281,5 +306,7 @@ class Scene_Options(Scene):
                 self.submenu = self.menuVolumeSound
             if item.inFocus and item == self.menu.items[2]:
                 self.submenu = self.menuTutorials
+            if item.inFocus and item == self.menu.items[3]:
+                self.submenu = self.menuFullscreen
                 
         return True

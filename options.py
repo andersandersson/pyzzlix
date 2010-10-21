@@ -6,6 +6,7 @@ class Options(Singleton):
     defaults = {"music_volume": VOLUME_STEPS,
                 "sound_volume": VOLUME_STEPS,
                 "show_tutorials": True,
+                "fullscreen": False,
                 }
     options = {}
     
