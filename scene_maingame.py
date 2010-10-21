@@ -192,6 +192,7 @@ class Scene_MainGame(Scene):
         self.board.stopPulseBorder()
         self.hourglass.stopPulseBorder()
         self.scoreboard.stopPulseBorder()
+        self.levelboard.stopPulseBorder()
         self.scoreboard.setHighscore(Scene_Highscore().getHighscore())
 
         self.state = self.statelist["idle"]
@@ -547,10 +548,14 @@ class Scene_MainGame(Scene):
             if event.state == "low":
                 self.board.pulseBorder((1.0, 0.0, 0.0, 0.0), (1.0, 0.0, 0.0, 1.0), 0.5)
                 self.hourglass.pulseBorder((1.0, 0.0, 0.0, 0.0), (1.0, 0.0, 0.0, 1.0), 0.5)
+                self.levelboard.pulseBorder((1.0, 0.0, 0.0, 0.0), (1.0, 0.0, 0.0, 1.0), 0.5)  
+                self.scoreboard.pulseBorder((1.0, 0.0, 0.0, 0.0), (1.0, 0.0, 0.0, 1.0), 0.5)  
             if event.state == "normal" or event.state == "high":
                 self.board.stopPulseBorder()
                 self.hourglass.stopPulseBorder()
-        
+                self.scoreboard.stopPulseBorder()
+                self.levelboard.stopPulseBorder()
+                
         if event.type == KEYDOWN:
             state = event.type
             key = event.key

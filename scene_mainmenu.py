@@ -162,6 +162,7 @@ class Scene_MainMenu(Scene):
         self.state = "transition"
         self.startmenu.moveTo((160, 260), self.currentTime, 0.4, self.menu_enter2)
         self.logo.moveTo((170, 50), self.currentTime, 0.4)
+        Mixer().playSound(self.startsound)
         pass
 
     def menu_enter2(self, sprite):  
@@ -170,7 +171,6 @@ class Scene_MainMenu(Scene):
  
     def menu_enter3(self, sprite):  
         self.menu.focusItem(0)
-        #self.menuitems[self.menufocus].focus(self.currentTime)
         self.state = "menu" 
 
     def menu_start(self):

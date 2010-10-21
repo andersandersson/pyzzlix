@@ -33,7 +33,7 @@ class Levelboard(Sprite):
         
         self.glow = Sprite()
         self.glow.setImage(loadImage("windowglows.png", 208, 80, 88, 48))
-        self.glow.setPos((0.0,8.0))
+        self.glow.setPos((0.0,0.0))
         self.glow.setCol((0.0, 0.0, 0.0, 0.0))
         
         self.subSprites.append(self.scorebg)
@@ -107,20 +107,22 @@ class Levelboard(Sprite):
             oldblock.fadeTo((1.0, 1.0, 1.0, 0.0), self.currentTime, 0.3, removeOldblock)
         
              
-    def pulseBorder(self, col, duration):
-        self._glow_col = col
+
+    def pulseBorder(self, col1, col2, duration):
         self._glow_duration = duration
-        from_col = (self._glow_col[0], self._glow_col[1], self._glow_col[2], 0.0)
-        
+
         def fade_to_done(s):
-            self.glow.fadeTo(from_col, self.currentTime, duration, fade_from_done)
-            
+            self._glow_col = col1
+            self.glow.fadeTo(col1, self.currentTime, duration, fade_from_done)
+
         def fade_from_done(s):
-            self.glow.fadeTo(col, self.currentTime, duration, fade_to_done)
+            self._glow_col = col2
+            self.glow.fadeTo(col2, self.currentTime, duration, fade_to_done)
 
         self.glow.clearColCallbacks()
         fade_from_done(None)
 
+        
     def stopPulseBorder(self):
         from_col = (self._glow_col[0], self._glow_col[1], self._glow_col[2], 0.0)
         
