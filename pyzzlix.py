@@ -42,7 +42,7 @@ def init():
     #sceneHandler.pushScene(game_over)
     #sceneHandler.pushScene(Scene_Preload())    
     sceneHandler.pushScene(Scene_MainMenu())    
-    sceneHandler.pushScene(Scene_Tutorial())
+    #sceneHandler.pushScene(Scene_Tutorial())
 
 def cleanup():
     global renderer

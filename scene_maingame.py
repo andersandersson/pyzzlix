@@ -13,7 +13,7 @@ from image import *
 from marker import *
 from hourglass import *
 from scoreboard import *
-#from levelboard import *
+from levelboard import *
 from scene_gameover import *
 from scene_highscore import *
 from background import *
@@ -263,12 +263,26 @@ class Scene_MainGame(Scene):
         self.score += self.level * POINTS_PER_LEVEL_FOR_BLOCK_SCORE
 
         if block.type == self.activeBlock:
-            self.blockCount += 1
+            tmp_block = Block(0, 0, block.type)
+            x = block.pos[0]+self.board.pos[0]+self.board.blocks.pos[0]
+            y = block.pos[1]+self.board.pos[1]+self.board.blocks.pos[1]
+            tmp_block.setPos((x, y))
+            tmp_block._layer = LAYER_EFFECTS
+            self.sprites.add(tmp_block)
 
-            if self.blockCount >= self.blocksToLevel:
-                self.newLevel()
+            def remove_tmp_block(b):
+                self.blockCount += 1
+                self.sprites.remove(b)
+                self.levelboard.updateLevelboard(self.blockCount)
 
-        self.levelboard.updateLevelboard(self.blockCount)
+                if self.blockCount >= self.blocksToLevel:
+                    self.newLevel()
+
+            tmp_block.moveTo((228, 110), self.currentTime, 0.5, remove_tmp_block)
+            tmp_block.rotateTo(720.0, self.currentTime, 0.5)
+            tmp_block.setCol((1.0, 1.0, 1.0, 0.8))
+            tmp_block.fadeTo((1.0, 1.0, 1.0, 0.5), self.currentTime, 0.5)
+                    
         #print "LEVEL %d: %d / %d" % (self.level, self.blockCount, self.blocksToLevel)
 
 
@@ -359,8 +373,8 @@ class Scene_MainGame(Scene):
         def block_scale_done(block):
             if(scale_blocks): 
                 Mixer().playSound(self.removeblocksound)
-                self.addBlockScore(block)
                 next_block = scale_blocks.pop()
+                self.addBlockScore(next_block)
                 next_block.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, delay, block_scale_done)
                 next_block.rotateTo(720.0, self.currentTime, delay)
                 next_block.scaleTo((4.0, 4.0), self.currentTime, 0.5)

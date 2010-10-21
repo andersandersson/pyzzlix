@@ -53,7 +53,7 @@ class Sprite(pygame.sprite.Sprite):
             return (self._pos_ref[0] - (self._pos_ref[0] - self.pos[0]) * factorT, self._pos_ref[1] - (self._pos_ref[1] - self.pos[1]) * factorT)
 
     def updatePos(self, currentTime):
-        if (self._col_reftime <= currentTime):                    
+        if (self._pos_reftime <= currentTime):                    
             if len(self._pos_callbacks):
                 callbacks = self._pos_callbacks
                 self._pos_callbacks = []
