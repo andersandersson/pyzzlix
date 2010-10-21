@@ -549,7 +549,7 @@ class Page_Advanced(Page):
         
         def turnLeft(sprite):
             rotateBlocksInGroup(self.blocks, 3, 3, 4, self.currentTime, True)
-            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, doBlink)
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.5, doBlink)
             
         def turnRight(sprite):
             for i in range(4):
@@ -572,7 +572,7 @@ class Page_Advanced(Page):
                 getBlock(self.blocks, 2, 1, 4).doBlink()
                 getBlock(self.blocks, 1, 2, 4).doBlink()            
                 
-                self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnRight)
+                self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.5, turnRight)
             
             self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, doWholeBlink)
 
@@ -584,7 +584,101 @@ class Page_Advanced(Page):
     def hide(self):
         self.marker2.clearColCallbacks()
         pass
+ 
+class Page_Combos(Page):
+    def __init__(self, x, y, page, pageCount):
+        Page.__init__(self, x, y, page, pageCount)
+
+        dposx = self.width/2
+        dposy = 10
+
+        
+        self.titletext = Text(dposx, dposy, self.titlefont, "COMBOS")
+        self.titletext.setAnchor("center")
+        self.titletext.setScale((1.5, 1.5))
+        self.subSprites.append(self.titletext)
+
+        dposy += 15
+        
+        self.infotext = []
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                                  "The loops you create do not have to be\n" +
+                                  "symmetric, they can have any shape as long\n" +
+                                  "as all blocks in the loop are connected."))
+
+        dposy += 58
+                         
+        blocktypes = [1, 2, 2, 0,
+                      0, 1, 1, 2,
+                      2, 1, 2, 1,
+                      0, 2, 0, 1]
+        self.blocks = createBlockGroup(dposx - 24, dposy - 24, blocktypes, 4)
+        for b in self.blocks:
+            self.subSprites.append(b)
+                
+        self.marker2 = Marker()
+        self.marker2.setPos((dposx, dposy))
+        self.subSprites.append(self.marker2)
+
+        dposy += 36
+        
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                                  "When encircling other blocks in a loop,\n" +
+                                  "they will also be removed. Large loops\n" +
+                                  "gives more points than the blocks\n" +
+                                  "individually."))
+ 
+                                         
+        for t in self.infotext:
+            t.setAnchor("center")
+            self.subSprites.append(t)
+
+    def show(self, currentTime):
+        # TODO, DOES NOTHING AT ALL THIS, FIX!:
+        for i in range(4):
+            for j in range(4):
+                self.blocks[i * 4 + j].doNormal()
+                self.blocks[i * 4 + j].setToBoardCoord(j, i)
+
+        
+        def turnLeft(sprite):
+            rotateBlocksInGroup(self.blocks, 3, 3, 4, self.currentTime, True)
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, doBlink)
             
+        def turnRight(sprite):
+            for i in range(4):
+                for j in range(4):
+                    self.blocks[i * 4 + j].doNormal()
+            
+            rotateBlocksInGroup(self.blocks, 3, 3, 4, self.currentTime, False)
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnLeft)
+
+        def doBlink1(sprite):
+            for b in self.blocks:
+                b.doBlink()
+
+            getBlock(self.blocks, 1, 1, 4).doNormal()
+            getBlock(self.blocks, 1, 2, 4).doNormal()
+            getBlock(self.blocks, 2, 1, 4).doNormal()            
+            getBlock(self.blocks, 2, 2, 4).doNormal()
+
+        def doBlink2(sprite):
+            getBlock(self.blocks, 2, 1, 4).doBlink()
+            getBlock(self.blocks, 1, 2, 4).doBlink()            
+                
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnRight)
+            
+      
+            
+            
+        self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), currentTime, 1.0, turnLeft)    
+
+    def hide(self):
+        self.marker2.clearColCallbacks()
+        pass
+            
+
+           
     
 class Scene_Tutorial(Scene):
     def _runOnce(self):
@@ -596,20 +690,22 @@ class Scene_Tutorial(Scene):
         self.titlefont = Font("font_fat.png", 8, 8);
         self.textfont = Font("font_clean.png", 8, 8);
 
-        self.pageCount = 6
+        self.pageCount = 7
         self.page_welcome = Page_Welcome(160, 120, 1, self.pageCount)
         self.page_controls = Page_Controls(160, 120, 2, self.pageCount)
         self.page_goal = Page_Goal(160, 120, 3, self.pageCount)
         self.page_level = Page_Level(160, 120, 4, self.pageCount)
         self.page_timer = Page_Timer(160, 120, 5, self.pageCount)
         self.page_advanced = Page_Advanced(160, 120, 6, self.pageCount)
-        
+        self.page_combos = Page_Combos(160, 120, 6, self.pageCount)   
+     
         self.pages = {0 : self.page_welcome,
                       1 : self.page_controls,
                       2 : self.page_goal,
                       3 : self.page_level,
                       4 : self.page_timer,
-                      5 : self.page_advanced}
+                      5 : self.page_advanced,
+                      6 : self.page_combos}
         
         self.currentPage = 0
         self.sprites.add(self.pages[self.currentPage])
