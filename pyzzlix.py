@@ -40,9 +40,9 @@ def init():
     #highscore.display(replay_callback=replay, exit_callback=quit)
     #game_over.display(level=2, score=1233, replay_callback=replay, exit_callback=quit)
     #sceneHandler.pushScene(game_over)
-    #sceneHandler.pushScene(Scene_Tutorial())
+    sceneHandler.pushScene(Scene_Tutorial())
     #sceneHandler.pushScene(Scene_Preload())    
-    sceneHandler.pushScene(Scene_MainMenu())    
+    #sceneHandler.pushScene(Scene_MainMenu())    
 
 
 def cleanup():

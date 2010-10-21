@@ -61,7 +61,7 @@ class Page(Sprite):
         self.setCol((1.0,1.0,1.0,0.0))
 
         
-class Page_1(Page):
+class Page_Welcome(Page):
     def __init__(self, x, y, page, pageCount):
         Page.__init__(self, x, y, page, pageCount)
 
@@ -91,7 +91,7 @@ class Page_1(Page):
     def hide(self):
         pass
         
-class Page_2(Page):
+class Page_Controls(Page):
     def __init__(self, x, y, page, pageCount):
         Page.__init__(self, x, y, page, pageCount)
 
@@ -108,17 +108,17 @@ class Page_2(Page):
         
         self.infotext = []
         self.infotext.append(Text(dposx, dposy, self.textfont,
-                             "Use the ARROW keys to move the marker."))
+                             "When playing the game, use the\n" +
+                             "ARROW keys to move the marker."))
 
-        dposy += 27
+        dposy += 35
         
         self.marker = Marker()
         self.marker.setPos((dposx - 16, dposy - 16))
         self.subSprites.append(self.marker)
 
 
-        dposy += 18
-        
+        dposy += 18        
         self.infotext.append(Text(dposx, dposy, self.textfont,
                              "The Z and X keys rotates the blocks\n" +
                                   "beneath the marker."))
@@ -142,7 +142,7 @@ class Page_2(Page):
         self.marker2.setPos((dposx - 16, dposy -16))
         self.subSprites.append(self.marker2)
 
-        dposy += 16
+        dposy += 18
         
         self.infotext.append(Text(dposx, dposy, self.textfont,
                                   "Z rotates counter-clockwise\n" +
@@ -196,7 +196,233 @@ class Page_2(Page):
         self.marker2.clearColCallbacks()
         pass
             
+        
+class Page_Goal(Page):
+    def __init__(self, x, y, page, pageCount):
+        Page.__init__(self, x, y, page, pageCount)
 
+        dposx = self.width/2
+        dposy = 10
+
+        
+        self.titletext = Text(dposx, dposy, self.titlefont, "THE GOAL")
+        self.titletext.setAnchor("center")
+        self.titletext.setScale((1.5, 1.5))
+        self.subSprites.append(self.titletext)
+
+        dposy += 15
+        
+        self.infotext = []
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                             "The goal of the game is to get a high\n" +
+                             "score before the time runs out."))
+
+        dposy += 24
+        
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                             "Score and extended time are awarded by\n" +
+                             "removing blocks. Remove blocks by\n" +
+                             "creating loops of same-colored blocks!"))
+
+        dposy += 56
+
+        blocktypes = [0, 0, 1,
+                      0, 2, 0,
+                      2, 1, 2]
+        self.blocks = []
+        for i in range(3):
+            for j in range(3):
+                b = Block(j, i, blocktypes[i*3 + j], (dposx - 16, dposy - 16))
+                self.blocks.append(b)
+                self.subSprites.append(b)
+        
+        self.marker2 = Marker()
+        self.marker2.setPos((dposx - 8, dposy - 8))
+        self.subSprites.append(self.marker2)
+
+        dposy += 26
+        
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                                  "The simplest loop is a 2x2 square.\n"))
+ 
+                                         
+        for t in self.infotext:
+            t.setAnchor("center")
+            self.subSprites.append(t)
+
+    def show(self, currentTime):
+        for i in range(3):
+            for j in range(3):
+                self.blocks[i * 3 + j].setToBoardCoord(j, i)
+
+        
+        def turnLeft(sprite):
+            self.blocks[4].moveToBoardCoord(self.blocks[4].boardx,
+                                            self.blocks[4].boardy + 1,
+                                            self.currentTime)
+            self.blocks[5].moveToBoardCoord(self.blocks[5].boardx - 1,
+                                            self.blocks[5].boardy,
+                                            self.currentTime)
+            self.blocks[7].moveToBoardCoord(self.blocks[7].boardx + 1,
+                                            self.blocks[7].boardy,
+                                            self.currentTime)
+            self.blocks[8].moveToBoardCoord(self.blocks[8].boardx,
+                                            self.blocks[8].boardy - 1,
+                                            self.currentTime)
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, doBlink)
+
+            
+        def turnRight(sprite):
+            self.blocks[0].doNormal()
+            self.blocks[1].doNormal()
+            self.blocks[3].doNormal()
+            self.blocks[5].doNormal()
+
+            self.blocks[4].moveToBoardCoord(self.blocks[4].boardx,
+                                            self.blocks[4].boardy - 1,
+                                            self.currentTime)
+            self.blocks[5].moveToBoardCoord(self.blocks[5].boardx + 1,
+                                            self.blocks[5].boardy,
+                                            self.currentTime)
+            self.blocks[7].moveToBoardCoord(self.blocks[7].boardx - 1,
+                                            self.blocks[7].boardy,
+                                            self.currentTime)
+            self.blocks[8].moveToBoardCoord(self.blocks[8].boardx,
+                                            self.blocks[8].boardy + 1,
+                                            self.currentTime)
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnLeft)
+
+        def doBlink(sprite):
+            self.blocks[0].doBlink()
+            self.blocks[1].doBlink()
+            self.blocks[3].doBlink()
+            self.blocks[5].doBlink()
+            
+            self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, turnRight)
+            
+            
+        self.marker2.fadeTo((1.0, 1.0, 1.0, 1.0), currentTime, 1.0, turnLeft)    
+
+    def hide(self):
+        self.marker2.clearColCallbacks()
+        pass
+
+
+        
+class Page_Level(Page):
+    def __init__(self, x, y, page, pageCount):
+        Page.__init__(self, x, y, page, pageCount)
+
+        dposx = self.width/2
+        dposy = 10
+
+        
+        self.titletext = Text(dposx, dposy, self.titlefont, "LEVELS")
+        self.titletext.setAnchor("center")
+        self.titletext.setScale((1.5, 1.5))
+        self.subSprites.append(self.titletext)
+
+        dposy += 15
+        
+        self.infotext = []
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                             "Each level has a Special Block color.\n" +     
+                             "In order to advance to the next level\n" +
+                             "a specific number of Special Blocks\n" +
+                             "needs to be removed."))
+
+        dposy += 38
+        
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                             "The Special Block and the progress of\n" +
+                             "the current level is displayed in the\n" +
+                             "level board."))
+ 
+        dposy += 56
+
+
+        #self.levelwindow = LevelBoard()
+        
+        for t in self.infotext:
+            t.setAnchor("center")
+            self.subSprites.append(t)
+
+    def show(self, currentTime):
+        pass
+        
+    def hide(self):
+        pass
+
+class Page_Timer(Page):
+    def __init__(self, x, y, page, pageCount):
+        Page.__init__(self, x, y, page, pageCount)
+
+        dposx = self.width/2
+        dposy = 10
+
+        
+        self.titletext = Text(dposx, dposy, self.titlefont, "THE TIMER")
+        self.titletext.setAnchor("center")
+        self.titletext.setScale((1.5, 1.5))
+        self.subSprites.append(self.titletext)
+
+        dposy += 15
+        
+        self.infotext = []
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                             "If the hourglass on the timer board\n" +
+                             "reaches zero the game is over."))
+
+        dposy += 20
+
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                             "Before running out of time, the borders\n" +
+                             "will flash red as a warning."))
+
+        dposy += 20
+        
+        self.hourglass = Hourglass()
+        self.hourglass.setPos((dposx - 22, dposy))
+        self.hourglass.setScale((0.5, 0.5))
+        self.hourglass.scaleValue(0.2)
+
+        self.subSprites.append(self.hourglass)
+        
+
+        dposy += 50
+        
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                             "When removing blocks, the timer will also\n" +
+                             "be a short while. The timer can only be\n" +
+                             "stopped a maximum of 5 seconds though.\n" +
+                             "Use this pause to plan your next move!"))
+ 
+        dposy += 36
+
+        for t in self.infotext:
+            t.setAnchor("center")
+            self.subSprites.append(t)
+
+    def show(self, currentTime):
+        self.hourglass.reset(200)
+        pass
+        
+    def hide(self):
+        pass
+
+    def setTimerState(self, state):
+        if state == "low":
+            def saveTheDay(sprite):
+                self.hourglass.value += 100
+                self.hourglass.addPause(1.0)
+            
+            self.hourglass.pulseBorder((1.0, 0.0, 0.0, 0.0), (1.0, 0.0, 0.0, 1.0), 0.5)
+            self.hourglass.fadeTo((1.0,1.0,1.0,1.0), self.currentTime, 2.5, saveTheDay)
+            
+        if state == "normal" or state == "high":
+            self.hourglass.stopPulseBorder()
+
+    
 class Scene_Tutorial(Scene):
     def _runOnce(self):
         Scene._runOnce(self)
@@ -207,15 +433,19 @@ class Scene_Tutorial(Scene):
         self.titlefont = Font("font_fat.png", 8, 8);
         self.textfont = Font("font_clean.png", 8, 8);
 
-        self.pageCount = 7
-        self.pages = [Page_1(160, 120, 1, self.pageCount),
-                      Page_2(160, 120, 2, self.pageCount),
-                      Page_1(160, 120, 3, self.pageCount),
-                      Page_2(160, 120, 4, self.pageCount),
-                      Page_1(160, 120, 5, self.pageCount),
-                      Page_2(160, 120, 6, self.pageCount),
-                      Page_1(160, 120, 7, self.pageCount)
-                      ]
+        self.pageCount = 5
+        self.page_welcome = Page_Welcome(160, 120, 1, self.pageCount)
+        self.page_controls = Page_Controls(160, 120, 2, self.pageCount)
+        self.page_goal = Page_Goal(160, 120, 3, self.pageCount)
+        self.page_level = Page_Level(160, 120, 4, self.pageCount)
+        self.page_timer = Page_Timer(160, 120, 5, self.pageCount)
+        
+        self.pages = {0 : self.page_welcome,
+                      1 : self.page_controls,
+                      2 : self.page_goal,
+                      3 : self.page_level,
+                      4 : self.page_timer}
+        
         self.currentPage = 0
         self.sprites.add(self.pages[self.currentPage])
         self.pages[self.currentPage].fadeTo((1.0,1.0,1.0,1.0), 0, 0.2)
@@ -231,24 +461,23 @@ class Scene_Tutorial(Scene):
             self.newPage = 0
 
         if (self.newPage != self.currentPage):
-            self.sprites.add(self.pages[self.newPage])
-            self.pages[self.newPage].show(self.currentTime)
-
-            self.pages[self.newPage].clearColCallbacks()
             
-            def removeCurrent(sprite):
+            def switchPage(sprite):
                 self.sprites.remove(sprite)
                 sprite.clearColCallbacks()
                 sprite.hide()
-    
-            self.pages[self.newPage].fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.2)
+
+                self.sprites.add(self.pages[self.newPage])
+                self.pages[self.newPage].show(self.currentTime)
+                self.pages[self.newPage].fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1)
+                self.pages[self.newPage].moveTo((160, 120), self.currentTime, 0.1)
+
+            self.pages[self.newPage].clearColCallbacks()
             self.pages[self.newPage].setPos((160 + (100 * (self.newPage - self.currentPage)), 120))
-            self.pages[self.newPage].moveTo((160, 120), self.currentTime, 0.2)
+            self.pages[self.currentPage].moveTo((160 + (100 * -(self.newPage - self.currentPage)), 120), self.currentTime, 0.1)
+            self.pages[self.currentPage].fadeTo((1.0, 1.0, 1.0, 0.0), self.currentTime, 0.1, switchPage)
             
-            self.pages[self.currentPage].fadeTo((1.0, 1.0, 1.0, 0.0), self.currentTime, 0.2, removeCurrent)
-            self.pages[self.currentPage].moveTo((160 + (100 * -(self.newPage - self.currentPage)), 120), self.currentTime, 0.2)
-            
-        self.currentPage = self.newPage    
+        self.currentPage = self.newPage
         
     def show(self):
         print self, "is showing"
@@ -283,6 +512,9 @@ class Scene_Tutorial(Scene):
             if (key == K_RIGHT):
                 self.turnToPage(self.currentPage + 1)
 
+        if event.type == EVENT_TIMER_STATE_CHANGED:
+            self.page_timer.setTimerState(event.state)
+                
                 
         return True
         

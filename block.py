@@ -39,7 +39,7 @@ class Block(Sprite):
 
         self.layer = type
 
-        Sprite.setPos(self, (self.boardx * self.size[0] + self.offset_x, self.boardy * self.size[1] + self.offset_y))
+        self.setPos((self.boardx * self.size[0] + self.offset_x, self.boardy * self.size[1] + self.offset_y))
     
     def doBlink(self):
         self.setAnimation(self.blinkAnimation)

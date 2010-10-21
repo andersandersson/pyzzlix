@@ -13,7 +13,7 @@ from image import *
 from marker import *
 from hourglass import *
 from scoreboard import *
-from levelboard import *
+#from levelboard import *
 from scene_gameover import *
 from scene_highscore import *
 from background import *
