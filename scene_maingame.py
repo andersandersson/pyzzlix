@@ -113,6 +113,9 @@ class Scene_MainGame(Scene):
 
         self.doLevelUp = False
         self.doLevelUpCounter = 0
+
+        self.comboCounter = 0
+        self.comboResetCounter = 0
         
         self.removeblocksound = Resources().getSound("removeblock")
                                
@@ -155,7 +158,9 @@ class Scene_MainGame(Scene):
         self.init_counter = BOARD_WIDTH*BOARD_HEIGHT
         self.sprites.remove_sprites_of_layer(LAYER_BLOCKS)
         self.blocks.empty()
-
+        self.comboCounter = 0
+        self.comboResetCounter = 0
+        
         self.board.stopPulseBorder()
         self.hourglass.stopPulseBorder()
         self.scoreboard.stopPulseBorder()
@@ -244,7 +249,16 @@ class Scene_MainGame(Scene):
                                 
             self.scoreboard.updateScoreboard(self.score)
                                 
-            #self.board.updateBoard()
+            self.board.updateBoard()
+
+            if self.comboCounter > 0:
+                if self.board.inactive():                    
+                    self.comboResetCounter += 1
+                else:
+                    self.comboResetCounter = 0
+
+                if self.comboResetCounter > 3:
+                    self.comboCounter = 0
                                 
             if self.doLevelUp:
                 if self.board.inactive():
@@ -302,7 +316,12 @@ class Scene_MainGame(Scene):
     def addCircleScore(self, blocks, falling=False):
         num_blocks = len(blocks)
         score = 0
-        factor = blocks[0].comboCounter
+
+        if falling:
+            self.comboCounter += 1
+        
+        factor = self.comboCounter+1
+        
         text_x = 0
         text_y = 0
         text_count = len(blocks)
