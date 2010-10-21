@@ -298,14 +298,6 @@ class Scene_MainGame(Scene):
         self.score += self.level * POINTS_PER_LEVEL_FOR_BLOCK_SCORE
 
         if block.type == self.activeBlock:
-<<<<<<< HEAD
-            self.blockCount += 1
-
-            if self.blockCount >= self.blocksToLevel:
-                self.newLevel()
-
-        self.levelboard.updateLevelboard(self.blockCount)
-=======
             tmp_block = Block(0, 0, block.type)
             x = block.pos[0]+self.board.pos[0]+self.board.blocks.pos[0]
             y = block.pos[1]+self.board.pos[1]+self.board.blocks.pos[1]
@@ -327,8 +319,6 @@ class Scene_MainGame(Scene):
             tmp_block.fadeTo((1.0, 1.0, 1.0, 0.5), self.currentTime, 0.5)
                     
         #print "LEVEL %d: %d / %d" % (self.level, self.blockCount, self.blocksToLevel)
-
->>>>>>> 62edd000bba30c2a4576ba9bbcbe0e16125206a8
 
     def addCircleScore(self, blocks, falling=False):
         num_blocks = len(blocks)
