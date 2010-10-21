@@ -159,6 +159,7 @@ class Scene_MainGame(Scene):
         self.board.stopPulseBorder()
         self.hourglass.stopPulseBorder()
         self.scoreboard.stopPulseBorder()
+        self.scoreboard.setHighscore(Scene_Highscore().getHighscore())
 
         self.state = self.statelist["idle"]
         self.playMusicForLevel()

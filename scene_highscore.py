@@ -138,7 +138,11 @@ class Scene_Highscore(Scene):
                 next_score = tmp
 
         self.saveHighscores()
-                
+
+    def getHighscore(self):
+        self.loadHighscores()
+
+        return self.highscores[0][1]
 
     def tick(self):
         pass        
