@@ -25,8 +25,9 @@ class Scene_Highscore(Scene):
 
         self.font = Font("font_fat.png", 8, 8);
 
-        self.titletext = Text(160, 40, self.font, "HIGHSCORES")
+        self.titletext = Text(160, 30, self.font, "HIGHSCORES")
         self.titletext.setAnchor("center")
+        self.titletext.setScale((2.0, 2.0))
 
         self.background = Sprite()
         self.background.setImage(loadImage("pixel.png"))
@@ -91,6 +92,12 @@ class Scene_Highscore(Scene):
         for obj in zip(hs, self.highscores):
             self.updateHighscore(obj[1], obj[0][0].encode(), obj[0][1], obj[0][2])
 
+    def resetHighscores(self):
+        for score in self.highscores:
+            self.updateHighscore(score, "AAA", 0, 0)
+
+        self.saveHighscores()
+        
     def saveHighscores(self):
         data = []
 
@@ -189,7 +196,7 @@ class Scene_Highscore(Scene):
 
         if not self.hasMenu:
             if event.type == KEYDOWN:
-                if (event.key == K_RETURN):
+                if (event.key == K_RETURN or event.key == K_ESCAPE):
                     SceneHandler().removeScene(self)
 
         if self.hasMenu:
@@ -206,5 +213,7 @@ class Scene_Highscore(Scene):
                     Mixer().playSound(self.selectsound)
                     self.menu.selectItem()
 
+
+                    
         return True
         

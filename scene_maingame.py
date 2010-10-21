@@ -13,7 +13,7 @@ from image import *
 from marker import *
 from hourglass import *
 from scoreboard import *
-from levelboard import *
+#from levelboard import *
 from scene_gameover import *
 from scene_highscore import *
 from background import *
@@ -122,7 +122,7 @@ class Scene_MainGame(Scene):
     def show(self):
         print self, "is showing"
         for mus in self.music:
-            Mixer().playSound(mus, volume=0.0, loops=-1)
+            Mixer().playMusic(mus, volume=0.0, loops=-1)
         self.resetGame()
         self.showSplash()
 
@@ -134,7 +134,7 @@ class Scene_MainGame(Scene):
         print self, "is hiding"
         self.pauseGame()
         for mus in self.music:
-            Mixer().stopSound(mus)
+            Mixer().stopMusic(mus)
         
     def resetGame(self):
         self.setLevel(1)
@@ -194,11 +194,11 @@ class Scene_MainGame(Scene):
         for key in to_play:
             if key in close:
                 close.remove(key)
-                Mixer().setVolume(self.music[key], 1.0, 3.1)
+                Mixer().setMusicVolume(self.music[key], 1.0, 3.1)
                 self.music_states[key] = 1
 
         for key in close:
-            Mixer().setVolume(self.music[key], 0.0, 3.1)
+            Mixer().setMusicVolume(self.music[key], 0.0, 3.1)
             self.music_states[key] = 0   
         
     def fillZigZag(self):
@@ -532,24 +532,24 @@ class Scene_MainGame(Scene):
                 
             if key == K_0:
                 for mus in self.music:
-                    Mixer().setVolume(mus, 0.0, 2.0)
+                    Mixer().setMusicVolume(mus, 0.0, 2.0)
                 
             if key == K_1:    
-                Mixer().setVolume(self.music[0], 1.0, 3.1)
+                Mixer().setMusicVolume(self.music[0], 1.0, 3.1)
             if key == K_2:    
-                Mixer().setVolume(self.music[1], 1.0, 3.1)     
+                Mixer().setMusicVolume(self.music[1], 1.0, 3.1)     
             if key == K_3:    
-                Mixer().setVolume(self.music[2], 1.0, 3.1)      
+                Mixer().setMusicVolume(self.music[2], 1.0, 3.1)      
             if key == K_4:    
-                Mixer().setVolume(self.music[3], 1.0, 3.1)   
+                Mixer().setMusicVolume(self.music[3], 1.0, 3.1)   
             if key == K_5:    
-                Mixer().setVolume(self.music[4], 1.0, 3.1)    
+                Mixer().setMusicVolume(self.music[4], 1.0, 3.1)    
             if key == K_6:    
-                Mixer().setVolume(self.music[5], 1.0, 3.1)   
+                Mixer().setMusicVolume(self.music[5], 1.0, 3.1)   
             if key == K_7:    
-                Mixer().setVolume(self.music[6], 1.0, 3.1)
+                Mixer().setMusicVolume(self.music[6], 1.0, 3.1)
             if key == K_8:    
-                Mixer().setVolume(self.music[7], 1.0, 3.1)
+                Mixer().setMusicVolume(self.music[7], 1.0, 3.1)
   
 
         return True

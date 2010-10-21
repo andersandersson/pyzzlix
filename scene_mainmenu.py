@@ -13,7 +13,6 @@ import random
 import scene_maingame
 from scene_maingame import *
 from scene_highscore import *
-from scene_help import *
 from scene_dialogyesno import *
 from scene_options import *
 
@@ -44,6 +43,7 @@ class Logo(Sprite):
         
         self.lastColorChange = 0
         self.colorOrder = 0
+        self.cycling = True
       
     def cycleTextColor(self, order, currentTime, length):
         i = order % 25
@@ -59,9 +59,10 @@ class Logo(Sprite):
             s.fadeTo(color, currentTime, length)
  
     def update(self, currentTime):
-        if (currentTime - self.lastColorChange > 3.0):
-            self.colorOrder += 1
-            self.cycleTextColor(self.colorOrder, currentTime, 3.0)
+        if (self.cycling == True):
+            if (currentTime - self.lastColorChange > 3.0):
+                self.colorOrder += 1
+                self.cycleTextColor(self.colorOrder, currentTime, 3.0)
 
 class Scene_MainMenu(Scene):
     def _runOnce(self):
@@ -79,10 +80,10 @@ class Scene_MainMenu(Scene):
         self.menu = Menu()
         self.menu.setPos((160, 100))
         self.menu.add(MenuItem(0, 0, self.menufont, "Start Game", self.menu_start))
-        self.menu.add(MenuItem(0, 16, self.menufont, "Options", self.menu_options))
-        self.menu.add(MenuItem(0, 32, self.menufont, "High Scores", self.menu_highscores))
-        self.menu.add(MenuItem(0, 48, self.menufont, "Help", self.menu_help))
-        self.menu.add(MenuItem(0, 64, self.menufont, "Quit", self.menu_quit))
+        self.menu.add(MenuItem(0, 16, self.menufont, "Highscores", self.menu_highscores))
+        self.menu.add(MenuItem(0, 32, self.menufont, "Options", self.menu_options))
+        #self.menu.add(MenuItem(0, 48, self.menufont, "Help", self.menu_help))
+        self.menu.add(MenuItem(0, 48, self.menufont, "Quit", self.menu_quit))
 
         self.sprites.add(self.menu)    
         self.menu.setPos((160, 260))
@@ -120,7 +121,7 @@ class Scene_MainMenu(Scene):
     def show(self):
         print self, "is showing"
         self.state = "entrance"
-        Mixer().playSound(self.music, loops=-1)
+        Mixer().playMusic(self.music, loops=-1)
         self.startmenu.setPos((160, 160))
         self.startmenu.setCol((1.0,1.0,1.0,0.0))
         self.startmenu.fadeTo((1.0,1.0,1.0,1.0), self.currentTime, 0.3)
@@ -128,7 +129,7 @@ class Scene_MainMenu(Scene):
         
     def hide(self):
         print self, "is hiding"
-        Mixer().stopSound(self.music) 
+        Mixer().stopMusic(self.music) 
         
     def handleEvent(self, event):
         if event.type == KEYDOWN:
@@ -174,7 +175,7 @@ class Scene_MainMenu(Scene):
 
     def menu_start(self):
         Mixer().playSound(self.startsound)
-        Mixer().stopSound(self.music)
+        Mixer().stopMusic(self.music)
         SceneHandler().pushScene(scene_maingame.Scene_MainGame())
         pass
     
@@ -192,7 +193,7 @@ class Scene_MainMenu(Scene):
         
     def menu_quit(self):
         Mixer().playSound(self.selectsound)
-        Mixer().setVolume(self.music, 0.5, 0.5)
+        Mixer().setMusicVolume(self.music, 0.5, 0.5)
         Scene_DialogYesNo().setQuery("Do you want to quit?", self.quitGame, self.doNothing)
         SceneHandler().pushScene(Scene_DialogYesNo())
         pass
@@ -208,5 +209,5 @@ class Scene_MainMenu(Scene):
             SceneHandler().removeScene(Scene_DialogYesNo())
         
         Scene_DialogYesNo().remove(killDialog)
-        Mixer().setVolume(self.music, 1.0, 0.5)
+        Mixer().setMusicVolume(self.music, 1.0, 0.5)
         pass
