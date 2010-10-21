@@ -111,6 +111,9 @@ class Scene_MainGame(Scene):
         self.allMusic = range(0, len(self.music))
         self.music_states = [0]*len(self.music)
 
+        self.doLevelUp = False
+        self.doLevelUpCounter = 0
+        
         self.removeblocksound = Resources().getSound("removeblock")
                                
     def startGame(self):
@@ -240,8 +243,17 @@ class Scene_MainGame(Scene):
                                 
             self.scoreboard.updateScoreboard(self.score)
                                 
-        self.board.updateBoard()
+            self.board.updateBoard()
                                 
+            if self.doLevelUp:
+                if self.board.inactive():
+                    self.doLevelUpCounter += 1
+                else:
+                    self.doLevelUpCounter = 0
+
+                if self.doLevelUpCounter > 3:
+                    self.newLevel()
+                
     def addRandom(self, x, y):
         if y < self.board.height - 1:
             type = self.getRandomBlockType()
@@ -275,8 +287,8 @@ class Scene_MainGame(Scene):
                 self.sprites.remove(b)
                 self.levelboard.updateLevelboard(self.blockCount)
 
-                if self.blockCount >= self.blocksToLevel:
-                    self.newLevel()
+                #if self.blockCount >= self.blocksToLevel:
+                #    self.newLevel()
 
             tmp_block.moveTo((228, 110), self.currentTime, 0.5, remove_tmp_block)
             tmp_block.rotateTo(720.0, self.currentTime, 0.5)
@@ -385,13 +397,16 @@ class Scene_MainGame(Scene):
                     
         def block_wait_done(block):
             block.scaleTo((1.0, 1.0), self.currentTime, 0.5, block_scale_done)
-            
-        for block in blocks[:-1]:
-            block.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1)
-            block.doBlink()
 
-        blocks[-1].fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, block_wait_done)
-        blocks[-1].doBlink()
+        def block_wait_before_blink(b):
+            for block in blocks[:-1]:
+                block.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1)
+                block.doBlink()
+                
+            blocks[-1].fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, block_wait_done)
+            blocks[-1].doBlink()
+
+        blocks[-1].fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, block_wait_before_blink)
 
     def getUsableBlocks(self):
         blocks = []
@@ -420,6 +435,7 @@ class Scene_MainGame(Scene):
         self.level = level
         self.blocksToLevel = self.getBlocksToLevel()
         self.activeBlock = self.getActiveBlock()
+        self.doLevelUp = False
         
         self.background.setTheme(self.activeBlock)
         self.levelboard.setNewLevel(self.level, self.activeBlock, self.blocksToLevel)
@@ -470,7 +486,7 @@ class Scene_MainGame(Scene):
             #    self.showGameOver()
 
         if event.type == EVENT_LEVEL_UP:
-            self.newLevel()
+            self.doLevelUp = True
 
         if event.type == EVENT_TIMER_STATE_CHANGED:
             if event.state == "low":

@@ -125,6 +125,14 @@ class Board(Sprite):
                     return False
         return True
 
+    def inactive(self):
+        for row in self.grid:
+            for tile in row:
+                if tile and (tile.status & STATUS_MOVING or tile.status & STATUS_IN_CIRCLE or tile.comboCounter > 0):
+                    return False
+                    
+        return True
+
     def add(self, x, y, block):
         self.grid[x][y] = block
 
