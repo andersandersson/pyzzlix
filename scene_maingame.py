@@ -3,6 +3,7 @@ import sys
 
 from mixer import *
 from resources import *
+from options import *
 
 from scene import *
 from board import *
@@ -85,8 +86,6 @@ class Scene_MainGame(Scene):
         self.music_states = []
         self.removeblocksound = None
 
-        self.tutorials = True
-
         self.statelist = {"idle":0, "running":1, "gameover":2}
         self.state = self.statelist["idle"]
 
@@ -111,6 +110,12 @@ class Scene_MainGame(Scene):
         self.allMusic = range(0, len(self.music))
         self.music_states = [0]*len(self.music)
 
+        self.doLevelUp = False
+        self.doLevelUpCounter = 0
+
+        self.comboCounter = 0
+        self.comboResetCounter = 0
+        
         self.removeblocksound = Resources().getSound("removeblock")
         
         self.combosound = []
@@ -130,11 +135,14 @@ class Scene_MainGame(Scene):
         for mus in self.music:
             Mixer().playMusic(mus, volume=0.0, loops=-1)
         self.resetGame()
-        self.showSplash()
+
+        if Options().get("show_tutorials"):
+            self.showSplash()
+        else:
+            self.startGame()
 
     def showSplash(self):
-        SceneHandler().pushScene(Scene_Tutorial())
-        
+        SceneHandler().pushScene(Scene_Tutorial())        
             
     def hide(self):
         print self, "is hiding"
@@ -158,10 +166,13 @@ class Scene_MainGame(Scene):
         self.init_counter = BOARD_WIDTH*BOARD_HEIGHT
         self.sprites.remove_sprites_of_layer(LAYER_BLOCKS)
         self.blocks.empty()
-
+        self.comboCounter = 0
+        self.comboResetCounter = 0
+        
         self.board.stopPulseBorder()
         self.hourglass.stopPulseBorder()
         self.scoreboard.stopPulseBorder()
+        self.scoreboard.setHighscore(Scene_Highscore().getHighscore())
 
         self.state = self.statelist["idle"]
         self.playMusicForLevel()
@@ -246,8 +257,26 @@ class Scene_MainGame(Scene):
                                 
             self.scoreboard.updateScoreboard(self.score)
                                 
-        self.board.updateBoard()
+            self.board.updateBoard()
+
+            if self.comboCounter > 0:
+                if self.board.inactive():                    
+                    self.comboResetCounter += 1
+                else:
+                    self.comboResetCounter = 0
+
+                if self.comboResetCounter > 3:
+                    self.comboCounter = 0
                                 
+            if self.doLevelUp:
+                if self.board.inactive():
+                    self.doLevelUpCounter += 1
+                else:
+                    self.doLevelUpCounter = 0
+
+                if self.doLevelUpCounter > 3:
+                    self.newLevel()
+                
     def addRandom(self, x, y):
         if y < self.board.height - 1:
             type = self.getRandomBlockType()
@@ -269,17 +298,47 @@ class Scene_MainGame(Scene):
         self.score += self.level * POINTS_PER_LEVEL_FOR_BLOCK_SCORE
 
         if block.type == self.activeBlock:
+<<<<<<< HEAD
             self.blockCount += 1
 
             if self.blockCount >= self.blocksToLevel:
                 self.newLevel()
 
         self.levelboard.updateLevelboard(self.blockCount)
+=======
+            tmp_block = Block(0, 0, block.type)
+            x = block.pos[0]+self.board.pos[0]+self.board.blocks.pos[0]
+            y = block.pos[1]+self.board.pos[1]+self.board.blocks.pos[1]
+            tmp_block.setPos((x, y))
+            tmp_block._layer = LAYER_EFFECTS
+            self.sprites.add(tmp_block)
+
+            def remove_tmp_block(b):
+                self.blockCount += 1
+                self.sprites.remove(b)
+                self.levelboard.updateLevelboard(self.blockCount)
+
+                #if self.blockCount >= self.blocksToLevel:
+                #    self.newLevel()
+
+            tmp_block.moveTo((228, 110), self.currentTime, 0.5, remove_tmp_block)
+            tmp_block.rotateTo(720.0, self.currentTime, 0.5)
+            tmp_block.setCol((1.0, 1.0, 1.0, 0.8))
+            tmp_block.fadeTo((1.0, 1.0, 1.0, 0.5), self.currentTime, 0.5)
+                    
+        #print "LEVEL %d: %d / %d" % (self.level, self.blockCount, self.blocksToLevel)
+
+>>>>>>> 62edd000bba30c2a4576ba9bbcbe0e16125206a8
 
     def addCircleScore(self, blocks, falling=False):
         num_blocks = len(blocks)
         score = 0
-        factor = blocks[0].comboCounter
+
+        if falling:
+            self.comboCounter += 1
+        
+        factor = self.comboCounter+1
+        
         text_x = 0
         text_y = 0
         text_count = len(blocks)
@@ -363,8 +422,8 @@ class Scene_MainGame(Scene):
         def block_scale_done(block):
             if(scale_blocks): 
                 Mixer().playSound(self.removeblocksound)
-                self.addBlockScore(block)
                 next_block = scale_blocks.pop()
+                self.addBlockScore(next_block)
                 next_block.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, delay, block_scale_done)
                 next_block.rotateTo(720.0, self.currentTime, delay)
                 next_block.scaleTo((4.0, 4.0), self.currentTime, 0.5)
@@ -375,13 +434,16 @@ class Scene_MainGame(Scene):
                     
         def block_wait_done(block):
             block.scaleTo((1.0, 1.0), self.currentTime, 0.5, block_scale_done)
-            
-        for block in blocks[:-1]:
-            block.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1)
-            block.doBlink()
 
-        blocks[-1].fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, block_wait_done)
-        blocks[-1].doBlink()
+        def block_wait_before_blink(b):
+            for block in blocks[:-1]:
+                block.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1)
+                block.doBlink()
+                
+            blocks[-1].fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, block_wait_done)
+            blocks[-1].doBlink()
+
+        blocks[-1].fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, block_wait_before_blink)
 
     def getUsableBlocks(self):
         blocks = []
@@ -410,6 +472,7 @@ class Scene_MainGame(Scene):
         self.level = level
         self.blocksToLevel = self.getBlocksToLevel()
         self.activeBlock = self.getActiveBlock()
+        self.doLevelUp = False
         
         self.background.setTheme(self.activeBlock)
         self.levelboard.setNewLevel(self.level, self.activeBlock, self.blocksToLevel)
@@ -460,7 +523,7 @@ class Scene_MainGame(Scene):
             #    self.showGameOver()
 
         if event.type == EVENT_LEVEL_UP:
-            self.newLevel()
+            self.doLevelUp = True
 
         if event.type == EVENT_TIMER_STATE_CHANGED:
             if event.state == "low":
@@ -514,6 +577,9 @@ class Scene_MainGame(Scene):
             if key == K_p:
                 print self.board
 
+            if key == K_u:
+                self.board.updateBoard()
+                                                
             if key == K_r:
                 self.resetGame()
                 self.startGame()

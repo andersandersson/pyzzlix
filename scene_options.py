@@ -72,6 +72,9 @@ class Scene_Options(Scene):
         
         self.font = Font("font_fat.png", 8, 8);
 
+        self.menuActiveCol = (1.0, 1.0, 1.0, 1.0)
+        self.menuInactiveCol = (0.5, 0.5, 0.5, 1.0)
+        
         self.menuSprite = Sprite()
         self.menuSprite.setPos((76, 70))
         
@@ -82,18 +85,22 @@ class Scene_Options(Scene):
         self.menu.add(MenuItem(0, 90, self.font, "Reset highscores", self.resetHighscores, "left"))
         self.menu.add(MenuItem(84, 140, self.font, "Exit", self.closeOptions, "center"))
 
+        self.menu.setCol(self.menuActiveCol)
         
         self.menuVolumeMusic = create_scale_menu(self.font, callback=self.focusTop, name="music_volume", update_callback=self.updateOptions)
         self.menuVolumeMusic.setPos((20, 13))
         self.menuVolumeMusic.focusItem(10)
+        self.menuVolumeMusic.setCol(self.menuInactiveCol)
 
         self.menuVolumeSound = create_scale_menu(self.font, callback=self.focusTop, name="sound_volume", update_callback=self.updateOptions)
         self.menuVolumeSound.setPos((20, 43))
         self.menuVolumeSound.focusItem(10)
+        self.menuVolumeSound.setCol(self.menuInactiveCol)
 
         self.menuTutorials = create_on_off_menu(self.font, callback=self.focusTop, name="show_tutorials", update_callback=self.updateOptions)
         self.menuTutorials.setPos((20, 73))
         self.menuTutorials.focusItem(0)
+        self.menuTutorials.setCol(self.menuInactiveCol)
         
         self.background = Sprite()
         self.background.setImage(loadImage("pixel.png"))
@@ -166,38 +173,31 @@ class Scene_Options(Scene):
         pass
 
     def focusVolumeMusic(self):
-        self.menu.setFocusCol(self.focusColors["topmenu_unfocus"])
-        self.menu.setFocusScale(self.focusScales["topmenu_unfocus"])
-        self.menuVolumeMusic.setFocusCol(self.focusColors["submenu_focus"])
+        self.menu.unfocusItem()
+        self.menuVolumeMusic.setCol(self.menuActiveCol)
         self.menuVolumeMusic.setFocusScale(self.focusScales["submenu_focus"])
         self.state = self.statelist["music"]
 
     def focusVolumeSound(self):
-        self.menu.setFocusCol(self.focusColors["topmenu_unfocus"])
-        self.menu.setFocusScale(self.focusScales["topmenu_unfocus"])
-        self.menuVolumeSound.setFocusCol(self.focusColors["submenu_focus"])
+        self.menu.unfocusItem()
+        self.menuVolumeSound.setCol(self.menuActiveCol)
         self.menuVolumeSound.setFocusScale(self.focusScales["submenu_focus"])
         self.state = self.statelist["sound"]
 
     def focusTutorials(self):
-        self.menu.setFocusCol(self.focusColors["topmenu_unfocus"])
-        self.menu.setFocusScale(self.focusScales["topmenu_unfocus"])
-        self.menuTutorials.setFocusCol(self.focusColors["submenu_focus"])
+        self.menu.unfocusItem()
+        self.menuTutorials.setCol(self.menuActiveCol)
         self.menuTutorials.setFocusScale(self.focusScales["submenu_focus"])
         self.state = self.statelist["tutorials"]
 
     def focusTop(self):
-        self.menuVolumeMusic.setFocusCol(self.focusColors["submenu_unfocus"])
-        self.menuVolumeMusic.setFocusScale(self.focusScales["submenu_unfocus"])
-
-        self.menuVolumeSound.setFocusCol(self.focusColors["submenu_unfocus"])
-        self.menuVolumeSound.setFocusScale(self.focusScales["submenu_unfocus"])
-
-        self.menuTutorials.setFocusCol(self.focusColors["submenu_unfocus"])
+        self.menu.focusItem(self.menu.focus)
+        self.menuTutorials.setCol(self.menuInactiveCol)
         self.menuTutorials.setFocusScale(self.focusScales["submenu_unfocus"])
-
-        self.menu.setFocusCol(self.focusColors["topmenu_focus"])
-        self.menu.setFocusScale(self.focusScales["topmenu_focus"])
+        self.menuVolumeMusic.setCol(self.menuInactiveCol)
+        self.menuVolumeMusic.setFocusScale(self.focusScales["submenu_unfocus"])
+        self.menuVolumeSound.setCol(self.menuInactiveCol)
+        self.menuVolumeSound.setFocusScale(self.focusScales["submenu_unfocus"])
         self.state = self.statelist["top"]
 
     def resetHighscores(self):

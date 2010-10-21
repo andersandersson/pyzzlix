@@ -18,6 +18,7 @@ class Hourglass(Sprite):
         self.bar.setImage(loadImage("pixel.png", 1, 1))        
         self.bar.setScale((72, -80))
         self.bar.setPos((8.0, 88.0))
+        self.bar.setCol((0.0, 1.0, 0.0, 1.0))
 
         self.max = 0
         

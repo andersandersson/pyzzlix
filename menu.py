@@ -57,5 +57,8 @@ class Menu(Sprite):
     def prevItem(self):
         self.focusItem(self.focus - 1)
 
+    def unfocusItem(self):
+        self.items[self.focus].unfocus(self.currentTime)
+        
     def selectItem(self):
         self.items[self.focus].select()

@@ -48,16 +48,15 @@ class Scoreboard(Sprite):
         self._glow_duration = 0.0
         
     def setHighscore(self, highscore):
-        self.highscore = highcsore
-        
+        self.highscore = highscore
+        self.highscoretext.setText(str(self.highscore))
+                
     def updateScoreboard(self, score):
-        self.score = score
-    
         if (score != self.score):
-            self.scoretext.setText(str(self.score))
             self.score = score
+            self.scoretext.setText(str(self.score))
             if (score > self.highscore):
-                self.highscoretext.setText(str(self.highscore))
+                self.highscoretext.setText(str(self.score))
                 
         
     def pulseBorder(self, col, duration):
