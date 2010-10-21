@@ -486,9 +486,10 @@ class Scene_MainGame(Scene):
         self.levelboard.setNewLevel(self.level, self.activeBlock, self.blocksToLevel)
         
     def newLevel(self):
+        self.background.flash(0.3)
         self.setLevel(self.level + 1)
         self.blockCount = 0
-
+        
         self.hourglass.scaleValue(0.8)
         self.refillUpperHalfBoard()
         
@@ -603,6 +604,9 @@ class Scene_MainGame(Scene):
                 
             if key == K_b:
                 self.background.boost(1)
+
+            if key == K_f:
+                self.background.flash(0.3)
 
             if key == K_v:
                 self.background.setTheme(self.activeBlock)

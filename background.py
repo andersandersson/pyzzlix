@@ -336,6 +336,16 @@ class Background(Sprite):
     def boost(self, count):
         self.currentShape.boost(count)
 
+    def flash(self, delay):
+        def remove_white(b):
+            self.subSprites.remove(b)
+        white = Sprite()
+        white.setImage(loadImage("pixel.png"))
+        white.setScale((320,240))
+        white.setCol((1.0, 1.0, 1.0, 1.0))
+        white.fadeTo((1.0, 1.0, 1.0, 0.0), self.currentTime, delay, remove_white)
+        self.subSprites.append(white)
+        
     def setTheme(self, shape):
         #shape = shape % self.shapeCount    
             
