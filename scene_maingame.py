@@ -3,6 +3,7 @@ import sys
 
 from mixer import *
 from resources import *
+from options import *
 
 from scene import *
 from board import *
@@ -85,8 +86,6 @@ class Scene_MainGame(Scene):
         self.music_states = []
         self.removeblocksound = None
 
-        self.tutorials = True
-
         self.statelist = {"idle":0, "running":1, "gameover":2}
         self.state = self.statelist["idle"]
 
@@ -130,11 +129,14 @@ class Scene_MainGame(Scene):
         for mus in self.music:
             Mixer().playMusic(mus, volume=0.0, loops=-1)
         self.resetGame()
-        self.showSplash()
+
+        if Options().get("show_tutorials"):
+            self.showSplash()
+        else:
+            self.startGame()
 
     def showSplash(self):
-        SceneHandler().pushScene(Scene_Tutorial())
-        
+        SceneHandler().pushScene(Scene_Tutorial())        
             
     def hide(self):
         print self, "is hiding"
