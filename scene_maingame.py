@@ -39,13 +39,17 @@ class Scene_MainGame(Scene):
         self.board.setPos((24.0, -300.0))
         
         self.scoreboard = Scoreboard()
-        self.scoreboard.setPos((208.0, 8.0))
+        #self.scoreboard.setPos((208.0, 8.0))
+        self.scoreboard.setPos((408.0, 8.0))
         
         self.levelboard = Levelboard()
-        self.levelboard.setPos((208.0, 80.0))
+        #self.levelboard.setPos((208.0, 80.0))
+        self.levelboard.setPos((408.0, 80.0))
         
         self.hourglass = Hourglass()
-        self.hourglass.setPos((208, 136))
+        #self.hourglass.setPos((208, 136))
+        self.hourglass.setPos((408, 136))
+        
         self.background = Background() 
 
         self.sprites.add(self.background)
@@ -141,12 +145,17 @@ class Scene_MainGame(Scene):
 
     def moveInParts(self):
         self.partsInPlace = True
-        print "OJ: ", self.renderTime, self.currentTime
         self.board.moveTo((24.0, 0.0), self.currentTime, 0.5)
+        self.scoreboard.moveTo((208.0, 8.0), self.currentTime, 0.5)
+        self.levelboard.moveTo((208.0, 80.0), self.currentTime, 0.5)
+        self.hourglass.moveTo((208, 136), self.currentTime, 0.5)
 
     def moveOutParts(self):
         self.partsInPlace = False
         self.board.setPos((24.0, -300.0))
+        self.scoreboard.setPos((408.0, 8.0))
+        self.levelboard.setPos((408.0, 80.0))
+        self.hourglass.setPos((408, 136))
 
     def showSplash(self):
         SceneHandler().pushScene(Scene_Tutorial())        
