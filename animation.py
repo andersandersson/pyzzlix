@@ -32,7 +32,6 @@ class Animation():
                     if (self.mode == "loop"):
                         self.frame = 0
                     elif (self.mode == "pingpong"):
-                        #print "LOOOOOKO"
                         if (not self.reverse):
                             self.frame = self.frameCount - 1
                             self.direction = -1
@@ -49,7 +48,6 @@ class Animation():
                     if (self.mode == "loop"):
                         self.frame = self.frameCount - 1
                     elif (self.mode == "pingpong"):
-                        print "ASOASFOJASFJO"
                         if (not self.reverse):
                             self.frameCount = 0
                             self.frame = 0
