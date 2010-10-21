@@ -43,11 +43,11 @@ class Levelboard(Sprite):
         self.subSprites.append(self.glow)
         
         self.level = 0
-        self.levelEventSent = False
 
         self._glow_col = (0.0, 0.0, 0.0, 0.0)
         self._glow_duration = 0.0
 
+        self.completed = False
 
     def doBlink(self):
         
@@ -61,29 +61,28 @@ class Levelboard(Sprite):
     def updateLevelboard(self, currentblocks):
     
         if (self.currentblocks != currentblocks):
-            self.currentblocks = currentblocks
+            self.block.doPulse()   
+            
+            if (self.completed == False):
+                self.currentblocks = currentblocks
                     
-            if (self.currentblocks >= self.goalblocks):
-                self.currentblocks = self.goalblocks
-                self.doBlink()
-
-                if not self.levelEventSent:
-                    self.levelEventSent = True
-                    pygame.event.post(pygame.event.Event(EVENT_LEVEL_UP))
-                    
-               
-            self.block.doPulse()       
-            self.blockcounttext.setText(":%2d/%2d" % (self.currentblocks, self.goalblocks))
+                if (self.currentblocks >= self.goalblocks):
+                    self.currentblocks = self.goalblocks
+                    self.completed = True
+                    self.doBlink()
+    
+                self.blockcounttext.setText(":%2d/%2d" % (self.currentblocks, self.goalblocks))
+           
         
     def setNewLevel(self, level, block, goalblocks):
         self.level = level
-        self.levelEventSent = False
     
         self.leveltext.setText("LEVEL %2d" % (self.level))   
         
         self.goalblocks = goalblocks
         self.currentblocks = 0
             
+        self.completed = False
         self.blockcounttext.clearColCallbacks()
         self.blockcounttext.setCol((1.0,1.0,1.0,1.0)) 
         self.blockcounttext.setText(":%2d/%2d" % (self.currentblocks, self.goalblocks))
