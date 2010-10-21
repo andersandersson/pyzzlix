@@ -244,7 +244,7 @@ class Scene_MainGame(Scene):
                                 
             self.scoreboard.updateScoreboard(self.score)
                                 
-            self.board.updateBoard()
+            #self.board.updateBoard()
                                 
             if self.doLevelUp:
                 if self.board.inactive():
@@ -541,6 +541,9 @@ class Scene_MainGame(Scene):
             if key == K_p:
                 print self.board
 
+            if key == K_u:
+                self.board.updateBoard()
+                                                
             if key == K_r:
                 self.resetGame()
                 self.startGame()
