@@ -72,12 +72,15 @@ class Renderer(Singleton):
         glLoadIdentity()
         reloadTextures()
         
-    
-    def toggleFullScreen(self):
+
+    def setFullScreen(self, value):
+        self.fullscreen = value
         glClear(GL_COLOR_BUFFER_BIT);
         pygame.display.flip()
-        self.fullscreen = not self.fullscreen
         self.setDisplay()
+        
+    def toggleFullScreen(self):
+        self.setFullScreen(not self.fullscreen)
 
 
 
@@ -237,7 +240,8 @@ class Renderer(Singleton):
 
                 
     def renderScene(self, scene):
-        scene.renderTime += self.deltaT
+        if not scene.blockedUpdate:
+            scene.renderTime += self.deltaT
 
         if (self.screen != 0):
             #for layer in scene.sprites.layers():

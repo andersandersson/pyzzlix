@@ -44,7 +44,7 @@ class Board(Sprite):
         
         self.glow = Sprite()
         self.glow.setImage(loadImage("windowglows.png", 24, 0, 176, 232))
-        self.glow.setPos((0.0,8.0))
+        self.glow.setPos((0.0, 0.0))
         self.glow.setCol((0.0, 0.0, 0.0, 0.0))
 
         self.marker = Marker()

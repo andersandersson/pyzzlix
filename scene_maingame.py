@@ -36,16 +36,20 @@ class Scene_MainGame(Scene):
         self.updateBlocker = True
         
         self.board = Board(self, BOARD_WIDTH, BOARD_HEIGHT)
-        self.board.setPos((24.0, 0.0))
+        self.board.setPos((24.0, -300.0))
         
         self.scoreboard = Scoreboard()
-        self.scoreboard.setPos((208.0, 8.0))
+        #self.scoreboard.setPos((208.0, 8.0))
+        self.scoreboard.setPos((408.0, 8.0))
         
         self.levelboard = Levelboard()
-        self.levelboard.setPos((208.0, 80.0))
+        #self.levelboard.setPos((208.0, 80.0))
+        self.levelboard.setPos((408.0, 80.0))
         
         self.hourglass = Hourglass()
-        self.hourglass.setPos((208, 136))
+        #self.hourglass.setPos((208, 136))
+        self.hourglass.setPos((408, 136))
+        
         self.background = Background() 
 
         self.sprites.add(self.background)
@@ -117,12 +121,16 @@ class Scene_MainGame(Scene):
         self.comboResetCounter = 0
         
         self.removeblocksound = Resources().getSound("removeblock")
-        
         self.combosound = Resources().getSound("combo")
         self.circlesound = Resources().getSound("circle")
-                               
+
+        self.partsInPlace = False
+                             
     def startGame(self):
         self.state = self.statelist["running"]
+
+        if not self.partsInPlace:
+            self.moveInParts()
 
     def pauseGame(self):
         self.state = self.statelist["idle"]
@@ -138,12 +146,27 @@ class Scene_MainGame(Scene):
         else:
             self.startGame()
 
+    def moveInParts(self):
+        self.partsInPlace = True
+        self.board.moveTo((24.0, 0.0), self.currentTime, 0.5)
+        self.scoreboard.moveTo((208.0, 8.0), self.currentTime, 0.5)
+        self.levelboard.moveTo((208.0, 80.0), self.currentTime, 0.5)
+        self.hourglass.moveTo((208, 136), self.currentTime, 0.5)
+
+    def moveOutParts(self):
+        self.partsInPlace = False
+        self.board.setPos((24.0, -300.0))
+        self.scoreboard.setPos((408.0, 8.0))
+        self.levelboard.setPos((408.0, 80.0))
+        self.hourglass.setPos((408, 136))
+
     def showSplash(self):
         SceneHandler().pushScene(Scene_Tutorial())        
             
     def hide(self):
         print self, "is hiding"
         self.pauseGame()
+        self.moveOutParts()
         for mus in self.music:
             Mixer().stopMusic(mus)
         
@@ -472,9 +495,10 @@ class Scene_MainGame(Scene):
         self.levelboard.setNewLevel(self.level, self.activeBlock, self.blocksToLevel)
         
     def newLevel(self):
+        self.background.flash(0.3)
         self.setLevel(self.level + 1)
         self.blockCount = 0
-
+        
         self.hourglass.scaleValue(0.8)
         self.refillUpperHalfBoard()
         
@@ -589,6 +613,9 @@ class Scene_MainGame(Scene):
                 
             if key == K_b:
                 self.background.boost(1)
+
+            if key == K_f:
+                self.background.flash(0.3)
 
             if key == K_v:
                 self.background.setTheme(self.activeBlock)
