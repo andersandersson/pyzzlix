@@ -62,10 +62,6 @@ class Board(Sprite):
         self._glow_col = (0.0, 0.0, 0.0, 0.0)
         self._glow_duration = 0.0
 
-        self.marker.movesound = Resources().getSound("markermove")  
-        self.marker.turnsound = Resources().getSound("markerturn")  
-        self.marker.failsound = Resources().getSound("markerfail")  
-
     def __str__(self):
         val = ""
         for x in range(self.width):

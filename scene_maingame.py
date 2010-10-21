@@ -112,6 +112,12 @@ class Scene_MainGame(Scene):
         self.music_states = [0]*len(self.music)
 
         self.removeblocksound = Resources().getSound("removeblock")
+        
+        self.combosound = []
+        for i in range(11)
+        self.combosound.append(Resources().getSound("combo"+str(i + 1)))
+        
+        
                                
     def startGame(self):
         self.state = self.statelist["running"]
@@ -269,8 +275,6 @@ class Scene_MainGame(Scene):
                 self.newLevel()
 
         self.levelboard.updateLevelboard(self.blockCount)
-        #print "LEVEL %d: %d / %d" % (self.level, self.blockCount, self.blocksToLevel)
-
 
     def addCircleScore(self, blocks, falling=False):
         num_blocks = len(blocks)

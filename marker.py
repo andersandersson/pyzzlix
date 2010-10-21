@@ -22,11 +22,10 @@ class Marker(Sprite):
         self.scale_y = 16
         
         self.setPos((self.boardx * self.scale_x + self.offset_x, self.boardy * self.scale_y + self.offset_y))
-        
-        self.movesound = None
-        self.turnsound = None
-        self.failsound = None
-        
+
+        self.movesound = Resources().getSound("markermove")  
+        self.turnsound = Resources().getSound("markerturn")  
+        self.failsound = Resources().getSound("markerfail")  
         
     def moveToBoardCoord(self, boardx, boardy, currentTime):
         self.boardx = boardx
