@@ -47,6 +47,7 @@ class Levelboard(Sprite):
         self._glow_col = (0.0, 0.0, 0.0, 0.0)
         self._glow_duration = 0.0
 
+        self.completed = False
 
     def doBlink(self):
         
@@ -60,14 +61,18 @@ class Levelboard(Sprite):
     def updateLevelboard(self, currentblocks):
     
         if (self.currentblocks != currentblocks):
-            self.currentblocks = currentblocks
+            self.block.doPulse()   
+            
+            if (self.completed == False):
+                self.currentblocks = currentblocks
                     
-            if (self.currentblocks >= self.goalblocks):
-                self.currentblocks = self.goalblocks
-                self.doBlink()
-               
-            self.block.doPulse()       
-            self.blockcounttext.setText(":%2d/%2d" % (self.currentblocks, self.goalblocks))
+                if (self.currentblocks >= self.goalblocks):
+                    self.currentblocks = self.goalblocks
+                    self.completed = True
+                    self.doBlink()
+    
+                self.blockcounttext.setText(":%2d/%2d" % (self.currentblocks, self.goalblocks))
+           
         
     def setNewLevel(self, level, block, goalblocks):
         self.level = level
@@ -77,6 +82,7 @@ class Levelboard(Sprite):
         self.goalblocks = goalblocks
         self.currentblocks = 0
             
+        self.completed = False
         self.blockcounttext.clearColCallbacks()
         self.blockcounttext.setCol((1.0,1.0,1.0,1.0)) 
         self.blockcounttext.setText(":%2d/%2d" % (self.currentblocks, self.goalblocks))

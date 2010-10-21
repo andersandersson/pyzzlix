@@ -17,6 +17,8 @@ import block
 from scene_dialogyesno import *
 import scene_maingame
 import scene_mainmenu
+from levelboard import *
+from hourglass import *
 import marker
 
 def createBlockGroup(posx, posy, types, size):
@@ -111,27 +113,39 @@ class Page_Welcome(Page):
     def __init__(self, x, y, page, pageCount):
         Page.__init__(self, x, y, page, pageCount)
 
-        self.welcometext = Text(self.width/2, 10, self.titlefont, "WELCOME\nTO\n")
-        self.welcometext.setAnchor("center")
-        self.welcometext.setScale((2.0, 2.0))
+        dposx = self.width/2
+        dposy = 10
 
-        self.logo = scene_mainmenu.Logo(self.width/2, 56)
+        self.welcometext = Text(dposx, dposy, self.titlefont, "WELCOME\nTO\n")
+        self.welcometext.setAnchor("center")
+        self.welcometext.setScale((1.5, 1.5))
+
+        self.logo = scene_mainmenu.Logo(self.width/2, 46)
         self.logo.setScale((0.5, 0.5))
         self.logo.cycling = False
         
         self.subSprites.append(self.welcometext)
         self.subSprites.append(self.logo)
+        
+        dposy += 60
 
         self.infotext = []
-        self.infotext.append(Text(self.width/2, 80, self.textfont,
+        self.infotext.append(Text(dposx, dposy, self.textfont,
                                   "This tutorial will explain how to play\n" +
                                   "Pyzzlix! If this is your first time\n" +
                                   "playing, skip this at your own peril..."))
 
-        self.infotext.append(Text(self.width/2, 120, self.textfont,
-                                  "Use the ARROW keys to navigate the\n" +
-                                  "pages of this tutorial."))
+        dposy += 32
 
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                                  "Use the left and right ARROW keys to\n" + 
+                                  "navigate the pages of this tutorial."))
+                  
+        dposy += 24                        
+                                  
+        self.infotext.append(Text(dposx, dposy, self.textfont,
+                                  "You can choose whether or not to display\n" +
+                                  "this tutorial from the options menu."))   
         for t in self.infotext:
             t.setAnchor("center")
             self.subSprites.append(t)
@@ -261,7 +275,7 @@ class Page_Goal(Page):
         self.marker2.setPos((dposx - 8, dposy - 8))
         self.subSprites.append(self.marker2)
 
-        dposy += 26
+        dposy += 30
         
         self.infotext.append(Text(dposx, dposy, self.textfont,
                                   "The simplest loop is a 2x2 square.\n"))
@@ -330,20 +344,22 @@ class Page_Level(Page):
                              "a specific number of Special Blocks\n" +
                              "needs to be removed."))
 
-        dposy += 38
+        dposy += 36
         
         self.infotext.append(Text(dposx, dposy, self.textfont,
                              "The Special Block and the progress of\n" +
                              "the current level is displayed in the\n" +
                              "level board."))
  
-        dposy += 56
+        dposy += 26
 
+        self.level = 1
+        self.levelwindow = Levelboard()
+        self.levelwindow.setPos((dposx - 44, dposy))
+        self.levelwindow.setNewLevel(self.level, 0, 20)
+        self.subSprites.append(self.levelwindow)
 
-        #self.levelwindow = LevelBoard()
-
-
-        dposy += 20
+        dposy += 50
 
         self.infotext.append(Text(dposx, dposy, self.textfont,
                              "You will score more points for each removed\n" +
@@ -354,6 +370,53 @@ class Page_Level(Page):
             self.subSprites.append(t)
 
     def show(self, currentTime):
+        self.level = 0
+        self.blocks = 0
+        
+        def nextLevel():
+            self.level += 1
+            if (self.level > 99):
+                self.level = 1
+                
+            self.levelwindow.setNewLevel(self.level, self.level % 3, 20)    
+
+
+        def addBlock1(sprite):
+            self.blocks += 1
+            self.levelwindow.updateLevelboard(self.blocks)
+            self.levelwindow.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, addBlock2)
+        def addBlock2(sprite):
+            self.blocks += 1
+            self.levelwindow.updateLevelboard(self.blocks)
+            self.levelwindow.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, addBlock3)
+        def addBlock3(sprite):
+            self.blocks += 1
+            self.levelwindow.updateLevelboard(self.blocks)
+            self.levelwindow.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, addBlock4)
+        def addBlock4(sprite):
+            self.blocks += 1
+            self.levelwindow.updateLevelboard(self.blocks)
+            self.levelwindow.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, addBlock5)
+        def addBlock5(sprite):
+            self.blocks += 1
+            self.levelwindow.updateLevelboard(self.blocks)
+            self.levelwindow.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, addBlock6)
+        def addBlock6(sprite):
+            self.blocks += 1
+            self.levelwindow.updateLevelboard(self.blocks)
+            self.levelwindow.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.1, checkAndDelay)
+
+            
+        def checkAndDelay(sprite):
+            if (self.blocks > 20):
+                nextLevel()
+                self.blocks = 0
+                
+            self.levelwindow.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 1.0, addBlock1)
+
+        self.levelwindow.fadeTo((1.0, 1.0, 1.0, 1.0), currentTime, 0.6, addBlock1)
+    
+        
         pass
         
     def hide(self):
