@@ -2,7 +2,6 @@ from math import *
 
 from scene import *
 from scenehandler import *
-from font import *
 from text import *
 from sprite import *
 from image import *
@@ -12,36 +11,55 @@ from scene_maingame import *
 from scene_highscore import *
 
 class MenuItem(Text):
-    def __init__(self, x, y, label, callfunc):
-        font = Font("font_fat.png", 8, 8);
+    def __init__(self, x, y, font, label, callfunc, anchor="center"):
         Text.__init__(self, x, y, font, label)
         self.callfunc = callfunc
         self._layer = 2
-        self.setAnchor("center")
+
+        self.setAnchor(anchor)
         
-        self.setCol((0.6, 0.6, 0.6, 1.0))
-        self.setScale((1.0, 1.0))
         self.timer = 0
         self.blinkcount = 0
         self.state = "normal"
-    
+
+        self.inFocus = False
+        self.focusScale = (1.5, 1.5)
+        self.focusColor = (1.0, 1.0, 1.0, 1.0)
+
+        self.unfocusScale = (1.0, 1.0)
+        self.unfocusColor = (0.6, 0.6, 0.6, 1.0)
+
+        self.setCol(self.unfocusColor)
+        self.setScale(self.unfocusScale)
+        
     def update(self, currentTimer):
+        Text.update(self, currentTimer)
+
         if (self.state == "normal"):
             pass
         elif (self.state == "blinking"):
             self.timer
-    
+
+    def reset(self):
+        self.inFocus = False
+        self.setCol(self.unfocusColor)
+        self.setScale(self.unfocusScale)
+            
     def focus(self, currentTime):
-        self.fadeTo((1.0, 1.0, 1.0, 1.0), currentTime, 0.1)
-        self.scaleTo((1.5, 1.5), currentTime, 0.05)    
+        self.inFocus = True
+        self.fadeTo(self.focusColor, currentTime, 0.1)
+        self.scaleTo(self.focusScale, currentTime, 0.05)
     
     def unfocus(self, currentTime):
-        self.fadeTo((0.6, 0.6, 0.6, 1.0), currentTime, 0.3)
-        self.scaleTo((1.0, 1.0), currentTime, 0.1)
+        self.inFocus = False
+        self.fadeTo(self.unfocusColor, currentTime, 0.3)
+        self.scaleTo(self.unfocusScale, currentTime, 0.1)
 
     def select(self):
         self.timer = 0
         self.state = "blinking"
-        self.callfunc()
+        
+        if self.callfunc:
+            self.callfunc()
         
     

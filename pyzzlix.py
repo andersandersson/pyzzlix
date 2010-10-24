@@ -11,15 +11,18 @@ from globals import *
 from scenehandler import *
 from renderer import *
 from mixer import *
+from options import *
 
 from scene_preload import *
+from scene_mainmenu import *
+from scene_tutorial import *
 
 sceneHandler = None
 renderer = None
 mixer = None
 enableSound = True
 listener = None
-fullScreen = False
+fullScreen = Options().get("fullscreen")
 
 def init():
     global sceneHandler
@@ -35,7 +38,13 @@ def init():
     
     # Initialize and populate scene stack
     sceneHandler = SceneHandler()
+    #highscore.display(replay_callback=replay, exit_callback=quit)
+    #game_over.display(level=2, score=1233, replay_callback=replay, exit_callback=quit)
+    #sceneHandler.pushScene(game_over)
+
     sceneHandler.pushScene(Scene_Preload())    
+    #sceneHandler.pushScene(Scene_MainMenu())    
+    #sceneHandler.pushScene(Scene_Tutorial())
 
 def cleanup():
     global renderer
@@ -43,6 +52,7 @@ def cleanup():
     # Clean up stuff
     mixer.cleanup()
     renderer.cleanup()
+    Resources().saveData()
     
 
 def main():
@@ -83,10 +93,6 @@ def main():
                 for event in pygame.event.get():
                     if event.type == QUIT:
                         return
-                    elif event.type == KEYDOWN and event.key == K_ESCAPE:
-                        Scene_DialogYesNo().setQuery("Do you want to quit?", quitGame, doNothing)
-                        SceneHandler().pushScene(Scene_DialogYesNo())
-                        #return
                     elif event.type == KEYDOWN and event.key == K_F1:
                         ptime = pygame.time.get_ticks() * 0.001
                         renderer.toggleFullScreen()
@@ -111,13 +117,6 @@ def main():
 
     #Game Over
     cleanup()
-
-def quitGame():
-    pygame.event.post(pygame.event.Event(QUIT))
-                
-def doNothing():
-    SceneHandler().removeScene(Scene_DialogYesNo())
-
 
 
 #this calls the 'main' function when this script is executed

@@ -7,13 +7,11 @@ import math
 class Text(Sprite):
     def __init__(self, x, y, font, text):
         Sprite.__init__(self)
-        self.chars = None
         self.font = font
         self.text = ""
         self.setPos([x, y])
         self.anchor = "left"
         self.setText(text)
-        self.currentChar = 0
 
     def setAnchor(self, mode):
         if (mode == "right"):
@@ -27,44 +25,39 @@ class Text(Sprite):
         self.text = ""
         self.setText(text)
         
-    def setText(self, text):
-        if self.text == text:
+    def setText(self, newtext):
+        if self.text == newtext:
            return
         else:
-            self.text = text
+            self.text = newtext
 
-        self.chars = list(text)
-        self.length = len(self.chars)
-        self.width = self.font.width*self.length
-        self.height = self.font.height
-
-        if (self.anchor == "left"):
-            drawposx = 0
-        elif (self.anchor == "right"):
-            drawposx = -self.length * self.font.width
-            #self.center = ((self.length * self.font.width), 0)
-        elif (self.anchor == "center"):
-            #self.center = ((self.length * self.font.width) / 2, 0)
-            drawposx = -(self.length * self.font.width) / 2
-
+        splittext = newtext.split('\n')    
         self.subSprites = []
 
-        for char in self.chars:
-            glyph = self.font.getGlyph(char)
-            sprite = Sprite()
-            sprite.setImage(glyph)
-            sprite.setPos((drawposx, 0))
-            self.subSprites.append(sprite)
-            drawposx += self.font.width
-                         
-    def draw(self, surf):
-        if (self.anchor == "left"):
-            drawposx = self.x
-        elif (self.anchor == "right"):
-            drawposx = self.x - self.length * self.font.width
-        elif (self.anchor == "center"):
-            drawposx = self.x - (self.length * self.font.width) / 2
+        drawposx = 0
+        drawposy = 0
+        for text in splittext:
+            chars = list(text)
+            length = len(chars)
+            width = self.font.width * length
+            height = self.font.height
 
-        for c in self.chars:
-            #surf.blit(self.font.getGlyph(c), (drawposx, self.y), ((0,0) , (self.font.width, self.font.height)))
-            drawposx += self.font.width
+            if (self.anchor == "left"):
+                drawposx = 0
+            elif (self.anchor == "right"):
+                drawposx = -length * self.font.width
+            #self.center = ((self.length * self.font.width), 0)
+            elif (self.anchor == "center"):
+            #self.center = ((self.length * self.font.width) / 2, 0)
+                drawposx = -(length * self.font.width) / 2
+                
+            for char in chars:
+                glyph = self.font.getGlyph(char)
+                sprite = Sprite()
+                sprite.setImage(glyph)
+                sprite.setPos((drawposx, drawposy))
+                self.subSprites.append(sprite)
+                drawposx += self.font.width
+                         
+            drawposy += self.font.height
+                

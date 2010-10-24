@@ -1,5 +1,6 @@
 from math import *
 
+from resources import *
 from scene import *
 from scenehandler import *
 from board import *
@@ -9,95 +10,59 @@ from text import *
 from sprite import *
 from image import *
 import random
-
+import scene_maingame
 from scene_maingame import *
 from scene_highscore import *
-from scene_help import *
 from scene_dialogyesno import *
+from scene_options import *
 
+from menu import *
 from menuitem import *
 
-class MenuItem(Text):
-    def __init__(self, x, y, font, label, callfunc):
-        Text.__init__(self, x, y, font, label)
-        self.callfunc = callfunc
-        self._layer = 2
-        self.setAnchor("center")
-        
-        self.setCol((0.6, 0.6, 0.6, 1.0))
-        self.setScale((1.0, 1.0))
-    
-    def focus(self, currentTime):
-        self.fadeTo((1.0, 1.0, 1.0, 1.0), currentTime, 0.1)
-        self.scaleTo((1.5, 1.5), currentTime, 0.1)    
-    
-    def unfocus(self, currentTime):
-        self.fadeTo((0.6, 0.6, 0.6, 1.0), currentTime, 0.3)
-        self.scaleTo((1.0, 1.0), currentTime, 0.3)
-
-    def blink(self, currentTime):
-    
-        def fadein(self, sprite):
-            self.fadeTo((1.0, 1.0, 1.0, 1.0), currentTime, 0.05, self.fadeout)
-        def fadeout(self, sprite):
-            self.fadeTo((0.0, 0.0, 0.0, 0.0), currentTime, 0.05, self.fadein)
-            
-        self.fadein(None)
-        
-    #def stopBlink    
-            
-    def select(self):
-        self.callfunc()
-        
-        
-        
-        
 class Logo(Sprite):
-        class LogoLetter(Sprite):
-            def __init__(self, x, y, sx, sy, w, h):
-                Sprite.__init__(self)
-                self.setImage(loadImage("logo.png", sx, sy, w, h))
-                self.setPos((x, y))
-
-
-        def __init__(self, x, y):
+    class LogoLetter(Sprite):
+        def __init__(self, x, y, sx, sy, w, h):
             Sprite.__init__(self)
-            self.setImage(loadImage("logo.png", 0, 0, 251, 73))
-            self.center = (251 / 2, 73 / 2)
+            self.setImage(loadImage("logo.png", sx, sy, w, h))
             self.setPos((x, y))
-            
-            
-            self.subSprites.append(self.LogoLetter(0, 0, 0, 80, 48, 80)) # P
-            self.subSprites.append(self.LogoLetter(32, 16, 48, 96, 48, 48)) # y   
-            self.subSprites.append(self.LogoLetter(48, 16, 96, 96, 80, 48)) # z   
-            self.subSprites.append(self.LogoLetter(85, 16, 96, 96, 80, 48)) # z   
-            self.subSprites.append(self.LogoLetter(128, 16, 176, 96, 64, 48)) # l   
-            self.subSprites.append(self.LogoLetter(176, 0, 0, 160, 16, 64)) # i           
-            self.subSprites.append(self.LogoLetter(160, 0, 16, 160, 96, 80)) # x
 
-            self.lastColorChange = 0
-            self.colorOrder = 0
-      
-        def cycleTextColor(self, order, currentTime, length):
-            i = order % 25
-            R = 0.5+sin((i*3.0+0.0)*1.3)*0.5
-            G = 0.5+sin((i*3.0+1.0)*1.3)*0.5
-            B = 0.5+sin((i*3.0+2.0)*1.3)*0.5
-            color = (R, G, B, 1.0)
-            self.setTextColor(color, currentTime, length)
-            self.lastColorChange = currentTime
+
+    def __init__(self, x, y):
+        Sprite.__init__(self)
+        self.setImage(loadImage("logo.png", 0, 0, 251, 73))
+        self.center = (251 / 2, 73 / 2)
+        self.setPos((x, y))
             
-        def setTextColor(self, color, currentTime, length):
-            for s in self.subSprites:
-                s.fadeTo(color, currentTime, length)
+        self.subSprites.append(self.LogoLetter(0, 0, 0, 80, 48, 80)) # P
+        self.subSprites.append(self.LogoLetter(32, 16, 48, 96, 48, 48)) # y   
+        self.subSprites.append(self.LogoLetter(48, 16, 96, 96, 80, 48)) # z   
+        self.subSprites.append(self.LogoLetter(85, 16, 96, 96, 80, 48)) # z   
+        self.subSprites.append(self.LogoLetter(128, 16, 176, 96, 64, 48)) # l   
+        self.subSprites.append(self.LogoLetter(176, 0, 0, 160, 16, 64)) # i           
+        self.subSprites.append(self.LogoLetter(160, 0, 16, 160, 96, 80)) # x
+        
+        self.lastColorChange = 0
+        self.colorOrder = 0
+        self.cycling = True
+      
+    def cycleTextColor(self, order, currentTime, length):
+        i = order % 25
+        R = 0.5+sin((i*3.0+0.0)*1.3)*0.5
+        G = 0.5+sin((i*3.0+1.0)*1.3)*0.5
+        B = 0.5+sin((i*3.0+2.0)*1.3)*0.5
+        color = (R, G, B, 1.0)
+        self.setTextColor(color, currentTime, length)
+        self.lastColorChange = currentTime
+            
+    def setTextColor(self, color, currentTime, length):
+        for s in self.subSprites:
+            s.fadeTo(color, currentTime, length)
  
-        def update(self, currentTime):
+    def update(self, currentTime):
+        if (self.cycling == True):
             if (currentTime - self.lastColorChange > 3.0):
                 self.colorOrder += 1
                 self.cycleTextColor(self.colorOrder, currentTime, 3.0)
-            pass
-            
-        
 
 class Scene_MainMenu(Scene):
     def _runOnce(self):
@@ -112,20 +77,14 @@ class Scene_MainMenu(Scene):
         self.crtext.setAnchor("center")
         self.sprites.add(self.crtext)
     
-        self.menu = Sprite()
+        self.menu = Menu()
         self.menu.setPos((160, 100))
-        self.menuitems = [ MenuItem(0, 0, self.menufont, "Start Game", self.menu_start), 
-                                    MenuItem(0, 16, self.menufont, "Options", self.menu_options), 
-                                    MenuItem(0, 32, self.menufont, "High Scores", self.menu_highscores), 
-                                    MenuItem(0, 48, self.menufont, "Help", self.menu_help), 
-                                    MenuItem(0, 64, self.menufont, "Quit", self.menu_quit) ]
-                                
-        self.menucount = len(self.menuitems)
-        self.menufocus = 0
-        
-        for sprite in self.menuitems:
-            self.menu.subSprites.append(sprite)
-            
+        self.menu.add(MenuItem(0, 0, self.menufont, "Start Game", self.menu_start))
+        self.menu.add(MenuItem(0, 16, self.menufont, "Highscores", self.menu_highscores))
+        self.menu.add(MenuItem(0, 32, self.menufont, "Options", self.menu_options))
+        #self.menu.add(MenuItem(0, 48, self.menufont, "Help", self.menu_help))
+        self.menu.add(MenuItem(0, 48, self.menufont, "Quit", self.menu_quit))
+
         self.sprites.add(self.menu)    
         self.menu.setPos((160, 260))
             
@@ -150,24 +109,19 @@ class Scene_MainMenu(Scene):
         self.state = "transition"
         self.state = "entrance"
                 
-    def preload(self):        
-        self.music =  Mixer().loadAudioStream("menumusic.ogg")
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        self.movesound =  Mixer().loadAudioFile("menumove.ogg") 
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        self.selectsound =  Mixer().loadAudioFile("menuselect.ogg") 
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
-        self.startsound =  Mixer().loadAudioFile("menustart.ogg") 
-        pygame.event.post(pygame.event.Event(EVENT_PRELOADED_PART, count=2))
+        self.music = Resources().getMusic("menumusic")
+        self.menumove = Resources().getSound("menumove")
+        self.selectsound = Resources().getSound("menuselect")
+        print self.selectsound
+        self.startsound = Resources().getSound("menustart")
         
     def tick(self):
-        self.ticker += 1
-        self.sprites.update(self.currentTime)
+        pass
 
     def show(self):
         print self, "is showing"
         self.state = "entrance"
-        Mixer().playSound(self.music, loops=-1)
+        Mixer().playMusic(self.music, loops=-1)
         self.startmenu.setPos((160, 160))
         self.startmenu.setCol((1.0,1.0,1.0,0.0))
         self.startmenu.fadeTo((1.0,1.0,1.0,1.0), self.currentTime, 0.3)
@@ -175,43 +129,40 @@ class Scene_MainMenu(Scene):
         
     def hide(self):
         print self, "is hiding"
-        Mixer().stopSound(self.music) 
+        Mixer().stopMusic(self.music) 
         
     def handleEvent(self, event):
         if event.type == KEYDOWN:
             key = event.key
 
-            if (self.state == "menu"):
-                self.newmenufocus = self.menufocus
-                if (key == K_UP):
-                    self.newmenufocus -= 1
-                    if (self.newmenufocus < 0):
-                        self.newmenufocus = 0
-                                               
-                if (key == K_DOWN):
-                    self.newmenufocus += 1
-                    if (self.newmenufocus >= self.menucount):
-                        self.newmenufocus = self.menucount - 1
+            if key == K_ESCAPE:
+                self.menu_quit()
                 
+            if (self.state == "menu"):
+                if (key == K_UP):
+                    Mixer().playSound(self.menumove)
+                    self.menu.prevItem()
+                                 
+                if (key == K_DOWN):
+                    Mixer().playSound(self.menumove)
+                    self.menu.nextItem()
+                    
+                    
                 if (key == K_RETURN):
-                    self.menuitems[self.menufocus].select()
-                     
-                if (self.newmenufocus != self.menufocus):
-                    Mixer().playSound(self.movesound)
-                    self.menuitems[self.menufocus].unfocus(self.currentTime)
-                    self.menuitems[self.newmenufocus].focus(self.currentTime)
-                    self.menufocus = self.newmenufocus
+                    self.menu.selectItem()
+                    
                 
             elif (self.state == "entrance"):   
                 if (key == K_RETURN):
                     self.startmenu.select()
+                    
             
 
     def menu_enter(self):
         self.state = "transition"
-        Mixer().playSound(self.startsound)
         self.startmenu.moveTo((160, 260), self.currentTime, 0.4, self.menu_enter2)
         self.logo.moveTo((170, 50), self.currentTime, 0.4)
+        Mixer().playSound(self.startsound)
         pass
 
     def menu_enter2(self, sprite):  
@@ -219,20 +170,19 @@ class Scene_MainMenu(Scene):
         self.menu.moveTo((160, 100), self.currentTime, 0.4, self.menu_enter3)
  
     def menu_enter3(self, sprite):  
-        print "HORRAY"
-        self.menuitems[self.menufocus].focus(self.currentTime)
-        self.state = "menu"
- 
+        self.menu.focusItem(0)
+        self.state = "menu" 
 
     def menu_start(self):
         Mixer().playSound(self.startsound)
-        SceneHandler().removeScene(self)
-        Scene_MainGame().run()
+        Mixer().stopMusic(self.music)
+        SceneHandler().pushScene(scene_maingame.Scene_MainGame())
         pass
     
     def menu_options(self):
-        pass
-        
+        Mixer().playSound(self.selectsound)
+        SceneHandler().pushScene(Scene_Options())
+
     def menu_highscores(self):
         Mixer().playSound(self.selectsound)
         SceneHandler().pushScene(Scene_Highscore())
@@ -243,10 +193,9 @@ class Scene_MainMenu(Scene):
         
     def menu_quit(self):
         Mixer().playSound(self.selectsound)
-        Mixer().setVolume(self.music, 0.5, 0.5)
+        Mixer().setMusicVolume(self.music, 0.5, 0.5)
         Scene_DialogYesNo().setQuery("Do you want to quit?", self.quitGame, self.doNothing)
         SceneHandler().pushScene(Scene_DialogYesNo())
-        #SceneHandler().clear()
         pass
       
 
@@ -256,6 +205,9 @@ class Scene_MainMenu(Scene):
         
         
     def doNothing(self):
-        SceneHandler().removeScene(Scene_DialogYesNo())
-        Mixer().setVolume(self.music, 1.0, 0.5)
+        def killDialog(sprite):
+            SceneHandler().removeScene(Scene_DialogYesNo())
+        
+        Scene_DialogYesNo().remove(killDialog)
+        Mixer().setMusicVolume(self.music, 1.0, 0.5)
         pass

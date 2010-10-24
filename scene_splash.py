@@ -44,7 +44,7 @@ class Scene_Splash(Scene):
         self.fading_out = False     
         
     def tick(self):
-        self.sprites.update(self.currentTime) 
+        pass
     
     def show(self):
         print self, "is showing"

@@ -1,3 +1,4 @@
+from resources import *
 from scene import *
 from scenehandler import *
 from board import *
@@ -46,48 +47,31 @@ class Scene_Preload(Scene):
         self.timeDone = 0.0
     
     def tick(self):
-        perc = int(float(self.show_progress) / 66.0 * 100.0)
-        perc = min(perc, 100)
+        real_progress = min(1.0, self.progress)
+
+        if self.show_progress < real_progress:
+            self.show_progress += (real_progress - self.show_progress + 10.0) / 40.0
+
+        if self.show_progress > real_progress:
+            self.show_progress = real_progress
+
+        self.gameovertext.setText("LOADING: %d%%" % (int(self.show_progress*100.0)))
+
+        if self.progress <= 1.0:
+            self.progress = Resources().preload()
         
-        if self.show_progress < self.progress:
-            self.show_progress += ((self.progress - self.show_progress + 10.0) / 40.0)
-        
-        self.gameovertext.setText("LOADING: %d%%" % (perc))
-        
-        if not self.maingameLoading:
-            self.maingameLoading = True
-            Scene_MainGame()
-            
-            def f():
-                Scene_MainGame().preload()
-                self.maingameLoaded = True
-            
-            thread.start_new_thread(f, ())
-             
-        if not self.mainmenuLoading:
-            self.mainmenuLoading = True
-            Scene_MainMenu()
-            
-            def f():
-                Scene_MainMenu().preload()
-                self.mainmenuLoaded = True
-            
-            thread.start_new_thread(f, ())
-        
-        if self.maingameLoaded and self.mainmenuLoaded and not self.done:
+        if self.show_progress >= 1.0 and not self.done:
             self.done = True
-            self.timeDone = self.currentTime
-        
-        if perc >= 100 and not self.fading:
-            self.fading = True
-            
+            self.progress = 1.0
+            self.show_progress = 1.0
+
             def text_fade_done(sprite):
                 SceneHandler().removeScene(self)
                 SceneHandler().pushScene(Scene_Splash())
                 
-            self.gameovertext.fadeTo([0.0, 0.0, 0.0, 0.0], self.currentTime, 2.0, text_fade_done)
+            self.gameovertext.fadeTo([1.0, 1.0, 1.0, 0.0], self.currentTime, 2.0, text_fade_done)
         
-        self.sprites.update(self.currentTime)
+
 
     def show(self):
         print self, "is showing"

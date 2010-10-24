@@ -10,17 +10,19 @@ class Scene(Singleton):
         self.done = False
         self.renderBlocker = False
         self.updateBlocker = False
-        self.softblend = False
-       
+
+        self.blockedUpdate = False
+        
         self.sprites = pygame.sprite.LayeredUpdates()
         
     def preload(self):
         pass
         
-    def updateTimer(self, deltaTime):    
+    def updateTimer(self, deltaTime):
         self.currentTime += deltaTime
         self.renderTime = self.currentTime
-
+        self.sprites.update(self.currentTime)
+        
     def handleEvent(self, event):
         return False
 

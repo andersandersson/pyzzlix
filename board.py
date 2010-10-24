@@ -1,6 +1,9 @@
+from resources import *
 from globals import *
 from block import *
 from sprite import *
+from marker import *
+from mixer import *
 
 def TriangleArea(a, b, c):
     return (b[0]-a[0]) * (c[1]-a[1]) - (c[0]-a[0])*(b[1]-a[1])
@@ -30,8 +33,34 @@ class Board(Sprite):
         self.background.setImage(loadImage("pixel.png", 1, 1))
         self.background.setScale((160.0, 208.0))
         self.background.setCol((0.0, 0.0, 0.0, 0.3))
+        self.background.setPos((8.0,16.0))
+        
+        self.blocks = Sprite()
+        self.blocks.setPos((8.0,16.0))
+        
+        self.border = Sprite()
+        self.border.setImage(loadImage("windowframes.png", 24, 0, 176, 232))
+        self.border.setPos((0.0,0.0))
+        
+        self.glow = Sprite()
+        self.glow.setImage(loadImage("windowglows.png", 24, 0, 176, 232))
+        self.glow.setPos((0.0, 0.0))
+        self.glow.setCol((0.0, 0.0, 0.0, 0.0))
+
+        self.marker = Marker()
+        self.marker.offset_x = self.blocks.pos[0]
+        self.marker.offset_y = -BOARD_HEIGHT*16.0 + self.blocks.pos[1]
+        self.marker.moveToBoardCoord(2, 14, self.currentTime)
+        
         self.subSprites.append(self.background)
+        self.subSprites.append(self.blocks)
+        self.subSprites.append(self.marker)
+        self.subSprites.append(self.border)
+        self.subSprites.append(self.glow)
         self.blocksFalling = False
+        
+        self._glow_col = (0.0, 0.0, 0.0, 0.0)
+        self._glow_duration = 0.0
 
     def __str__(self):
         val = ""
@@ -50,6 +79,26 @@ class Board(Sprite):
     def __iter__(self):
         return iter(self.sprites)
 
+    def pulseBorder(self, col1, col2, duration):
+        self._glow_duration = duration
+
+        def fade_to_done(s):
+            self._glow_col = col1
+            self.glow.fadeTo(col1, self.currentTime, duration, fade_from_done)
+            
+        def fade_from_done(s):
+            self._glow_col = col2
+            self.glow.fadeTo(col2, self.currentTime, duration, fade_to_done)
+            
+        self.glow.clearColCallbacks()
+        fade_from_done(None)
+        
+    def stopPulseBorder(self):
+        from_col = (self._glow_col[0], self._glow_col[1], self._glow_col[2], 0.0)
+        
+        self.glow.clearColCallbacks()
+        self.glow.fadeTo(from_col, self.currentTime, self._glow_duration)
+    
     def reset(self):
         for x in range(self.width):
             for y in range(self.height):
@@ -72,18 +121,26 @@ class Board(Sprite):
                     return False
         return True
 
+    def inactive(self):
+        for row in self.grid:
+            for tile in row:
+                if tile and (tile.status & STATUS_MOVING or tile.status & STATUS_IN_CIRCLE or tile.comboCounter > 0):
+                    return False
+                    
+        return True
+
     def add(self, x, y, block):
         self.grid[x][y] = block
 
         if y >= self.height/2:
-            self.subSprites.append(block)
+            self.blocks.subSprites.append(block)
 
         if y < self.height/2:
             block.status |= STATUS_OFFSCREEN
 
     def clear(self, x, y):
-        if self.grid[x][y] in self.subSprites:
-            self.subSprites.remove(self.grid[x][y])
+        if self.grid[x][y] in self.blocks.subSprites:
+            self.blocks.subSprites.remove(self.grid[x][y])
 
         self.grid[x][y] = None
 
@@ -133,7 +190,7 @@ class Board(Sprite):
                 while (x+x_dir, y+y_dir) not in points:
                     x = x+x_dir
                     y = y+y_dir
-                    if not self.grid[x][y].status & STATUS_IN_CIRCLE:
+                    if self.grid[x][y] and not self.grid[x][y].status & STATUS_IN_CIRCLE:
                         self.grid[x][y].status |= STATUS_IN_CIRCLE
                         if self.grid[x][y] not in blocks:
                             self.grid[x][y].comboCounter += 1
@@ -283,8 +340,8 @@ class Board(Sprite):
         if y < self.height/2:
             block.status |= STATUS_OFFSCREEN
         else:
-            if not block in self.subSprites:
-                self.subSprites.append(block)
+            if not block in self.blocks.subSprites:
+                self.blocks.subSprites.append(block)
 
             block.status &= ~STATUS_OFFSCREEN
 

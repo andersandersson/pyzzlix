@@ -1,4 +1,5 @@
 from math import *
+from resources import *
 
 from scene import *
 from scenehandler import *
@@ -8,6 +9,7 @@ from sprite import *
 from image import *
 import random
 
+from menu import *
 from menuitem import *
 
 class Scene_DialogYesNo(Scene):
@@ -15,82 +17,90 @@ class Scene_DialogYesNo(Scene):
         Scene._runOnce(self)
         
         self.renderBlocker = False
-        self.updateBlocker = True
+        self.updateBlocker = False
     
         self.query = "This should be a question?"
         self.yesCallback = None
         self.noCallback = None
         
-        font = Font("font_fat.png", 8, 8);
-        self.querytext = Text(160, 90, font, self.query)
-        self.querytext.setAnchor("center")
-        self.querytext._layer = 1
-        
-        self.sprites.add(self.querytext)
-        
-        self.menuitems = [ MenuItem(140, 100, "Yes", self.yesCallback), 
-                             MenuItem(180, 100, "No", self.noCallback)]                             
-        self.menucount = len(self.menuitems)
-        self.menufocus = 1
-        
-        for sprite in self.menuitems:
-            self.sprites.add(sprite)
-            sprite._layer = 1 
+        self.font = Font("font_fat.png", 8, 8);
 
+        self.querytext = Text(0, -10, self.font, self.query)
+        self.querytext.setAnchor("center")
+
+        self.menu = Menu()
+        self.menu.add(MenuItem(-20, 0, self.font, "Yes", self.yesCallback))
+        self.menu.add(MenuItem(20, 0, self.font, "No", self.noCallback))
+            
+        self.menuSprite = Sprite()        
+        self.menuSprite.subSprites.append(self.querytext)
+        self.menuSprite.subSprites.append(self.menu)
+        self.menuSprite._layer = 1
+        self.menuSprite.setPos((160, 100))
+            
         self.background = Sprite()
         self.background.setImage(loadImage("pixel.png"))
         self.background.scaleTo((320,240), 0, 0)
         self.background._layer = 0        
         self.sprites.add(self.background)
+        self.sprites.add(self.menuSprite)
         
-        self.movesound =  Mixer().loadAudioFile("menumove.ogg") 
-        self.selectsound =  Mixer().loadAudioFile("menuselect.ogg") 
+        self.movesound = Resources().getSound("menumove") 
+        self.selectsound = Resources().getSound("menuselect")
+
+        self.statelist = {"showing" : 0, "fading" : 1}
+        self.state = self.statelist["showing"]
    
     def setQuery(self, query, yescall, nocall):
         self.query = query
         self.yesCallback = yescall
         self.noCallback = nocall
         self.querytext.setText(query)
-        self.menuitems[0].callfunc = self.yesCallback
-        self.menuitems[1].callfunc = self.noCallback
+        self.menu.items[0].callfunc = self.yesCallback
+        self.menu.items[1].callfunc = self.noCallback
         
           
     def tick(self):
-        self.sprites.update(self.currentTime)
+        pass
 
     def show(self):
-        print self, "is showing"
-        self.menuitems[self.menufocus].focus(self.currentTime)
-        self.background.setCol((0.0, 0.0, 0.0, 0.0))
-        self.background.fadeTo((0.0, 0.0, 0.0, 1.0), 0, 1.0)
+        for item in self.menu.items:
+            item.reset()
             
-    def hide(self):
-        print self, "is hiding"
+        self.menu.focusItem(1)
+        self.background.setCol((0.0, 0.0, 0.0, 0.0))
+        self.background.fadeTo((0.0, 0.0, 0.0, 1.0), self.currentTime, 0.3)
+        self.menuSprite.setCol((1.0, 1.0, 1.0, 0.0))
+        self.menuSprite.fadeTo((1.0, 1.0, 1.0, 1.0), self.currentTime, 0.2)
+        self.state = self.statelist["showing"]
+        self.updateBlocker = True
+
+        
+    def remove(self, callfunc=None):
+        self.menuSprite.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.2)
+        self.background.fadeTo((0.0, 0.0, 0.0, 0.0), self.currentTime, 0.5, callfunc)
+        self.state = self.statelist["fading"]
+        self.updateBlocker = False
         
     def handleEvent(self, event):
+        if (self.state == self.statelist["fading"]):
+            return False
+            
         if event.type == KEYDOWN:
             key = event.key
 
-            self.newmenufocus = self.menufocus
             if (key == K_LEFT):
-                self.newmenufocus -= 1
-                if (self.newmenufocus < 0):
-                    self.newmenufocus = 0
+                self.menu.prevItem()
                                            
             if (key == K_RIGHT):
-                self.newmenufocus += 1
-                if (self.newmenufocus >= self.menucount):
-                    self.newmenufocus = self.menucount - 1
+                self.menu.nextItem()
             
             if (key == K_RETURN):
                 Mixer().playSound(self.selectsound)
-                self.menuitems[self.menufocus].select()
+                self.menu.selectItem()
                 
-            
-            if (self.newmenufocus != self.menufocus):
-                Mixer().playSound(self.movesound)
-                self.menuitems[self.menufocus].unfocus(self.currentTime)
-                self.menuitems[self.newmenufocus].focus(self.currentTime)
-                self.menufocus = self.newmenufocus
-        return True        
-       
+            if (key == K_ESCAPE):
+                Mixer().playSound(self.selectsound)
+                self.menu.items[1].select()
+
+        return True
